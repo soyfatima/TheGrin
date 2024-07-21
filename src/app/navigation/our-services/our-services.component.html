@@ -11,12 +11,12 @@
             <div class="col-md-4 col-sm-6 mb-3" *ngFor="let item of services">
                 <div class="card services-items shadow-lg border border-1 rounded-3 text-center p-3" [ngClass]="item.bgcolor">
                     <div class=" d-flex align-items-center justify-content-center mb-3">
-                       <div class="circle-icon d-flex justify-content-center align-items-center">
+                       <div class="circle-icon bg-color-white d-flex justify-content-center align-items-center">
                         <i class="fa {{item.icon}}"></i>
                        </div>
                 </div>
                 <div class="info">
-                    <h5 class="fw-bold text-primary text-xl mb-2">{{item.name}}</h5>
+                    <h5 class="fw-bold color-primary text-xl mb-2">{{item.name}}</h5>
                     <p>{{item.description}}</p>
                 </div>
 

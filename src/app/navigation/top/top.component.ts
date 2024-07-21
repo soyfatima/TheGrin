@@ -1,4 +1,6 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { ContactUsComponent } from '../dialog/contact-us/contact-us.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-top',
@@ -12,7 +14,10 @@ export class TopComponent {
   @ViewChild('counter3') counter3!: ElementRef;
   @ViewChild('counter4') counter4!: ElementRef;
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private renderer: Renderer2,
+    private dialog: MatDialog,
+
+  ) { }
 
  
   ngAfterViewInit(): void {
@@ -40,5 +45,13 @@ export class TopComponent {
 
     animateCounter();
   }
+
+  openDialog(): void {
+    this.dialog.open(ContactUsComponent, {
+      width: '700px',
+      data: { }
+    });
+  
+}
 
 }

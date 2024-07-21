@@ -26,7 +26,8 @@ import { SidebarComponent } from './forum/sidebar/sidebar.component';
 import { ChatComponent } from './forum/chat/chat.component';
 import { BlogComponent } from './forum/blog/blog.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { HomeComponent } from './forum/home/home.component';
+import { HomeComponent } from './navigation/home/home.component';
+import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { HomeComponent } from './forum/home/home.component';
     SidebarComponent,
     ChatComponent,
     BlogComponent,
-    HomeComponent
+    HomeComponent,
+    ContactUsComponent
   ],
   
   imports: [

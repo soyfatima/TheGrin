@@ -1,3 +1,4 @@
+@import './dark-mode.css';
 @import url('https://fonts.googleapis.com/css?family=Barlow');
 
 * {
@@ -48,9 +49,13 @@
 }
 
 .bg-color-info {
-  
-    background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
-    
+
+background: var(--color-info);
+}
+
+.bg-color-gradient {
+    background: linear-gradient(90deg, #095caf, #ff50c2);
+
 }
 
 .bg-color-default {
@@ -592,8 +597,8 @@ h6 {
 
 .services .services-items:hover {
     transform: translateY(-5px);
-    border-bottom: 20px solid rgb(209, 209, 209) !important;
 }
+
 .circle-icon {
     border: 3px solid #fafafa;
     background: #fafafa;
@@ -611,39 +616,6 @@ h6 {
     height: 100%;
     object-fit: cover;
 }
-
-
-.forum .info {
-    flex: 1;
-}
-
-.forum .name {
-    font-size: 1.1rem;
-}
-
-.forum .message {
-    font-size: 0.9rem;
-}
-
-.forum .online {
-    padding: 10px;
-}
-
-.forum .online-person {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.forum .participant {
-    font-size: 14px;
-    font-weight: normal;
-    margin: 0;
-    white-space: nowrap;
-    border: solid #fff;
-    padding: 10px;
-}
-
 
 .service-1 {
     background: rgba(245, 160, 194, 0.475) !important;
@@ -809,24 +781,6 @@ h6 {
     }
 }
 
-.switch-container {
-    margin-bottom: 10px;
-}
-
-.nav-tabs {
-    margin-bottom: 0;
-}
-
-.nav-item .nav-link {
-    cursor: pointer;
-}
-
-.nav-item .nav-link.active {
-    font-weight: bold;
-}
-
-
-
 /*--------------------------------------------------------------
 # Blog Sidebar
 --------------------------------------------------------------*/
@@ -866,8 +820,8 @@ h6 {
     padding: 6px 10px;
     margin: 0 6px 8px 0;
     border: 1px solid #ffffff;
-    background-color: #fff;
     display: inline-block;
+    color: #fff;
     transition: 0.3s;
     border-radius: 5px;
     text-decoration: none;

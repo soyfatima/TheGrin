@@ -9,7 +9,8 @@ import { FeaturesComponent } from './navigation/features/features.component';
 import { FooterComponent } from './navigation/footer/footer.component';
 import { SidebarComponent } from './forum/sidebar/sidebar.component';
 import { ChatComponent } from './forum/chat/chat.component';
-import { HomeComponent } from './forum/home/home.component';
+import { HomeComponent } from './navigation/home/home.component';
+import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 
 const routes: Routes = [
   // { path: '', component: },
@@ -26,7 +27,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent},
   { path: 'sidebar', component: SidebarComponent},
   { path: 'chat', component: ChatComponent },
-  // { path: '', component: },
+   { path: 'contact-us', component: ContactUsComponent },
 
 ];
 

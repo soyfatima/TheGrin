@@ -1,0 +1,79 @@
+@media (prefers-color-scheme: dark) {
+
+  /* Add your dark mode styles here */
+  body {
+    background: var(--color-secondary) !important;
+    color: #fff !important;
+  }
+
+  /* Menu links in dark mode */
+  .global-nav.dark-mode.scrolled a,
+  .global-nav.dark-mode.scrolled a:focus,
+  .global-nav.dark-mode.scrolled a:hover,
+  .global-nav.dark-mode.scrolled .active,
+  .global-nav.dark-mode.scrolled .active:focus,
+  .global-nav.dark-mode.scrolled li:hover>a {
+    color: #fff !important;
+    /* Change the color to white */
+  }
+
+  @media (max-width: 992px) {
+
+    .goog-te-gadget .goog-te-combo,
+    .navbar a,
+    .navbar a:focus,
+    .header .logo h1,
+    .mobile-nav-toggle {
+      color: var(--text-color-dark) !important;
+    }
+
+    .navbar ul {
+      background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
+  }
+
+  h1,
+  h3,
+  h4,
+  h6 {
+    color: #fff !important;
+    font-weight: 600 !important;
+  }
+
+  .section-title h2,
+  .section-title p,
+  .forum .nav-item .nav-link,
+  .info p,
+  mat-expansion-indicator {
+    color: #fff !important;
+  }
+  .time{
+    color: var(--color-info) !important;
+  }
+  .bg-color-primary,
+  .services .service-item:hover:before,
+  .sidebar .tags ul li a.active,
+  .admin-sidebar .sidebar .cActive,
+  .admin-nav .nav .custom-btn {
+  }
+
+  .bg-color, .admin .circle-icon {
+    background-color: #212121 !important;
+    color: #fff !important;
+  }
+
+  .form-select,
+  .form-control,
+  ::placeholder,
+  .bg-color-white,
+  .sidebar mat-expansion-panel {
+    background: #2a2929 !important;
+    color: #fff !important;
+  }
+
+  .hero {
+    background-image: linear-gradient(to top, #7c0bbd 0%, #7f0255 100%) !important;
+
+  }
+}

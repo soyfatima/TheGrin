@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-chat',
@@ -8,7 +8,9 @@ import { Component } from '@angular/core';
 export class ChatComponent {
   tab = 'forum';
   activeTab: string = 'forum';
-  iscategoryActive: boolean = false
+  isCategoryHidden = false;
+  isMobile = false;
+
   forum: any[] = [];
   filteredForum: any[] = [];
   selectedCategory: string = '';
@@ -28,6 +30,7 @@ export class ChatComponent {
     { name: 'relation sentimental' },
     { name: 'autre' }
   ]
+  
   Categories: any[] = [
     { label: 'fertilité', value: 'fertilité', },
     { label: 'cardiologie', value: 'cardiologie', },
@@ -44,42 +47,86 @@ export class ChatComponent {
     {
       img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
       username: 'cindy', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed to using Content here, content here ....',
+      titre: 'distribution of letters, as opposed  ....',
       message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
     },
     {
       img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
       username: 'nobody', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed to using Content here, content here ....',
+      titre: 'distribution of letters, as opposed  ....',
       message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
     },
     {
       img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
       username: 'jushuao', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed to using Content here, content here ....',
+      titre: 'distribution of letters, as opposed  ....',
       message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
     },
     {
       img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
       username: 'its-Me', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed to using Content here, content here ....',
+      titre: 'distribution of letters, as opposed  ....',
       message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
     },
-  ]
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
+      username: 'its-Me', time: 'publié il y a 1 min',
+      titre: 'distribution of letters, as opposed  ....',
+      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
+    }, {
+      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
+      username: 'its-Me', time: 'publié il y a 1 min',
+      titre: 'distribution of letters, as opposed  ....',
+      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
+    }, {
+      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
+      username: 'its-Me', time: 'publié il y a 1 min',
+      titre: 'distribution of letters, as opposed  ....',
+      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
+    }, {
+      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
+      username: 'its-Me', time: 'publié il y a 1 min',
+      titre: 'distribution of letters, as opposed  ....',
+      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
+    }, {
+      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
+      username: 'its-Me', time: 'publié il y a 1 min',
+      titre: 'distribution of letters, as opposed  ....',
+      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
+    },
+  ];
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth <= 768;
+    // Adjust sidebar visibility based on viewport width
+    if (this.isMobile && !this.isCategoryHidden) {
+      this.isCategoryHidden = true;
+    }
+  }
+
 
   constructor() { }
+
 
   ngOnInit() {
     const savedCard = localStorage.getItem('selectedCard');
     if (savedCard) {
       this.selectedCard = JSON.parse(savedCard);
     }
+    //this.isMobile = window.innerWidth <= 768;
+    this.onResize();
+
   }
+
+  // toggleCategory() {
+  //   this.iscategoryActive = !this.iscategoryActive
+  // }
 
   toggleCategory() {
-    this.iscategoryActive = !this.iscategoryActive
+    this.isCategoryHidden = !this.isCategoryHidden;
   }
-
+  
   filterForumByCategory(category: string) {
     this.selectedCategory = category;
     if (this.selectedCategory) {
