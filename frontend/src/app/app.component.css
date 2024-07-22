@@ -1,0 +1,16 @@
+/* Default background color */
+.navbar.bg-light {
+    background-color: #ffffff;
+  }
+  
+  /* Dark mode background color */
+  .navbar.bg-dark {
+    background-color: #000000;
+  }
+  .navbar {
+    opacity: 0.9; /* Adjust the opacity as needed */
+  }
+  .navbar {
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Adjust the shadow properties as needed */
+  }
+      

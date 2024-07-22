@@ -1,0 +1,35 @@
+<mat-dialog-content class="bg-color rounded-0">
+    <div class="admin-modal mat-dialog-centered">
+        <div class="d-flex justify-content-end mb-4">
+            <button class="btn btn-danger shadow-none" mat-dialog-close
+                (click)="onClose()"><mat-icon>close</mat-icon></button>
+        </div>
+
+<form action="">
+    <div class="input-form mb-3">
+        <label class="form-label">Nom & Prénom</label>
+        <input type="text" class="form-control" placeholder="votre nom et prénom . . . ">
+    </div>
+    <div class="input-form mb-3">
+        <label class="form-label">Choississez une Catégorie</label>
+        <select class="form-select">
+            <option selected disabled>Choississez une option</option>
+            <option *ngFor="let option of Categories" [value]="option.value">{{
+                option.label}}</option>
+        </select>
+    </div>
+    <div class="row mb-4">
+        <div class="col form-group">
+            <label class="form-label">Contenu</label>
+            <textarea class="form-control" rows="8" cols="8"
+                placeholder="Votre message ici . . ."></textarea>
+        </div>
+    </div>
+    <button type="submit"
+        class="bg-color-primary border border-0 rounded-2 p-2 color-default w-100">Envoyer</button>
+
+</form>
+
+
+        </div>
+        </mat-dialog-content>

@@ -1,0 +1,27 @@
+<div class="container-fluid">
+    <div class="section-content">
+        <div class="text-center section-title">
+            <h2 class="fw-bold text-uppercase position-relative fs-5">Nos services</h2>
+            <p class="text-muted fs-5"> Découvrez nos services</p>
+        </div>
+    </div>
+
+    <div class="item-of-service extra-padding" data-aos="fade-up">
+        <div class="row">
+            <div class="col-md-4 col-sm-6 mb-3" *ngFor="let item of services">
+                <div class="card services-items shadow-lg border border-1 rounded-3 text-center p-3" [ngClass]="item.bgcolor">
+                    <div class=" d-flex align-items-center justify-content-center mb-3">
+                       <div class="circle-icon bg-color-white d-flex justify-content-center align-items-center">
+                        <i class="fa {{item.icon}}"></i>
+                       </div>
+                </div>
+                <div class="info">
+                    <h5 class="fw-bold color-primary text-xl mb-2">{{item.name}}</h5>
+                    <p>{{item.description}}</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    </div>

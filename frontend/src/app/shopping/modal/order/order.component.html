@@ -1,0 +1,40 @@
+
+<mat-dialog-content *ngIf="TotalAmount">
+  <div class="admin-modal mat-dialog-centered">
+    <div class="btn-action d-flex justify-content-end mb-4">
+        <button class="btn btn-danger shadow-none" mat-dialog-close
+            (click)="onYesClick()"><mat-icon>close</mat-icon></button>
+    </div>
+  <div class="card">
+    <div class="card-body">
+      <form (ngSubmit)="submitOrder()" #orderForm="ngForm">
+        <div class="row">
+          <!-- Static fields for total price and quantity -->
+          <div class="col-md-6">
+            <label>Prix total</label>
+            <input type="text" class="form-control" [(ngModel)]="TotalAmount.totalPrice"  (input)="onPriceInput($event)" [ngModelOptions]="{ standalone: true }" readonly>
+          </div>
+          <div class="col-md-6">
+            <label>Total Quantité</label>
+            <input type="text" class="form-control" [(ngModel)]="TotalAmount.totalQuantity" [ngModelOptions]="{ standalone: true }" readonly>
+          </div>
+
+          <!-- Dynamically generated fields -->
+          <ng-container>
+            <div class="col-md-6" *ngFor="let item of fields">
+              <label class="form-label">{{ item.label }}</label>
+              <input [type]="item.type" class="form-control" [(ngModel)]="orderData[item.modalName]" [ngModelOptions]="{ standalone: true }" required name="{{ item.modalName }}">
+              <div *ngIf="orderForm.controls[item.modalName]?.invalid && orderForm.controls[item.modalName]?.touched" class="text-danger">
+                <div *ngIf="orderForm.controls[item.modalName]?.errors?.['required']">{{ item.label }} est requis.</div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div class="col-md-12 mt-3">
+          <button class="btn btn-primary" type="submit" [disabled]="orderForm.invalid">Order Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</mat-dialog-content>

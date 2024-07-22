@@ -1,0 +1,53 @@
+<div class="loader5" [hidden]="!loaderVisible">
+    <div class="loader-inner box-1"></div>
+    <div class="loader-inner box-2"></div>
+    <div class="loader-inner box-3"></div>
+    <div class="loader-inner box-4"></div>
+</div>
+
+
+<div class="main-content" [hidden]="loaderVisible">
+    <app-sidebar (menuIndex)="switchMemu($event)"></app-sidebar>
+    <div class="admin-nav">
+        <nav class=" nav navbar navbar-expand-lg  shadow-none fixed-top" id="navbar">
+            <button type="button" id="sidebarCollapse" class="btn custom-btn" id="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </button>
+            <div class="m-2 mt-2">
+                <a class="" style=" color: #000; text-decoration: none; font-size: px;">
+                    <span>BLOG THL</span></a>
+            </div>
+            <button class="navbar-toggler ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">
+                <i class="fa fa-bars text-center"></i>
+            </button>
+            <div class="collapse navbar-collapse" [ngbCollapse]="isNavbarCollapsed" id="navbarSupportedContent">
+                <!-- Left links -->
+                <form class="search d-flex input-group w-auto align-items-center"
+                    style="margin-left:auto; margin-right:auto; display:block;">
+                </form>
+                <div class="d-flex align-items-end justify-content-end">
+                    <div class="avatar">
+                        <mat-icon class="text-dark">notifications</mat-icon>
+                    </div>
+                    <div class="avatar">
+                        <mat-icon class="text-dark">account_circle</mat-icon>
+                    </div>
+                    <!-- <div class="logout me-3" (click)="logout()">
+                        <mat-icon matBadgeColor="primary" class="material-icons text-danger"
+                            type="button">logout</mat-icon>
+                    </div> -->
+                </div>
+            </div>
+        </nav>
+        <ng-template #sidebarTitle>
+
+        </ng-template>
+
+        <div id="content">
+            <main id="main" class="content offset-lg-3 p-">
+             <app-chat *ngIf="menuIndex === 0"></app-chat>
+            </main>
+        </div>
+
+
+    </div>

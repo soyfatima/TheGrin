@@ -1,0 +1,102 @@
+<div class="container-fluid  product bg-color">
+  <div class="bubble mb-5">
+    <div class="centered bubble6">
+      <span>1</span>
+    </div>
+    <div class="section-title">
+      <h2>NOS PRODUITS </h2>
+      <p>Découvrez nos produits</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-3 mb-3 padding bg-color-light">
+      <div class="col-l filter">
+        <div class="sidebar">
+          <div class="sidebar-item recent-posts">
+            <div class="d-flex justify-content-end">
+              <h6 class="fw-bold text-info">filtrer</h6>
+            </div>
+            <div class="sidebar-item tags">
+              <h3 class="sidebar-title">Tags</h3>
+              <ul class="mt-3">
+                <li (click)="filterProductsByCategory('')">
+                  <a [class.active]="selectedCategory === ''"> Tout afficher </a>
+                </li>
+                <li *ngFor="let item of category" (click)="filterProductsByCategory(item.name)">
+                  <a [class.active]="selectedCategory === item.name">{{item.name}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-9 mb-3">
+      <div class="row" *ngIf="paginatedProducts.length > 0;">
+        <div class="col-lg-4 col-md-4 col-6 mb-4" *ngFor="let product of paginatedProducts; trackBy:trackByProductId">
+          <div class="card bg-color-light border border-1 rounded-3 shadow-sm">
+            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
+              <div style="height: 200px; overflow: hidden;">
+                <img [src]="product.uploadedFileUrl" style="object-fit: cover; width: 100%; height: 100%;" />
+              </div>
+              <div class="reduction" *ngIf="product.remise > 0">
+                <h5><span class="badge bg-warning ms-2">{{product.remise}} %</span></h5>
+              </div>
+              <div class="hover-overlay">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!--h5 class="mb-3">{{product.category}}</h5-->
+              <p class="fw-bold mb-1">{{product.name}}</p>
+              <h6 class="mb-3 fw-bold text-danger">{{formatNumberWithSeparator(product.price)}} fcfa</h6>
+
+              <div class="btn-action d-flex justify-content-between">
+                <div class="order">
+                  <button class="btn btn-primary p-1 border border-0 rounded-2 shadow-sm"
+                    (click)="redirectTopurchaseProduct(product.id)">détails</button>
+                </div>
+                <div class="round-icon justify-content-center align-items-center d-flex text-white"
+                  style="width: 50px; height: 50px; border-radius: 50%; background: green;">
+                 <button class="border border-0 bg-transparent" (click)="addToCart(product.id)"> <mat-icon>shopping_cart</mat-icon> </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <!-- <ng-template #noProduct>
+            <div class="col-md-12 text-center">
+              <p>Pas d'articles pour le moment</p>
+            </div>
+          </ng-template> -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-pagination">
+    <ul class="justify-content-center">
+      <!-- Bouton Précédent -->
+      <li>
+        <button class="btn btn-link" (click)="previousPage()" [disabled]="currentPage === 1">
+          Préc
+        </button>
+      </li>
+      <!-- Boutons de pagination -->
+      <ng-container *ngFor="let pageNumber of visiblePageRange">
+        <li [class.active]="pageNumber === currentPage">
+          <a (click)="changePage(pageNumber)">{{ pageNumber }}</a>
+        </li>
+      </ng-container>
+      <!-- Bouton Suivant -->
+      <li>
+        <button class="btn btn-link" (click)="nextPage()" [disabled]="currentPage === getTotalPages()">
+          Suiv
+        </button>
+      </li>
+    </ul>
+  </div>
+
+</div>

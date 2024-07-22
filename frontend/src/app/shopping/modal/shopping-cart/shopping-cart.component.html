@@ -1,0 +1,72 @@
+<mat-dialog-content class="bg-color-light" *ngIf="cartVisible">
+    <div class="admin-modal mat-dialog-centered">
+        <div class="d-flex justify-content-end mb-4">
+            <button class="btn btn-danger shadow-none" mat-dialog-close
+                (click)="onClose()"><mat-icon>close</mat-icon></button>
+        </div>
+    <div class="shopping-cart store">
+        <div class="row">
+            <div class="col-12 p-2 mb-5" *ngIf="userCart && userCart.items && userCart.items.length > 0; else noItems">
+                <div *ngFor="let item of userCart.items" class="card bg-color rounded-3 mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-4 col-md-2 mb-3 mb-md-0">
+                                <img [src]="item.product.uploadedFileUrl" alt="product image" class="img-fluid rounded-3">
+                            </div>
+                            <div class="col-8 col-md-4 col-lg-3">
+                                <h5 class="fw-bold text-center text-md-start mb-0">{{ item.product.name }}</h5>
+                                <div class="size-buttons d-flex flex-wrap justify-content-center justify-content-md-start">
+                                    <button *ngFor="let size of item.product.sizes" class="btn btn-outline-primary m-1"
+                                        [class.selected]="item.selectedSize === size" (click)="selectSize(size, item)">
+                                        {{ size }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-5 mt-3 mt-md-0">
+                                <div class="row align-items-center justify-content-center justify-content-md-start">
+                                    <div class="col-8 col-md-6">
+                                        <div class="quantity d-flex align-items-center">
+                                            <button class="btn btn-outline-secondary"
+                                                (click)="decrementQuantity(item)">-</button>
+                                            <input type="number" class="form-control mx-1" [(ngModel)]="item.quantity"
+                                                name="quantity" min="1">
+                                            <button class="btn btn-outline-secondary"
+                                                (click)="incrementQuantity(item)">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 col-md-6 mt-2 mt-md-0 text-md-end">
+                                        <p class="text-success fw-bold mb-0">{{ item.product.price }} fcfa</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-2 col-lg-2 mt-2 mt-md-0 text-center">
+                                <button class="btn btn-danger m-1" (click)="removeCartItem(item.product.id)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                                <button class="btn btn-primary m-1" (click)="fetchSingleItemPrice(item.id)">
+                                    <mat-icon>shopping_cart</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            <ng-template #noItems>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <p>Vous n'avez rien ajouté pour le moment</p>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+        <div class="card w-50 bg-color" style="position: fixed; bottom: 50px; left: 50%; transform: translate(-50%, -70%);">
+            <div class="card-body">
+                <button type="button" class="btn btn-primary w-100" (click)="getTotalCartPrice()">Paiement</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</mat-dialog-content>
