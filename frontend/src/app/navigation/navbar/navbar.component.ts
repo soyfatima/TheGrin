@@ -3,6 +3,8 @@ import { NavigationEnd, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserLoginComponent } from '../dialog/user-login/user-login.component';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../service/auth.service';
+import { TokenService } from '../../service/tokenservice';
 
 declare var google: any;
 
@@ -38,7 +40,9 @@ export class NavbarComponent {
   constructor(private router: Router,
     private dialog: MatDialog,
     private fb: FormBuilder,
-
+    private authService: AuthService,
+    private tokenService: TokenService,
+    private cdr: ChangeDetectorRef
   ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -51,8 +55,32 @@ export class NavbarComponent {
   
 
     this.googleTranslateElementInit();
+  
+    this.checkUserLoginStatus();
   }
 
+  logout(): void {
+    this.tokenService.removeAuthData();
+    this.IsUserLogged = false;
+  }
+
+  checkUserLoginStatus(): void {
+    const authData = this.tokenService.getAuthData();
+    if (authData && authData.accessToken) {
+      this.authService.verifyToken(authData.accessToken).subscribe(
+        (response) => {
+          this.IsUserLogged = response.valid && response.userId !== null;
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          console.error('Error verifying token:', error);
+          this.IsUserLogged = false;
+        }
+      );
+    } else {
+      this.IsUserLogged = false;
+    }
+  }
 
   googleTranslateElementInit() {
     new google.translate.TranslateElement({ pageLanguage: 'fr' }, 'google_translate_element');

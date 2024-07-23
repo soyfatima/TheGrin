@@ -110,8 +110,8 @@ export class UserLoginComponent {
         if (response.accessToken && response.refreshToken) {
           this.loggedInUser = response.userInfo;
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
-         // this.showLoginPopup = false;
-          this.IsUserLogged = true;
+        this.IsUserLogged = true;
+        this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
         } else {
@@ -152,7 +152,7 @@ export class UserLoginComponent {
           const loggedIn = response.valid && response.userId !== null;
           this.IsUserLogged = loggedIn;
           // if (this.activeNavbarType === 'store') {
-          // this.toastrService.success(loggedIn ? 'Utilisateur connecté' : 'Utilisateur déconnecté');
+          this.toastrService.success(loggedIn ? 'Utilisateur connecté' : 'Utilisateur déconnecté');
           // }
         },
         (error) => {

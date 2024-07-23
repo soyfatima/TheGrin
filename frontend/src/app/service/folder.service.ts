@@ -21,6 +21,11 @@ getFolderDetails(): Observable<any> {
   return this.http.get<any[]>(url);
 }
 
+getUserFolders(): Observable<any> {
+  const url = `${this.apiUrl}/folders/user-folders`;
+  return this.http.get<any[]>(url);
+}
+
 updateFolder(id: string, updatedFolderData: any): Observable<any> {
   const url = `${this.apiUrl}/folders/${id}`;
   return this.http.put<any>(url, updatedFolderData);

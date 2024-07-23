@@ -18,16 +18,15 @@ export class CommentService {
   }
 
   //fetch comments
-  getCommentsByFolderId(folderId: number): Observable<any[]> {
+  getComments(folderId: number): Observable<any[]> {
     const url = `${this.apiUrl}/comments/folder/${folderId}`;
     return this.http.get<any[]>(url);
   }
 
   //add reply
-  addReply(commentId: number, content: string, replyCreateDate: Date): Observable<any> {
-    const url = `${this.apiUrl}/comments/reply/${commentId}`;
-    const body = { content, replyCreateDate };
-    return this.http.post<any>(url, body);
+  addReply(commentId: number, content: string): Observable<Comment> {
+    return this.http.post<Comment>(`${this.apiUrl}/comments/${commentId}/reply`, { content });
   }
+  
 
 }    

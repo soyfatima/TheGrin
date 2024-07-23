@@ -24,8 +24,20 @@
         <button *ngIf="!IsUserLogged" class="border border-0 bg-transparent" (click)="loginUser()">
           <li><a>
               Se connecter</a></li>
-
         </button>
+
+        <div class="d-flex" *ngIf="IsUserLogged">
+           <div class="avatar">
+            <button class="bg-success text-white"> <mat-icon>shopping_cart</mat-icon>
+            </button>
+          </div>
+          <div class="avatar dropdown">
+            <button class="bg-color" > <mat-icon>account_circle</mat-icon></button>
+          </div>
+          <div class="avatar">
+            <button class="bg-danger text-white" (click)="logout()" > <mat-icon>logout</mat-icon> </button>
+          </div> 
+        </div>
       </ul>
       <!-- Store Navbar -->
       <div class="justify-content-end">
