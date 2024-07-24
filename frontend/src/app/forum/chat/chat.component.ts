@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FolderService } from '../../service/folder.service';
 import { Title } from '@angular/platform-browser';
@@ -6,6 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { CommentService } from '../../service/comment.service';
+import { AuthService } from '../../service/auth.service';
+import { TokenService } from '../../service/tokenservice';
 
 @Component({
   selector: 'app-chat',
@@ -33,7 +35,13 @@ export class ChatComponent {
   folderId!: number;
   comments: any[] = [];
   replyContent: string = '';
-  replyingTo: number | null = null; // Initialize replyingTo to null
+  replyingTo: number | null = null;
+  isEditing: boolean = false;
+  isEditingComment: { [key: number]: boolean } = {};
+  editContent: string = '';
+/////////////////////////////
+  loggedInUserId: number | null = null;
+  isUserReplyVisible:boolean = false
 
   category: any[] = [
     { name: 'fertilité' },
@@ -59,59 +67,6 @@ export class ChatComponent {
     { label: 'autre', value: 'autre', }
   ]
 
-  cards = [
-    {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'cindy', time: ' il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    },
-    {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'nobody', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    },
-    {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'jushuao', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    },
-    {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'its-Me', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    },
-    {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'its-Me', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    }, {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'its-Me', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    }, {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'its-Me', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    }, {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'its-Me', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    }, {
-      img: 'https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fcta-img.jpg?alt=media&token=1ce80d8a-0b09-425d-a61c-c4dc52d64848',
-      username: 'its-Me', time: 'publié il y a 1 min',
-      titre: 'distribution of letters, as opposed  ....',
-      message: 'distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here distribution of letters, as opposed to using Content here, content here ....'
-    },
-  ];
-
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth <= 768;
@@ -125,12 +80,16 @@ export class ChatComponent {
   constructor(
     private fb: FormBuilder,
     private folderService: FolderService,
+    private authService: AuthService,
+    private tokenService: TokenService,
+
     private toastrService: ToastrService,
     private route: ActivatedRoute,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private cdr: ChangeDetectorRef
   ) {
     this.route.paramMap.subscribe(params => {
-      this.folderId = +params.get('id')!; // Adjust based on your route
+      this.folderId = +params.get('id')!;
     });
   }
 
@@ -145,11 +104,12 @@ export class ChatComponent {
     const savedCard = localStorage.getItem('selectedCard');
     if (savedCard) {
       this.selectedCard = JSON.parse(savedCard);
-      this.fetchComments(this.selectedCard.id); // Fetch comments if a card is already selected
+      this.fetchComments(this.selectedCard.id);
     }
     this.onResize();
     this.fetchFolders();
     this.updateTime();
+    this.getLoggedInUserId();
   }
 
   //fetch folders and details
@@ -161,89 +121,203 @@ export class ChatComponent {
           uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${folder.uploadedFile}`,
         }));
         this.filteredForum = this.folders;
-        console.log('folders', folders)
+        //console.log('folders', folders)
       },
       (error) => {
-        console.error('Error fetching folders:', error);
+        // console.error('Error fetching folders:', error);
       }
     );
   }
+
+  
+  selectCard(folder: any): void {
+    this.selectedCard = folder;
+    console.log('Selected card:', this.selectedCard); 
+    localStorage.setItem('selectedCard', JSON.stringify(folder));
+    this.fetchComments(folder.id);
+    this.cdr.detectChanges(); // Force change detection
+
+  }
+
+  deselectCard(): void {
+    this.selectedCard = null;
+    localStorage.removeItem('selectedCard');
+    this.comments = []; 
+  }
+
   updateTime(): void {
     setInterval(() => {
       this.currentDate = new Date();
-    }, 1000); // Met à jour la date et l'heure chaque seconde
+    }, 1000);
   }
 
   submitComment(): void {
     if (this.commentContent.trim() === '') {
-      // Optionally handle empty comment submission
       return;
     }
     this.commentService.addComment(this.selectedCard.id, this.commentContent)
       .subscribe(
         response => {
-          console.log('Comment added successfully', response);
           this.commentContent = '';
           this.fetchComments(this.selectedCard.id);
         },
         error => {
-          console.error('Error adding comment:', error);
-          // Optionally, handle error (show notification, etc.)
+          //   console.error('Error adding comment:', error);
         }
       );
   }
 
   fetchComments(id: any): void {
     this.commentService.getComments(this.selectedCard.id).subscribe(
-      (data:Comment[]) => {
+      (data: Comment[]) => {
         this.comments = data;
-        console .log('comment and replies' , data)
       },
       (error) => {
-        console.error('Error fetching comments:', error);
+        // console.error('Error fetching comments:', error);
+      }
+    );
+  }
+
+  ///////////////////////////
+  //reply
+  submitReply(): void {
+    if (this.replyContent.trim() === '' || this.replyingTo === null) {
+      return;
+    }
+
+    this.commentService.addReply(this.replyingTo, this.replyContent)
+      .subscribe(
+        response => {
+          this.replyContent = '';
+          this.replyingTo = null;
+          this.fetchComments(this.selectedCard.id);
+        },
+        error => {
+          //  console.error('Error adding reply:', error);
+        }
+      );
+  }
+
+  replyToComment(commentId: number): void {
+    this.replyingTo = commentId;
+  }
+
+  cancelReply(): void {
+    this.replyingTo = null;
+    this.replyContent = '';
+  }
+
+  editReply(reply: any): void {
+    reply.isEditing = true;
+    reply.editContent = reply.content; // Pre-fill the textarea with the existing content
+  }
+
+  cancelEditReply(reply: any): void {
+    reply.isEditing = false;
+  }
+
+  saveReply(reply: any): void {
+    const content = reply.editContent;
+    const id = reply.id;
+    const folderId = reply.folderId; // Ensure folderId is correctly retrieved from the reply object
+
+    this.commentService.updateReply(id, folderId, content).subscribe(
+      (response) => {
+        console.log('Reply updated successfully', response);
+
+        // Update the reply content
+        reply.content = content;
+        reply.isEditing = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error updating reply', error);
+      }
+    );
+  }
+
+showUserReply(){
+  this.isUserReplyVisible = !this.isUserReplyVisible
+}
+  ///////////////////////////
+  //folder edit
+  EditContent(): void {
+    if (this.selectedCard) {
+      this.isEditing = true;
+      this.editContent = this.selectedCard.content;
+    }
+  }
+  EditFolderContent(): void {
+    if (this.selectedCard) {
+      const content = this.editContent;
+      const id = this.selectedCard.id;
+      const folderId = id;
+      console.log(`Updating folder with id: ${folderId}, content: ${content}`);
+      this.folderService.updateFolderContent(folderId, content).subscribe(
+        (response) => {
+          console.log('Folder updated successfully', response);
+          this.selectedCard.content = content;
+          const folderIndex = this.folders.findIndex(folder => folder.id === id);
+          if (folderIndex !== -1) {
+            this.folders[folderIndex].content = content;
+          }
+          this.isEditing = false;
+
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          // console.error('Error updating folder', error);
+        }
+      );
+    }
+  }
+
+
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.editContent = '';
+  }
+
+  ///////////////////////////
+  //comment
+
+  editComment(comment: any): void {
+    comment.isEditing = true;
+    comment.editContent = comment.content;
+  }
+
+  cancelEditComment(comment: any): void {
+    comment.isEditing = false;
+  }
+
+  saveComment(comment: any): void {
+    const content = comment.editContent;
+    const id = comment.id;
+    const folderId = comment.folderId; // Assuming folderId is available in comment object
+
+    this.commentService.updateComment(id, folderId, content).subscribe(
+      (response) => {
+        console.log('Comment updated successfully', response);
+
+        // Update the comment content
+        comment.content = content;
+        comment.isEditing = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error updating comment', error);
       }
     );
   }
 
 
-  submitReply(): void {
-    if (this.replyContent.trim() === '' || this.replyingTo === null) {
-      return;
-    }
-  
-    this.commentService.addReply(this.replyingTo, this.replyContent)
-      .subscribe(
-        response => {
-          console.log('Reply added successfully', response);
-          this.replyContent = '';
-          this.replyingTo = null;
-          this.fetchComments(this.selectedCard.id); // Refresh comments after adding a reply
-        },
-        error => {
-          console.error('Error adding reply:', error);
-        }
-      );
-  }
-  
-  replyToComment(commentId: number): void {
-    this.replyingTo = commentId;
-  }
-  
-  cancelReply(): void {
-    this.replyingTo = null;
-    this.replyContent = '';
-  }
-  
-
+  //create folder
   onSubmit() {
     if (this.folderForm.invalid) {
       return;
     }
 
-    console.log('Form Values:', this.folderForm.value); // Log form values
-
-    const folderData = this.folderForm.value; // Directly use form values as JSON
-
+    const folderData = this.folderForm.value;
     this.folderService.createFolder(folderData).subscribe(
       (response) => {
         this.toastrService.success('Poste crée avec succès');
@@ -252,7 +326,7 @@ export class ChatComponent {
       },
       (error) => {
         this.toastrService.error('Erreur lors de la création');
-        console.error('Failed to create folder:', error);
+        //  console.error('Failed to create folder:', error);
       }
     );
   }
@@ -261,23 +335,10 @@ export class ChatComponent {
     this.isCategoryHidden = !this.isCategoryHidden;
   }
 
-  
-  selectCard(folder: any): void {
-    this.selectedCard = folder;
-    localStorage.setItem('selectedCard', JSON.stringify(folder)); // Save the selected folder to LocalStorage
-    this.fetchComments(folder.id); // Fetch comments for the selected folder
-  }
-
-  deselectCard(): void {
-    this.selectedCard = null;
-    localStorage.removeItem('selectedCard'); // Remove from LocalStorage
-    this.comments = []; // Clear comments when deselecting a card
-  }
-  
   filterForumByCategory(category: string) {
     this.selectedCategory = category;
     if (this.selectedCategory) {
-      this.filteredForum = this.folders.filter(forum => forum.category === category); // Utilisez `this.folders` ici
+      this.filteredForum = this.folders.filter(forum => forum.category === category); 
     } else {
       this.filteredForum = this.folders;
     }
@@ -347,4 +408,24 @@ export class ChatComponent {
   }
 
 
+  getLoggedInUserId(): void {
+    const authData = this.tokenService.getAuthData();
+    if (authData && authData.accessToken) {
+      this.authService.verifyToken(authData.accessToken).subscribe(
+        (response) => {
+          if (response.valid) {
+            this.loggedInUserId = response.userId;
+            console.log('Logged in user ID:', this.loggedInUserId);
+            this.cdr.detectChanges(); // Force change detection
+          } else {
+            this.loggedInUserId = null;
+          }
+        },
+        (error) => {
+          console.error('Error verifying token:', error);
+          this.loggedInUserId = null;
+        }
+      );
+    }
+  }
 }

@@ -94,8 +94,9 @@
                                 <div class="d-sm-block d-md-flex bg-color-gradient color-default p-2 justify-content-end"
                                     style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
                                     <div class="text-end">
-                                        <p class="mb-0">dernier message par <strong>Ami</strong></p>
-                                        <time class="fw-bold"> <mat-icon>schedule</mat-icon>12 min</time>
+                                        <h4 class="mb-4"> Nombre de Commentaires laisser sur ce dossier</h4>
+                                        <p class="mb-0">dernier message par <strong></strong></p>
+                                        <time class="fw-bold"><mat-icon>schedule</mat-icon></time>
                                     </div>
                                 </div>
                             </div>
@@ -121,12 +122,22 @@
                                 </div>
                             </div>
                             <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
-                            <p>{{selectedCard.content}}</p>
-
-
+                            <div class="content edit-content mb-3">
+                                <ng-container *ngIf="!isEditing; else editMode">
+                                    <p>{{ selectedCard?.content }}</p>
+                                    <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="EditContent()"
+                                        class="btn btn-danger">edit</button>
+                                </ng-container>
+                                <ng-template #editMode>
+                                    <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
+                                    <button (click)="EditFolderContent()" class="btn btn-success m-1">Editer</button>
+                                    <button (click)="cancelEdit()" class="btn btn-secondary m-1">Annuler</button>
+                                </ng-template>
+                            </div>
                             <div class="reply-form mb-5">
-                                <h4 class="mb-4">Commentaire</h4>
                                 <div class="col-12 mb-3" *ngFor="let comment of comments">
+                                <h4 class="mb-4">({{ comments.length }}) Commentaire</h4>
+
                                     <div class="p-2 bg-color rounded-3"
                                         style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;">
                                         <div class="card-body">
@@ -136,111 +147,176 @@
                                                     <img [src]="comment.uploadedFileUrl" alt="img"
                                                         class="img-fluid rounded-circle">
                                                 </div>
-                                                <div class="info ms-sm-4">
+                                                <div class="user-comment-info ms-sm-4">
                                                     <p class="name fw-bold color-primary mb-1">{{comment.user.username}}
                                                     </p>
-                                                    <p class="time text-default">{{comment.createdAt | date: 'yyyy-MM-dd
+                                                    <p class="time text-default mb-0">{{comment.createdAt | date:
+                                                        'yyyy-MM-dd
                                                         HH:mm:ss'}}</p>
+                                                    <p class="color-info" (click)="showUserReply()">réponse</p>
+                                                    <!--user-replies-->
+                                                    <div class="user-replies" *ngIf="comment.replies?.length">
+                                                        <div class="reply" *ngIf="isUserReplyVisible">
+                                                            <hr>
+                                                            <div class="p-2 rounded-3 bg-color-white"
+                                                                *ngFor="let reply of comment.replies">
+                                                                <div
+                                                                    class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
+                                                                    <div
+                                                                        class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
+                                                                        <img [src]="reply.user.uploadedFileUrl"
+                                                                            alt="img" class="img-fluid rounded-circle">
+                                                                    </div>
+
+                                                                    <div class="reply-user-info ms-sm-4">
+                                                                        <p class="mb-0"><strong>{{ reply.user.username
+                                                                                }}</strong></p>
+                                                                        <p class="time text-default">{{ reply.createdAt
+                                                                            | date: 'yyyy-MM-dd
+                                                                            HH:mm' }}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="content edit-content">
+                                                                    <ng-container
+                                                                        *ngIf="!reply.isEditing; else editModeReply">
+                                                                        <p class="mb-0">{{ reply.content }}</p>
+                                                                        <button
+                                                                            *ngIf="reply?.user?.Id === loggedInUserId"
+                                                                            (click)="editReply(reply)"
+                                                                            class="btn btn-secondary">Edit</button>
+                                                                    </ng-container>
+                                                                    <ng-template #editModeReply>
+                                                                        <textarea [(ngModel)]="reply.editContent"
+                                                                            class="form-control" rows="2"></textarea>
+                                                                        <input type="hidden"
+                                                                            [(ngModel)]="reply.folderId" />
+                                                                        <button (click)="saveReply(reply)"
+                                                                            class="btn btn-success">Editer</button>
+                                                                        <button (click)="cancelEditReply(reply)"
+                                                                            class="btn btn-secondary">Annuler</button>
+                                                                    </ng-template>
+                                                                </div>
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!---->
                                                 </div>
                                             </div>
                                             <hr>
-                                            <div class="user-message">
-                                                <p class="message">{{comment.content}}</p>
+                                            <div class="content edit-content">
+                                                <ng-container *ngIf="!comment.isEditing; else editMode">
+                                                    <p>{{ comment.content }}</p>
+                                                    <button *ngIf="comment?.user?.Id === loggedInUserId"
+                                                        (click)="editComment(comment)"
+                                                        class="btn btn-secondary">Edit</button>
+                                                </ng-container>
+                                                <ng-template #editMode>
+                                                    <textarea [(ngModel)]="comment.editContent" class="form-control"
+                                                        rows="4"></textarea>
+                                                    <button (click)="saveComment(comment)"
+                                                        class="btn btn-success">Editer</button>
+                                                    <button (click)="cancelEditComment(comment)"
+                                                        class="btn btn-secondary">Annuler</button>
+                                                </ng-template>
                                             </div>
+
                                         </div>
                                         <div class="d-flex justify-content-end">
                                             <button (click)="replyToComment(comment.id)"
                                                 class="bg-color-primary border border-0 rounded-3 p-2 color-default">
                                                 Répondre
                                             </button>
+
+                                        </div>
+                                        <!-- Reply box -->
+                                        <!-- Reply box -->
+                                        <div *ngIf="replyingTo === comment.id">
+                                            <form (ngSubmit)="submitReply()" #replyForm="ngForm">
+                                                <div class="row mb-4">
+                                                    <div class="col form-group">
+                                                        <label class="form-label" for="replyContent">Reply</label>
+                                                        <textarea id="replyContent" class="form-control" rows="4"
+                                                            cols="8" placeholder="Your reply..."
+                                                            [(ngModel)]="replyContent" name="replyContent"
+                                                            required></textarea>
+                                                    </div>
+                                                </div>
+                                                <button type="submit"
+                                                    class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2"
+                                                    [disabled]="!replyForm.form.valid">
+                                                    Répondre
+                                                </button>
+                                                <button type="button" class="btn btn-secondary" (click)="cancelReply()">
+                                                    Annuler
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
-                               
-                                <div *ngIf="comment.replies?.length">
-                                    <div *ngFor="let reply of comment.replies" class="p-2 bg-color-light rounded-3 mt-2">
-                                      <p><strong>{{ reply.user.username }}</strong>: {{ reply.content }}</p>
-                                      <p class="time text-default">{{ reply.createdAt | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
+
+
+
+                                </div>
+                            </div>
+
+
+
+                            <!--comment box-->
+                            <form (ngSubmit)="submitComment()" #commentForm="ngForm">
+                                <div class="row mb-4">
+                                    <div class="col form-group">
+                                        <label class="form-label" for="commentContent">Message</label>
+                                        <textarea id="commentContent" class="form-control" rows="8" cols="8"
+                                            placeholder="Pour citer un utilisateur, veuillez utiliser le hashtag ex: @username ...."
+                                            [(ngModel)]="commentContent" name="content" required></textarea>
                                     </div>
-                            </div>
-                        </div>
-                        </div>
-
-                          <!-- Reply box -->
-                          <div *ngIf="replyingTo !== null">
-                            <form (ngSubmit)="submitReply()" #replyForm="ngForm">
-                              <div class="row mb-4">
-                                <div class="col form-group">
-                                  <label class="form-label" for="replyContent">Reply</label>
-                                  <textarea id="replyContent" class="form-control" rows="4" cols="8"
-                                    placeholder="Your reply..." [(ngModel)]="replyContent" name="replyContent"
-                                    required></textarea>
                                 </div>
-                              </div>
-                              <button type="submit"
-                                class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2"
-                                [disabled]="!replyForm.form.valid">
-                                Reply
-                              </button>
-                              <button type="button" class="btn btn-secondary" (click)="cancelReply()">
-                                Cancel
-                              </button>
+                                <button type="submit"
+                                    class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2 mb-4"
+                                    [disabled]="!commentForm.form.valid">
+                                    Commenter
+                                </button>
                             </form>
-                          </div>
 
-                        <!--comment box-->
-                        <form (ngSubmit)="submitComment()" #commentForm="ngForm">
-                            <div class="row mb-4">
-                                <div class="col form-group">
-                                    <label class="form-label" for="commentContent">Message</label>
-                                    <textarea id="commentContent" class="form-control" rows="8" cols="8"
-                                        placeholder="Pour citer un utilisateur, veuillez utiliser le hashtag ex: @username ...."
-                                        [(ngModel)]="commentContent" name="content" required></textarea>
-                                </div>
-                            </div>
-                            <button type="submit"
-                                class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2 mb-4"
-                                [disabled]="!commentForm.form.valid">
-                                Commenter
-                            </button>
-                        </form>
+                        </div>
 
-            </div>
-
-</div>
-</div>        </div>
-    <div *ngIf="tab === 'publish'">
-        <div class="content padding">
-            <form (ngSubmit)="onSubmit()" [formGroup]="folderForm">
-                <div class="form-input col-8 mb-3">
-                    <label class="form-label">Titre</label>
-                    <input type="text" class="form-control" formControlName="title" required>
-                </div>
-                <div class="col-md-6 col-6 mb-3">
-                    <label class="form-label">Choississez une Catégorie</label>
-                    <select class="form-select" formControlName="category" required>
-                        <option selected disabled>Choississez une option</option>
-                        <option *ngFor="let option of Categories" [value]="option.value">{{
-                            option.label}}</option>
-                    </select>
-                </div>
-                <div class="row mb-4">
-                    <div class="col form-group">
-                        <label class="form-label">Contenu</label>
-                        <textarea class="form-control" formControlName="content" rows="8" cols="8"
-                            placeholder="Votre message ici . . ."></textarea>
                     </div>
                 </div>
-                <button type="submit"
-                    class="bg-color-primary border border-0 rounded-2 p-2 color-default w-50">Poster</button>
+            </div>
+            <div *ngIf="tab === 'publish'">
+                <div class="content padding">
+                    <form (ngSubmit)="onSubmit()" [formGroup]="folderForm">
+                        <div class="form-input col-8 mb-3">
+                            <label class="form-label">Titre</label>
+                            <input type="text" class="form-control" formControlName="title" required>
+                        </div>
+                        <div class="col-md-6 col-6 mb-3">
+                            <label class="form-label">Choississez une Catégorie</label>
+                            <select class="form-select" formControlName="category" required>
+                                <option selected disabled>Choississez une option</option>
+                                <option *ngFor="let option of Categories" [value]="option.value">{{
+                                    option.label}}</option>
+                            </select>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col form-group">
+                                <label class="form-label">Contenu</label>
+                                <textarea class="form-control" formControlName="content" rows="8" cols="8"
+                                    placeholder="Votre message ici . . ."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="bg-color-primary border border-0 rounded-2 p-2 color-default w-50">Poster</button>
 
-            </form>
+                    </form>
+                </div>
+            </div>
+            <div *ngIf="tab === 'note'">
+                <div class="content py-5">
+                </div>
+            </div>
+
         </div>
     </div>
-    <div *ngIf="tab === 'note'">
-        <div class="content py-5">
-        </div>
-    </div>
-
-</div>
-</div>
 </div>

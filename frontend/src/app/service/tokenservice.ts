@@ -31,12 +31,12 @@ export class TokenService {
   }
 
   setAccessTokenInCookie(accessToken: string, refreshToken: string, userInfo: string): void {
-    //console.log('Storing Tokens:', { accessToken, refreshToken, userInfo }); // Log tokens and userInfo being stored
+    console.log('Storing Tokens:', { accessToken, refreshToken, userInfo }); // Log tokens and userInfo being stored
     const expires = new Date();
   expires.setDate(expires.getDate() + 1);
     const cookieOptions: CookieOptions = {
       expires,
-      secure: true, 
+      secure: false, 
       sameSite: 'Strict',
     };
     this.cookieService.set('authData', JSON.stringify({ accessToken, refreshToken, userInfo }), cookieOptions);

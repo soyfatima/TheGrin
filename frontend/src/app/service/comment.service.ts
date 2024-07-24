@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class CommentService {
-  private apiUrl: string = environment.apiUrl;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -28,5 +28,19 @@ export class CommentService {
     return this.http.post<Comment>(`${this.apiUrl}/comments/${commentId}/reply`, { content });
   }
   
+  updateComment(id: number, content: string, folderId: number): Observable<Comment> {
+    //const payload = { content, folderId };
+    const url = `${this.apiUrl}/comments/${id}`;
+    return this.http.put<Comment>(url,{content, folderId})
+    //console.log(`Sending PUT request to ${this.apiUrl}/comments/${id} with payload:`, payload);
+   // return this.http.put<Comment>(`${this.apiUrl}/comments/${id}`, payload);
+  }
 
+  updateReply(id:number, folderId:number, content:string):Observable<Comment>{
+    const url =`${this.apiUrl}/comments/replies/${id}`;
+    return this.http.put<Comment>(url,{content, folderId})
+  }
+  
+  
+  
 }    

@@ -21,23 +21,22 @@ getFolderDetails(): Observable<any> {
   return this.http.get<any[]>(url);
 }
 
-getUserFolders(): Observable<any> {
-  const url = `${this.apiUrl}/folders/user-folders`;
-  return this.http.get<any[]>(url);
+updateFolderContent(id: number, content: string): Observable<any> {
+  const url = `${this.apiUrl}/folders/${id}`;
+  return this.http.put<any>(url,{content});
+
 }
 
-updateFolder(id: string, updatedFolderData: any): Observable<any> {
-  const url = `${this.apiUrl}/folders/${id}`;
-  return this.http.put<any>(url, updatedFolderData);
-}
+// getUserFolders(): Observable<any> {
+//   const url = `${this.apiUrl}/folders/user-folders`;
+//   return this.http.get<any[]>(url);
+// }
+
+
 
 deleteFolder(id: number): Observable<any> {
   const url = `${this.apiUrl}/folders/${id}`;
   return this.http.delete<any>(url);
 }
 
-getFolderDetailsById(id: number): Observable<any> {
-  const url = `${environment.apiUrl}/folders/getfolderdetails/${id}`; // Correction de l'URL
-  return this.http.get<any>(url);
-}
 }

@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 export class TokenInterceptor implements HttpInterceptor {
   constructor(private tokenService: TokenService, private router: Router) {}
 
+ 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authData = this.tokenService.getAuthData();
     const accessToken = authData?.accessToken;
@@ -22,10 +23,6 @@ export class TokenInterceptor implements HttpInterceptor {
 
     if (accessToken) {
       request = this.addAuthorizationHeader(request, accessToken);
-    }
-
-    if (refreshToken && !request.url.endsWith('/auth/refresh-token')) {
-      request = this.addAuthorizationHeader(request, refreshToken);
     }
 
     return next.handle(request).pipe(
@@ -41,12 +38,13 @@ export class TokenInterceptor implements HttpInterceptor {
   private handleUnauthorizedError(request: HttpRequest<any>, next: HttpHandler, refreshToken: string): Observable<HttpEvent<any>> {
     return this.tokenService.refreshAccessToken(refreshToken).pipe(
       switchMap((refreshResponse) => {
+        this.tokenService.setAccessTokenInCookie(refreshResponse.accessToken, refreshToken, JSON.stringify(this.tokenService.getAuthData()?.userInfo || ''));
         const newRequest = this.addAuthorizationHeader(request.clone(), refreshResponse.accessToken);
         return next.handle(newRequest);
       }),
       catchError((refreshError) => {
         this.tokenService.removeAuthData();
-        this.router.navigate(['/login']);
+        //this.router.navigate(['/login']);
         return throwError(refreshError);
       })
     );
@@ -60,3 +58,4 @@ export class TokenInterceptor implements HttpInterceptor {
     });
   }
 }
+

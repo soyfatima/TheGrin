@@ -110,6 +110,10 @@ export class UserLoginComponent {
         if (response.accessToken && response.refreshToken) {
           this.loggedInUser = response.userInfo;
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
+          console.log('refresh token', response.refreshToken)
+          console.log('access token', response.accessToken)
+          console.log('user info', response.userinfo)
+
         this.IsUserLogged = true;
         this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
