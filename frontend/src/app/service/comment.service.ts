@@ -41,6 +41,11 @@ export class CommentService {
     return this.http.put<Comment>(url,{content, folderId})
   }
   
+  getUserComments(id:number): Observable<any> {
+    const url = `${this.apiUrl}/comments/user-comment/${id}`;
+    return this.http.get<any[]>(url);
+  }
+  
   
   
 }    

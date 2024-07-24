@@ -213,7 +213,7 @@ export class ChatComponent {
         }
         if (this.selectedCard && this.selectedCard.id === folderId) {
           this.comments = comments;
-          setTimeout(() => this.scrollToLastComment(), 300); // Ensure comments are rendered
+        //  setTimeout(() => this.scrollToLastComment(), 300); // Ensure comments are rendered
         }
       },
       (error) => {

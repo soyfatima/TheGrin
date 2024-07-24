@@ -72,7 +72,7 @@
                     <div class="row" *ngIf="!selectedCard">
                         <div class="col-md-6 mb-4" type="button" *ngFor="let folder of paginatedForum">
                             <div class="">
-                                <div class=" p-2 border border-1 bg-color"
+                                <div class=" p-2 border border-1 bg-color" (click)="selectCard(folder)"
                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
                                     <div class="card-body">
                                         <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start">
@@ -87,7 +87,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="titre text-black" (click)="selectCard(folder)">{{folder.title}}</div>
+                                        <div class="titre text-black">{{folder.title}}</div>
 
                                     </div>
                                 </div>
@@ -218,7 +218,7 @@
                                             <div class="content edit-content">
                                                 <ng-container *ngIf="!comment.isEditing; else editMode">
                                                     <p [innerHTML]="comment.content"></p>
-                                                    <button *ngIf="comment?.user?.Id === loggedInUserId"
+                                                    <button *ngIf="comment?.user.Id === loggedInUserId"
                                                         (click)="editComment(comment)"
                                                         class="btn btn-secondary">Edit</button>
                                                 </ng-container>
