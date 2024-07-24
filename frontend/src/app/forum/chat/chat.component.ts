@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FolderService } from '../../service/folder.service';
-import { Title } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../environments/environment';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommentService } from '../../service/comment.service';
 import { AuthService } from '../../service/auth.service';
 import { TokenService } from '../../service/tokenservice';
@@ -39,9 +39,16 @@ export class ChatComponent {
   isEditing: boolean = false;
   isEditingComment: { [key: number]: boolean } = {};
   editContent: string = '';
-/////////////////////////////
+  /////////////////////////////
   loggedInUserId: number | null = null;
-  isUserReplyVisible:boolean = false
+  isUserReplyVisible: boolean = false
+  ///////////////////////////
+  commentsCount: { [key: number]: number } = {};
+  lastCommentDetails: { [key: number]: { user: string, time: string, id: number } } = {};
+  lastCommentId: number | null = null;
+
+  @ViewChild('commentList') commentList!: ElementRef;
+  sanitizedContent!: SafeHtml;
 
   category: any[] = [
     { name: 'fertilité' },
@@ -82,17 +89,21 @@ export class ChatComponent {
     private folderService: FolderService,
     private authService: AuthService,
     private tokenService: TokenService,
-
+    private router: Router,
     private toastrService: ToastrService,
     private route: ActivatedRoute,
     private commentService: CommentService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {
     this.route.paramMap.subscribe(params => {
       this.folderId = +params.get('id')!;
     });
   }
 
+  setSanitizedContent(content: string): void {
+    this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(content);
+  }
 
   ngOnInit() {
     this.folderForm = this.fb.group({
@@ -121,7 +132,10 @@ export class ChatComponent {
           uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${folder.uploadedFile}`,
         }));
         this.filteredForum = this.folders;
-        //console.log('folders', folders)
+        this.folders.forEach(folder => {
+          this.fetchComments(folder.id)
+
+        })
       },
       (error) => {
         // console.error('Error fetching folders:', error);
@@ -129,20 +143,22 @@ export class ChatComponent {
     );
   }
 
-  
+
   selectCard(folder: any): void {
     this.selectedCard = folder;
-    console.log('Selected card:', this.selectedCard); 
     localStorage.setItem('selectedCard', JSON.stringify(folder));
     this.fetchComments(folder.id);
     this.cdr.detectChanges(); // Force change detection
 
   }
 
+
   deselectCard(): void {
     this.selectedCard = null;
     localStorage.removeItem('selectedCard');
-    this.comments = []; 
+    this.comments = [];
+    // this.fetchComments(folder.id);
+
   }
 
   updateTime(): void {
@@ -167,17 +183,91 @@ export class ChatComponent {
       );
   }
 
-  fetchComments(id: any): void {
-    this.commentService.getComments(this.selectedCard.id).subscribe(
-      (data: Comment[]) => {
-        this.comments = data;
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.lastCommentId) {
+        this.scrollToLastComment();
+      }
+    }, 300); // Adjust the delay as necessary
+  }
+
+  fetchComments(folderId: number): void {
+    this.commentService.getComments(folderId).subscribe(
+      (comments: any[]) => {
+        this.commentsCount[folderId] = comments.length;
+        if (comments.length > 0) {
+          const lastComment = comments[comments.length - 1];
+          this.lastCommentDetails[folderId] = {
+            user: lastComment.user.username,
+            time: lastComment.createdAt,
+            id: lastComment.id
+          };
+          this.lastCommentId = lastComment.id; // Set the last comment ID
+        } else {
+          this.lastCommentDetails[folderId] = {
+            user: '',
+            time: '',
+            id: 0
+          };
+          this.lastCommentId = null; // No comments
+        }
+        if (this.selectedCard && this.selectedCard.id === folderId) {
+          this.comments = comments;
+          setTimeout(() => this.scrollToLastComment(), 300); // Ensure comments are rendered
+        }
       },
       (error) => {
-        // console.error('Error fetching comments:', error);
+        // console.error('Error fetching comments for folder ID:', folderId, error);
       }
     );
   }
 
+  handleLastCommentClick(folderId: number): void {
+    // Select the card
+    this.selectCard(this.paginatedForum.find(folder => folder.id === folderId));
+
+    // Wait for the view to update and then scroll
+    setTimeout(() => {
+      this.scrollToLastComment();
+    }, 300); // Adjust the timeout if necessary
+  }
+
+  scrollToLastComment(): void {
+    setTimeout(() => {
+      if (this.lastCommentId) {
+        const commentElement = document.getElementById(`comment-${this.lastCommentId}`);
+        if (commentElement) {
+          commentElement.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          //          console.error('Comment element not found with ID:', `comment-${this.lastCommentId}`);
+        }
+      } else {
+        //console.error('No last comment ID available');
+      }
+    }, 300); // Adjust the timeout as needed
+  }
+
+
+  CountComments(folderId: number): void {
+    this.commentService.getComments(folderId).subscribe(
+      (comments: any[]) => {
+        this.commentsCount[folderId] = comments.length;
+      },
+      (error) => {
+        // console.error('Error fetching comments for folder ID:', folderId, error);
+      }
+    );
+  }
+
+  calculateCommentCounts(): void {
+    this.comments.forEach(comment => {
+      if (this.commentsCount[comment.folderId]) {
+        this.commentsCount[comment.folderId]++;
+      } else {
+        this.commentsCount[comment.folderId] = 1;
+      }
+    });
+  }
   ///////////////////////////
   //reply
   submitReply(): void {
@@ -223,22 +313,20 @@ export class ChatComponent {
 
     this.commentService.updateReply(id, folderId, content).subscribe(
       (response) => {
-        console.log('Reply updated successfully', response);
-
         // Update the reply content
         reply.content = content;
         reply.isEditing = false;
         this.cdr.detectChanges();
       },
       (error) => {
-        console.error('Error updating reply', error);
+        // console.error('Error updating reply', error);
       }
     );
   }
 
-showUserReply(){
-  this.isUserReplyVisible = !this.isUserReplyVisible
-}
+  showUserReply() {
+    this.isUserReplyVisible = !this.isUserReplyVisible
+  }
   ///////////////////////////
   //folder edit
   EditContent(): void {
@@ -252,10 +340,8 @@ showUserReply(){
       const content = this.editContent;
       const id = this.selectedCard.id;
       const folderId = id;
-      console.log(`Updating folder with id: ${folderId}, content: ${content}`);
       this.folderService.updateFolderContent(folderId, content).subscribe(
         (response) => {
-          console.log('Folder updated successfully', response);
           this.selectedCard.content = content;
           const folderIndex = this.folders.findIndex(folder => folder.id === id);
           if (folderIndex !== -1) {
@@ -297,15 +383,13 @@ showUserReply(){
 
     this.commentService.updateComment(id, folderId, content).subscribe(
       (response) => {
-        console.log('Comment updated successfully', response);
-
         // Update the comment content
         comment.content = content;
         comment.isEditing = false;
         this.cdr.detectChanges();
       },
       (error) => {
-        console.error('Error updating comment', error);
+        // console.error('Error updating comment', error);
       }
     );
   }
@@ -322,7 +406,6 @@ showUserReply(){
       (response) => {
         this.toastrService.success('Poste crée avec succès');
         this.folderForm.reset();
-        console.log('folder', response);
       },
       (error) => {
         this.toastrService.error('Erreur lors de la création');
@@ -338,7 +421,7 @@ showUserReply(){
   filterForumByCategory(category: string) {
     this.selectedCategory = category;
     if (this.selectedCategory) {
-      this.filteredForum = this.folders.filter(forum => forum.category === category); 
+      this.filteredForum = this.folders.filter(forum => forum.category === category);
     } else {
       this.filteredForum = this.folders;
     }
@@ -415,17 +498,21 @@ showUserReply(){
         (response) => {
           if (response.valid) {
             this.loggedInUserId = response.userId;
-            console.log('Logged in user ID:', this.loggedInUserId);
             this.cdr.detectChanges(); // Force change detection
           } else {
             this.loggedInUserId = null;
           }
         },
         (error) => {
-          console.error('Error verifying token:', error);
+          //console.error('Error verifying token:', error);
           this.loggedInUserId = null;
         }
       );
     }
+  }
+
+
+  goToUserFolders(id: number,): void {
+    this.router.navigate(['/User-folders', id]);
   }
 }

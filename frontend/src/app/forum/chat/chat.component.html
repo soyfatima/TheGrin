@@ -72,7 +72,7 @@
                     <div class="row" *ngIf="!selectedCard">
                         <div class="col-md-6 mb-4" type="button" *ngFor="let folder of paginatedForum">
                             <div class="">
-                                <div class=" p-2 border border-1 bg-color" (click)="selectCard(folder)"
+                                <div class=" p-2 border border-1 bg-color"
                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
                                     <div class="card-body">
                                         <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start">
@@ -82,28 +82,37 @@
                                                     class="img-fluid rounded-circle">
                                             </div>
                                             <div class="info ms-sm-4">
-                                                <div class="name fw-bold color-primary">{{folder.user.username}}</div>
+                                                <div class="name fw-bold color-primary"  (click)="goToUserFolders(folder.user.id)">{{folder.user.username}}</div>
                                                 <div class="time">{{folder.createdAt | date: 'yyyy-MM-dd HH:mm:ss'}}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="titre text-black">{{folder.title}}</div>
+                                        <div class="titre text-black" (click)="selectCard(folder)">{{folder.title}}</div>
 
                                     </div>
                                 </div>
                                 <div class="d-sm-block d-md-flex bg-color-gradient color-default p-2 justify-content-end"
                                     style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
                                     <div class="text-end">
-                                        <h4 class="mb-4"> Nombre de Commentaires laisser sur ce dossier</h4>
-                                        <p class="mb-0">dernier message par <strong></strong></p>
-                                        <time class="fw-bold"><mat-icon>schedule</mat-icon></time>
+                                        <h6 class="mb-1">Commentaires ({{ commentsCount[folder.id] || 0 }})</h6>
+                                        <p class="mb-0" *ngIf="lastCommentDetails[folder.id]?.user"
+                                        (click)="handleLastCommentClick(folder.id)">
+                                            Dernier message par
+                                            <strong>
+                                                {{ lastCommentDetails[folder.id].user }}
+                                              </strong>
+                                        </p>
+                                        <time class="fw-bold" *ngIf="lastCommentDetails[folder.id]?.time">
+                                            <mat-icon>schedule</mat-icon> {{ lastCommentDetails[folder.id].time | date:
+                                            'yyyy-MM-dd HH:mm:ss' }}
+                                        </time>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!--selected post-->
-                    <div *ngIf="selectedCard">
+                    <div *ngIf="selectedCard" class="selectedCard">
                         <div class="card-body">
                             <div class="position-fixed" style="right: 0px; bottom: 0px;">
                                 <button (click)="deselectCard()" class="btn btn-secondary mb-3">
@@ -124,7 +133,7 @@
                             <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
                             <div class="content edit-content mb-3">
                                 <ng-container *ngIf="!isEditing; else editMode">
-                                    <p>{{ selectedCard?.content }}</p>
+                                    <p [innerHTML]="selectedCard?.content"></p>
                                     <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="EditContent()"
                                         class="btn btn-danger">edit</button>
                                 </ng-container>
@@ -134,12 +143,13 @@
                                     <button (click)="cancelEdit()" class="btn btn-secondary m-1">Annuler</button>
                                 </ng-template>
                             </div>
-                            <div class="reply-form mb-5">
-                                <div class="col-12 mb-3" *ngFor="let comment of comments">
-                                <h4 class="mb-4">({{ comments.length }}) Commentaire</h4>
+                            <div class="comment-form mb-5">
+                                <div class="col-12 mb-3" #commentList>
+                                    <h4 class="mb-4">({{ comments.length }}) Commentaire</h4>
 
-                                    <div class="p-2 bg-color rounded-3"
-                                        style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;">
+                                    <div class="p-2 mb-3 bg-color rounded-3"
+                                        style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;"
+                                        *ngFor="let comment of comments" [id]="'comment-' + comment.id">
                                         <div class="card-body">
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                 <div
@@ -153,7 +163,7 @@
                                                     <p class="time text-default mb-0">{{comment.createdAt | date:
                                                         'yyyy-MM-dd
                                                         HH:mm:ss'}}</p>
-                                                    <p class="color-info" (click)="showUserReply()">réponse</p>
+                                                    <p class="color-info fw-bold" (click)="showUserReply()">({{comment.replies?.length || 0}}) réponse</p>
                                                     <!--user-replies-->
                                                     <div class="user-replies" *ngIf="comment.replies?.length">
                                                         <div class="reply" *ngIf="isUserReplyVisible">
@@ -179,7 +189,7 @@
                                                                 <div class="content edit-content">
                                                                     <ng-container
                                                                         *ngIf="!reply.isEditing; else editModeReply">
-                                                                        <p class="mb-0">{{ reply.content }}</p>
+                                                                        <p class="mb-0"[innerHTML]="reply.content"></p>
                                                                         <button
                                                                             *ngIf="reply?.user?.Id === loggedInUserId"
                                                                             (click)="editReply(reply)"
@@ -191,9 +201,9 @@
                                                                         <input type="hidden"
                                                                             [(ngModel)]="reply.folderId" />
                                                                         <button (click)="saveReply(reply)"
-                                                                            class="btn btn-success">Editer</button>
+                                                                            class="btn btn-success m-1">Editer</button>
                                                                         <button (click)="cancelEditReply(reply)"
-                                                                            class="btn btn-secondary">Annuler</button>
+                                                                            class="btn btn-secondary m-1">Annuler</button>
                                                                     </ng-template>
                                                                 </div>
 
@@ -207,7 +217,7 @@
                                             <hr>
                                             <div class="content edit-content">
                                                 <ng-container *ngIf="!comment.isEditing; else editMode">
-                                                    <p>{{ comment.content }}</p>
+                                                    <p [innerHTML]="comment.content"></p>
                                                     <button *ngIf="comment?.user?.Id === loggedInUserId"
                                                         (click)="editComment(comment)"
                                                         class="btn btn-secondary">Edit</button>
@@ -216,9 +226,9 @@
                                                     <textarea [(ngModel)]="comment.editContent" class="form-control"
                                                         rows="4"></textarea>
                                                     <button (click)="saveComment(comment)"
-                                                        class="btn btn-success">Editer</button>
+                                                        class="btn btn-success m-1">Editer</button>
                                                     <button (click)="cancelEditComment(comment)"
-                                                        class="btn btn-secondary">Annuler</button>
+                                                        class="btn btn-secondary m-1">Annuler</button>
                                                 </ng-template>
                                             </div>
 
@@ -230,7 +240,6 @@
                                             </button>
 
                                         </div>
-                                        <!-- Reply box -->
                                         <!-- Reply box -->
                                         <div *ngIf="replyingTo === comment.id">
                                             <form (ngSubmit)="submitReply()" #replyForm="ngForm">
@@ -244,11 +253,11 @@
                                                     </div>
                                                 </div>
                                                 <button type="submit"
-                                                    class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2"
+                                                    class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2 m-1"
                                                     [disabled]="!replyForm.form.valid">
                                                     Répondre
                                                 </button>
-                                                <button type="button" class="btn btn-secondary" (click)="cancelReply()">
+                                                <button type="button" class="btn btn-secondary m-1" (click)="cancelReply()">
                                                     Annuler
                                                 </button>
                                             </form>

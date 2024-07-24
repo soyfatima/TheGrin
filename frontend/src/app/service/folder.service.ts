@@ -27,10 +27,10 @@ updateFolderContent(id: number, content: string): Observable<any> {
 
 }
 
-// getUserFolders(): Observable<any> {
-//   const url = `${this.apiUrl}/folders/user-folders`;
-//   return this.http.get<any[]>(url);
-// }
+getUserFolders(id:number): Observable<any> {
+  const url = `${this.apiUrl}/folders/user-folders/${id}`;
+  return this.http.get<any[]>(url);
+}
 
 
 

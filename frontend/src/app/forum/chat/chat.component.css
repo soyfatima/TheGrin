@@ -185,3 +185,21 @@ app-navbar {
         width: 100%;
     }
 }
+
+
+/* Ensure line breaks and white spaces are preserved */
+.selectedCard .content p {
+    white-space: pre-wrap; /* This will preserve both spaces and line breaks */
+  }
+  
+  /* Additional styling for paragraph text */
+  .selectedCard .content {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+  
+  /* Optional: Add some margin or padding to paragraphs */
+  .selectedCard .content p {
+    margin: 0 0 1em 0; /* Adjust margins as needed */
+  }
+  
