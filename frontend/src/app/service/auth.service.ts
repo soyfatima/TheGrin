@@ -105,8 +105,6 @@ export class AuthService {
     );
   }
 
-
-
   // Method to set the logged-in user's information upon successful login
   setLoggedInUser(user: { username: string }) {
     this.loggedInUser = user;
