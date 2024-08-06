@@ -26,6 +26,7 @@ export class UserLoginComponent {
   usernameErrorMessage: string | null = null;
   userErrorMessage: string | null = null;
   emailErrorMessage: string | null = null;
+  genderErrorMessage: string | null = null;
   userCart: any;
 
   constructor(private router: Router,
@@ -53,7 +54,8 @@ export class UserLoginComponent {
     this.signupForm = this.fb.group({
       Newemail: ['', Validators.required],
       Newusername: ['', Validators.required],
-      Newpassword: ['', Validators.required]
+      Newpassword: ['', Validators.required],
+      gender: ['',Validators.required],
     });
     this.checkUserLoginStatus();
 
@@ -68,8 +70,9 @@ export class UserLoginComponent {
     const Newemail = this.signupForm.get('Newemail')?.value;
     const Newusername = this.signupForm.get('Newusername')?.value;
     const Newpassword = this.signupForm.get('Newpassword')?.value;
+    const gender = this.signupForm.get('gender')?.value
 
-    this.authService.userSignup(Newemail, Newusername, Newpassword).subscribe(
+    this.authService.userSignup(Newemail, Newusername, Newpassword, gender).subscribe(
       (response) => {
         if (response.accessToken) {
           this.data = response;
@@ -78,15 +81,17 @@ export class UserLoginComponent {
        //   this.showLoginPopup = true;
         } else {
           this.toastrService.error('erreur lors de l\'inscription, veuillez réessayer');
-          console.error('Signup failed: No access token received');
+       //   console.error('Signup failed: No access token received');
         }
       },
       (errorMessage) => {
-        console.error('Signup failed:', errorMessage);
+       // console.error('Signup failed:', errorMessage);
         if (errorMessage === 'Email already exists') {
           this.emailErrorMessage = errorMessage;
         } else if (errorMessage === 'Username already exists') {
           this.usernameErrorMessage = errorMessage;
+        } else if (errorMessage === 'Please select a gender') {
+          this.genderErrorMessage = errorMessage;
         } else {
           this.usernameErrorMessage = errorMessage;
           this.emailErrorMessage = errorMessage;
@@ -110,22 +115,22 @@ export class UserLoginComponent {
         if (response.accessToken && response.refreshToken) {
           this.loggedInUser = response.userInfo;
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
-          console.log('refresh token', response.refreshToken)
-          console.log('access token', response.accessToken)
-          console.log('user info', response.userinfo)
+          //console.log('refresh token', response.refreshToken)
+          //console.log('access token', response.accessToken)
+          //console.log('user info', response.userinfo)
 
         this.IsUserLogged = true;
         this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
         } else {
-          console.error('Login failed: Tokens missing in the response');
+         // console.error('Login failed: Tokens missing in the response');
         }
       },
       (errorMessage) => {
         // Display Toastr message based on active navbar type
          this.toastrService.error('Erreur de connexion, veuillez réessayer');
-        console.error('Login failed:', errorMessage);
+       // console.error('Login failed:', errorMessage);
         this.userErrorMessage = errorMessage;
       }
     );
@@ -142,7 +147,7 @@ export class UserLoginComponent {
         return response.valid && response.userId !== null;
       }),
       catchError(error => {
-        console.error('Error verifying token:', error);
+       // console.error('Error verifying token:', error);
         return of(false);
       })
     );
@@ -160,7 +165,7 @@ export class UserLoginComponent {
           // }
         },
         (error) => {
-          console.error('Error verifying token:', error);
+        //  console.error('Error verifying token:', error);
           this.IsUserLogged = false;
         }
       );

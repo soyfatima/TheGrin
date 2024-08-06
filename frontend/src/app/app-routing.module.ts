@@ -29,11 +29,12 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent},
   { path: 'sidebar', component: SidebarComponent},
   { path: 'chat', component: ChatComponent },
+  { path: 'chat/:id', component: ChatComponent },
    { path: 'contact-us', component: ContactUsComponent },
 
 
   { path: 'user-login', component: UserLoginComponent },
-  { path: 'User-folders/:id', component: UserFoldersComponent },
+  { path: 'user-folders/:id', component: UserFoldersComponent },
 ];
 
 @NgModule({

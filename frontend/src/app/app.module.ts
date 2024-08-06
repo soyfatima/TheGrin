@@ -20,6 +20,8 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { ToastrModule } from 'ngx-toastr';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -73,6 +75,7 @@ import { UserFoldersComponent } from './forum/user-folders/user-folders.componen
      MatListModule,
      MatIconModule,
      MatDialogModule,
+     MatPaginatorModule,
    HttpClientModule,
      ToastrModule.forRoot({
        timeOut: 2000,

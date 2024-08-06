@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private apiUrl: string = environment.apiUrl;
   private loggedInUser: { username: string } | null = null;
- 
+
   constructor(private http: HttpClient) { }
 
   //admin login 
@@ -57,15 +57,18 @@ export class AuthService {
   }
 
   //user signup for blog
-  userSignup(email: string, username: string, password: string): Observable<any> {
+  userSignup(email: string, username: string, password: string, gender:string): Observable<any> {
     const url = `${this.apiUrl}/auth/userSignup`;
-    return this.http.post<any>(url, { email, username, password }).pipe(
+    return this.http.post<any>(url, { email, username, password , gender}).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.error.message.includes('Email already exists')) {
           return throwError('Email already exists');
         } else if (error.error.message.includes('Username already exists')) {
           return throwError('Username already exists');
-        } else {
+        } else if (error.error.message.includes('selectionné un genre')){
+          return throwError('genre non selectionné');
+
+      }else {
           return throwError(error.error.message);
         }
       })
@@ -76,24 +79,24 @@ export class AuthService {
   userLogin(username: string, password: string): Observable<any> {
     const url = `${this.apiUrl}/auth/userLogin`;
     return this.http.post<any>(url, { username, password }).pipe(
-//      catchError((error: HttpErrorResponse) => {
+      //      catchError((error: HttpErrorResponse) => {
       tap(response => {
 
         if (response && response.accessToken) {
           localStorage.setItem('currentUser', JSON.stringify(response.userInfo));
           this.updateLoginStatus();
         }
-      //  return throwError('Login failed: ' + error.error.message);
+        //  return throwError('Login failed: ' + error.error.message);
       })
-      
+
     );
   }
-  
+
   //user log token for blog
   verifyToken(accessToken: string): Observable<{ valid: boolean; userId: number | null }> {
     return this.http.post<{ valid: boolean, userId: number | null }>(`${this.apiUrl}/auth/verify-token`, { accessToken }).pipe(
       tap(response => {
-        console.log('Token verification response:', response);
+     //   console.log('Token verification response:', response);
       }),
       catchError(error => {
         console.error('Error verifying token:', error);
@@ -101,8 +104,8 @@ export class AuthService {
       })
     );
   }
-  
-  
+
+
 
   // Method to set the logged-in user's information upon successful login
   setLoggedInUser(user: { username: string }) {
@@ -112,7 +115,7 @@ export class AuthService {
   getLoggedInUser(): { username: string } | null {
     return this.loggedInUser;
   }
-  
+
 
   logout(accessToken: string): Observable<void> {
     const url = `${this.apiUrl}/auth/logout`;
@@ -135,4 +138,34 @@ export class AuthService {
   resetPassword(email: string, code: string, newPassword: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/auth/reset-password`, { email, code, newPassword });
   }
+
+
+//  updateUserInfo(id: number, username?: string, file?: File | null): Observable<any> {
+//   const url = `${this.apiUrl}/auth/${id}/update`;
+//   const formData = new FormData();
+
+//   if (username) {
+//     formData.append('username', username);
+//   }
+  
+//   if (file) {
+//     formData.append('uploadedFile', file, file.name);
+//   }
+
+//   console.log('Sending FormData:', formData);
+
+//   return this.http.put<any>(url, formData).pipe(
+//     tap(response => console.log('Update User Info Response:', response)),
+//     catchError(error => {
+//       console.error('Error updating user info:', error);
+//       return throwError(error);
+//     })
+//   );
+// }
+
+updateUserInfo(id: number, formData: FormData): Observable<any> {
+  const url = `${this.apiUrl}/auth/${id}/update`;
+  return this.http.put(url, formData);
+}
+
 }

@@ -52,10 +52,8 @@ export class NavbarComponent {
   }
 
  ngOnInit(){
-  
-
+  this.determineNavbarVariant(this.router.url);
     this.googleTranslateElementInit();
-  
     this.checkUserLoginStatus();
   }
 
@@ -96,7 +94,7 @@ export class NavbarComponent {
       this.showOtherNavbar = false;
       this.showStoreNavbar = false;
       this.activeNavbarType = 'home';
-    } else if (url.includes('/chat')) {
+    } else if (url.includes('/chat')|| url.includes('user-folders/:id')) {
       this.showHomeNavbar = false;
       this.showOtherNavbar = true;
       this.showStoreNavbar = false;

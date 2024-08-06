@@ -46,7 +46,7 @@ export class ProductInfoComponent {
         };
       },
       (error) => {
-        console.error('Error fetching product details:', error);
+       // console.error('Error fetching product details:', error);
       }
     );
   }
@@ -76,7 +76,7 @@ export class ProductInfoComponent {
       this.selectedSize = response.selectedSize;
       },
       (error) => {
-        console.error('Error updating item:', error);
+       // console.error('Error updating item:', error);
       }
     );
   }
@@ -95,7 +95,7 @@ export class ProductInfoComponent {
         });
       },
       (error) => {
-        console.error('Error when proceeding order', error);
+       // console.error('Error when proceeding order', error);
       }
     );
   }
@@ -113,7 +113,7 @@ export class ProductInfoComponent {
         } else {
           this.toastrService.error('Veuillez vous connecter pour ajouter cet article à votre panier');
         }
-        console.error('Error adding product to cart:', error);
+       // console.error('Error adding product to cart:', error);
       }
     );
   }

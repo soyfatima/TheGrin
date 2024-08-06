@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommentService } from '../../service/comment.service';
 import { AuthService } from '../../service/auth.service';
 import { TokenService } from '../../service/tokenservice';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -46,6 +47,9 @@ export class ChatComponent {
   commentsCount: { [key: number]: number } = {};
   lastCommentDetails: { [key: number]: { user: string, time: string, id: number } } = {};
   lastCommentId: number | null = null;
+  userSuggestions: any[] = [];
+  private searchSubject = new Subject<string>();
+  formattedReplyContent: string = '';
 
   @ViewChild('commentList') commentList!: ElementRef;
   sanitizedContent!: SafeHtml;
@@ -96,10 +100,18 @@ export class ChatComponent {
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
   ) {
-    this.route.paramMap.subscribe(params => {
-      this.folderId = +params.get('id')!;
+
+    this.searchSubject.pipe(
+      debounceTime(300) // Adjust debounce time as needed
+    ).subscribe(prefix => {
+      if (prefix.length > 1) {
+        this.fetchUserSuggestions(prefix);
+      } else {
+        this.userSuggestions = [];
+      }
     });
   }
+
 
   setSanitizedContent(content: string): void {
     this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(content);
@@ -109,7 +121,17 @@ export class ChatComponent {
     this.folderForm = this.fb.group({
       category: ['', Validators.required],
       title: ['', Validators.required],
-      content: ['', Validators.required]
+      content: ['', Validators.required],
+      uploadedFile: [null],
+
+    });
+    this.route.paramMap.subscribe(params => {
+      const folderId = +params.get('id')!;
+      this.folderId = folderId;
+      this.selectedCard = JSON.parse(localStorage.getItem('selectedCard')!);
+      if (this.selectedCard && this.selectedCard.id === folderId) {
+        this.fetchComments(this.selectedCard.id);
+      }
     });
 
     const savedCard = localStorage.getItem('selectedCard');
@@ -122,27 +144,6 @@ export class ChatComponent {
     this.updateTime();
     this.getLoggedInUserId();
   }
-
-  //fetch folders and details
-  fetchFolders(): void {
-    this.folderService.getFolderDetails().subscribe(
-      (folders) => {
-        this.folders = folders.map((folder: { uploadedFile: any; }) => ({
-          ...folder,
-          uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${folder.uploadedFile}`,
-        }));
-        this.filteredForum = this.folders;
-        this.folders.forEach(folder => {
-          this.fetchComments(folder.id)
-
-        })
-      },
-      (error) => {
-        // console.error('Error fetching folders:', error);
-      }
-    );
-  }
-
 
   selectCard(folder: any): void {
     this.selectedCard = folder;
@@ -157,9 +158,61 @@ export class ChatComponent {
     this.selectedCard = null;
     localStorage.removeItem('selectedCard');
     this.comments = [];
+    this.cdr.detectChanges(); // Force change detection
     // this.fetchComments(folder.id);
 
   }
+  //fetch folders and details
+  fetchFolders(): void {
+    this.folderService.getFolderDetails().subscribe(
+      (folders) => {
+        // Assurez-vous que 'createdAt' est le nom correct du champ de date dans votre API
+        this.folders = folders
+          .map((folder: { uploadedFile: any; user: any; createdAt: Date }) => ({
+            ...folder,
+            FolderUploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/userFile/${folder.uploadedFile}` : null,
+            userProfileImageUrl: folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${folder.user.uploadedFile}` : null,
+          }))
+          .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Trier par date décroissante
+
+        this.filteredForum = this.folders;
+        this.folders.forEach(folder => {
+          this.fetchComments(folder.id);
+        });
+
+      },
+      (error) => {
+//        console.error('Error fetching folders:', error);
+      }
+    );
+  }
+
+
+
+  deleteFolder() {
+    if (this.selectedCard) {
+      const id = this.selectedCard.id;
+      const folderId = id;
+
+      if (confirm('Are you sure you want to delete this folder?')) {
+        this.folderService.deleteFolder(folderId).subscribe(
+          () => {
+            this.toastrService.success('Folder deleted successfully');
+            this.folders = this.folders.filter(folder => folder.id !== folderId); // Remove the folder from the list
+            this.deselectCard();
+            this.fetchFolders();
+            this.cdr.detectChanges();
+          },
+          (error) => {
+            this.toastrService.error('Failed to delete folder');
+        //    console.error('Failed to delete folder:', error);
+          }
+
+        );
+      }
+    }
+  }
+
 
   updateTime(): void {
     setInterval(() => {
@@ -211,9 +264,19 @@ export class ChatComponent {
           };
           this.lastCommentId = null; // No comments
         }
+        this.comments = comments.map((comment: any) => {
+          const profilePictureUrl = comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null;
+          console.log('User Profile Picture URL:', profilePictureUrl); // Log URL for debugging
+          return {
+            ...comment,
+            userProfilePictureUrl: profilePictureUrl
+          };
+        });
+
+        console.log('comments', comments)
         if (this.selectedCard && this.selectedCard.id === folderId) {
           this.comments = comments;
-        //  setTimeout(() => this.scrollToLastComment(), 300); // Ensure comments are rendered
+          //  setTimeout(() => this.scrollToLastComment(), 300); // Ensure comments are rendered
         }
       },
       (error) => {
@@ -239,7 +302,7 @@ export class ChatComponent {
         if (commentElement) {
           commentElement.scrollIntoView({ behavior: 'smooth' });
         } else {
-          //          console.error('Comment element not found with ID:', `comment-${this.lastCommentId}`);
+          //console.error('Comment element not found with ID:', `comment-${this.lastCommentId}`);
         }
       } else {
         //console.error('No last comment ID available');
@@ -287,6 +350,45 @@ export class ChatComponent {
         }
       );
   }
+  fetchUserSuggestions(prefix: string): void {
+    this.commentService.getUserSuggestions(prefix)
+      .subscribe(
+        suggestions => {
+          this.userSuggestions = suggestions;
+        },
+        error => {
+         // console.error('Error fetching user suggestions:', error);
+          this.userSuggestions = [];
+        }
+      );
+  }
+
+  onReplyContentChange(): void {
+    const mentionMatch = this.replyContent.match(/@(\w*)$/); // Capture last mention in the input
+    if (mentionMatch) {
+      const prefix = mentionMatch[1]; // Get the prefix after '@'
+      if (prefix.length > 1) {
+        this.fetchUserSuggestions(prefix);
+      } else {
+        this.userSuggestions = [];
+      }
+    } else {
+      this.userSuggestions = [];
+    }
+  }
+
+  getHighlightedContent(content: string): string {
+    if (!content) return '';
+    return content.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+  }
+
+
+  selectUser(username: string): void {
+    // Replace the last mention with the selected username
+    const mentionRegex = /@(\w*)$/;
+    this.replyContent = this.replyContent.replace(mentionRegex, `@${username} `);
+    this.userSuggestions = []; // Clear suggestions after selection
+  }
 
   replyToComment(commentId: number): void {
     this.replyingTo = commentId;
@@ -323,7 +425,21 @@ export class ChatComponent {
       }
     );
   }
-
+  deleteReply(replyId: number): void {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      this.commentService.deleteReply(replyId).subscribe(
+        () => {
+          this.toastrService.success('commentaire supprimé avec succès');
+          this.comments = this.comments.filter(comment => comment.id !== replyId);
+          this.fetchFolders();
+        },
+        (error) => {
+          this.toastrService.error('Erreur lors de la suppression');
+          //    console.error('Failed to delete comment:', error);
+        }
+      );
+    }
+  }
   showUserReply() {
     this.isUserReplyVisible = !this.isUserReplyVisible
   }
@@ -335,6 +451,7 @@ export class ChatComponent {
       this.editContent = this.selectedCard.content;
     }
   }
+
   EditFolderContent(): void {
     if (this.selectedCard) {
       const content = this.editContent;
@@ -394,25 +511,92 @@ export class ChatComponent {
     );
   }
 
+  deleteComment(commentId: number): void {
+    if (confirm('Are you sure you want to delete this comment?')) {
+
+      this.commentService.deleteComment(commentId).subscribe(
+        () => {
+          this.toastrService.success('Commentaire supprimé avec succès');
+          this.comments = this.comments.filter(comment => comment.id !== commentId);
+          this.fetchFolders();
+
+        },
+        (error) => {
+          this.toastrService.error('Erreur lors de la suppression');
+          //  console.error('Failed to delete comment:', error);
+        }
+      );
+    }
+  }
+
 
   //create folder
+  // onSubmit() {
+  //   if (this.folderForm.invalid) {
+  //     return;
+  //   }
+
+  //   const folderData = this.folderForm.value;
+  //   this.folderService.createFolder(folderData).subscribe(
+  //     (response) => {
+  //       this.toastrService.success('Poste crée avec succès');
+  //       this.folderForm.reset();
+  //     },
+  //     (error) => {
+  //       this.toastrService.error('Erreur lors de la création');
+  //       //  console.error('Failed to create folder:', error);
+  //     }
+  //   );
+  // }
+
+  ////////////////////////////
+  ///publish post
+
   onSubmit() {
     if (this.folderForm.invalid) {
       return;
     }
 
-    const folderData = this.folderForm.value;
+    const folderData = new FormData();
+    folderData.append('category', this.folderForm.get('category')?.value);
+    folderData.append('title', this.folderForm.get('title')?.value);
+    folderData.append('content', this.folderForm.get('content')?.value);
+
+    // Only append the file if it exists
+    const uploadedFile = this.folderForm.get('uploadedFile')?.value;
+    if (uploadedFile) {
+      folderData.append('uploadedFile', uploadedFile);
+    }
+
     this.folderService.createFolder(folderData).subscribe(
       (response) => {
-        this.toastrService.success('Poste crée avec succès');
         this.folderForm.reset();
+        this.toastrService.success('Poste créé avec succès');
+        this.fetchFolders();
       },
       (error) => {
+        // console.error('Error during folder creation:', error);
         this.toastrService.error('Erreur lors de la création');
-        //  console.error('Failed to create folder:', error);
       }
     );
   }
+
+
+  // Method to handle file selection
+  chooseImage(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      this.folderForm.patchValue({
+        uploadedFile: fileInput.files[0]
+      });
+    } else {
+      // Clear the uploadedFile if no file is selected
+      this.folderForm.patchValue({
+        uploadedFile: null
+      });
+    }
+  }
+
 
   toggleCategory() {
     this.isCategoryHidden = !this.isCategoryHidden;
@@ -513,6 +697,6 @@ export class ChatComponent {
 
 
   goToUserFolders(id: number,): void {
-    this.router.navigate(['/User-folders', id]);
+    this.router.navigate(['/user-folders', id]);
   }
 }

@@ -175,9 +175,9 @@ export class ProductComponent {
         this.toastrService.success('Article ajouté au panier avec succès');
       },
       (error) => {
-        if (error.status === 409) { // Conflict status code for 'Item already in cart'
+        if (error.status === 409) {
           this.toastrService.warning('Cet article est déjà dans votre panier');
-        } else if (error.status === 404) { // Not found status code for 'Product not found'
+        } else if (error.status === 404) { 
           this.toastrService.error('Produit non trouvé');
         } else {
          // this.toastrService.error('Veuillez vous connecter pour ajouter cet article à votre panier');

@@ -29,11 +29,8 @@ export class CommentService {
   }
   
   updateComment(id: number, content: string, folderId: number): Observable<Comment> {
-    //const payload = { content, folderId };
     const url = `${this.apiUrl}/comments/${id}`;
     return this.http.put<Comment>(url,{content, folderId})
-    //console.log(`Sending PUT request to ${this.apiUrl}/comments/${id} with payload:`, payload);
-   // return this.http.put<Comment>(`${this.apiUrl}/comments/${id}`, payload);
   }
 
   updateReply(id:number, folderId:number, content:string):Observable<Comment>{
@@ -46,6 +43,23 @@ export class CommentService {
     return this.http.get<any[]>(url);
   }
   
-  
-  
+  getUserSuggestions(prefix: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/comments/suggestions`, {
+        params: { prefix }
+    });
+}
+// deleteComment(id: number, folderId: number): Observable<any> {
+//   const url = `${this.apiUrl}/comments/delete-comment/${id}/folder/${folderId}`;
+//   return this.http.delete<any>(url);
+// }
+
+
+deleteComment(id: number): Observable<any> {
+  return this.http.delete<any>(`${this.apiUrl}/comments/delete/${id}`);
+}
+
+deleteReply(id: number): Observable<any> {
+  return this.http.delete<any>(`${this.apiUrl}/comments/delete-reply/${id}`);
+}
+
 }    

@@ -32,10 +32,8 @@ getUserFolders(id:number): Observable<any> {
   return this.http.get<any[]>(url);
 }
 
-
-
 deleteFolder(id: number): Observable<any> {
-  const url = `${this.apiUrl}/folders/${id}`;
+  const url = `${this.apiUrl}/folders/delete/${id}`;
   return this.http.delete<any>(url);
 }
 

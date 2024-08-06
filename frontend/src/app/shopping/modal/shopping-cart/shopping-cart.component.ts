@@ -114,7 +114,7 @@ export class ShoppingCartComponent implements OnInit {
         });
       },
       (error) => {
-        console.error('Error when proceeding order', error);
+      //  console.error('Error when proceeding order', error);
       }
     );
   }

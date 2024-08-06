@@ -70,7 +70,7 @@ export class OrderComponent {
 
   private handleOrderError(error: any) {
     this.toastrService.error('Erreur lors de la commande');
-    console.error('Erreur lors de la commande :', error);
+  //  console.error('Erreur lors de la commande :', error);
   }
 
 

@@ -78,7 +78,7 @@
                                         <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start">
                                             <div
                                                 class="circle-icon mb-3 mb-sm-0 d-flex bg-white justify-content-center align-items-center">
-                                                <img [src]="folder.uploadedFileUrl" alt="img"
+                                                <img [src]="folder.userProfileImageUrl" alt="img"
                                                     class="img-fluid rounded-circle">
                                             </div>
                                             <div class="info ms-sm-4">
@@ -87,7 +87,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="titre text-black">{{folder.title}}</div>
+                                        <div class="title">{{folder.title}}</div>
 
                                     </div>
                                 </div>
@@ -114,16 +114,18 @@
                     <!--selected post-->
                     <div *ngIf="selectedCard" class="selectedCard">
                         <div class="card-body">
-                            <div class="position-fixed" style="right: 0px; bottom: 0px;">
+                            <div class="position-fixed" style="right: 0px; bottom: 0px; z-index: 2;">
                                 <button (click)="deselectCard()" class="btn btn-secondary mb-3">
                                     <mat-icon>arrow_back</mat-icon> Retour
                                 </button>
                             </div>
                             <div class="d-flex mb-2 flex0-column flex-sm-row align-items-start">
                                 <div class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                    <img [src]="selectedCard.uploadedFileUrl" alt="img"
+                                    <img [src]="selectedCard.userProfileImageUrl" alt="img"
                                         class="img-fluid rounded-circle">
                                 </div>
+
+                              
                                 <div class="info ms-sm-4">
                                     <h4 class="color-primary">{{selectedCard.user.username}}</h4>
                                     <time class="time mb-1">{{selectedCard.createdAt | date: 'yyyy-MM-dd
@@ -131,11 +133,19 @@
                                 </div>
                             </div>
                             <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
+                            <div class="user-uploaded-file"  *ngIf="selectedCard?.FolderUploadedFileUrl">
+                                <img [src]="selectedCard.FolderUploadedFileUrl" alt="img"
+                                class="img-fluid" width="400">
+                            </div>
                             <div class="content edit-content mb-3">
                                 <ng-container *ngIf="!isEditing; else editMode">
                                     <p [innerHTML]="selectedCard?.content"></p>
                                     <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="EditContent()"
-                                        class="btn btn-danger">edit</button>
+                                        class="btn btn-primary m-1"><mat-icon>edit</mat-icon></button>
+                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="deleteFolder()"
+                                        class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
+
+                                      
                                 </ng-container>
                                 <ng-template #editMode>
                                     <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
@@ -154,8 +164,9 @@
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                 <div
                                                     class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                    <img [src]="comment.uploadedFileUrl" alt="img"
+                                                    <img [src]="comment.userProfilePictureUrl" alt="img"
                                                         class="img-fluid rounded-circle">
+                                                        
                                                 </div>
                                                 <div class="user-comment-info ms-sm-4">
                                                     <p class="name fw-bold color-primary mb-1">{{comment.user.username}}
@@ -174,7 +185,7 @@
                                                                     class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                                     <div
                                                                         class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
-                                                                        <img [src]="reply.user.uploadedFileUrl"
+                                                                        <img [src]="reply.user.userProfileImageUrl"
                                                                             alt="img" class="img-fluid rounded-circle">
                                                                     </div>
 
@@ -189,11 +200,16 @@
                                                                 <div class="content edit-content">
                                                                     <ng-container
                                                                         *ngIf="!reply.isEditing; else editModeReply">
-                                                                        <p class="mb-0"[innerHTML]="reply.content"></p>
+                                                                        <p class="mb-0"[innerHTML]="getHighlightedContent(reply.content)"></p>
                                                                         <button
-                                                                            *ngIf="reply?.user?.Id === loggedInUserId"
+                                                                        *ngIf="reply.user?.id === loggedInUserId"
                                                                             (click)="editReply(reply)"
-                                                                            class="btn btn-secondary">Edit</button>
+                                                                            class="btn btn-secondary m-1"><mat-icon>edit</mat-icon></button>
+                                                                            <button
+                                                                            *ngIf="reply.user?.id === loggedInUserId"
+                                                                                (click)="deleteReply(reply.id)"
+                                                                                class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
+                                                                                
                                                                     </ng-container>
                                                                     <ng-template #editModeReply>
                                                                         <textarea [(ngModel)]="reply.editContent"
@@ -218,9 +234,12 @@
                                             <div class="content edit-content">
                                                 <ng-container *ngIf="!comment.isEditing; else editMode">
                                                     <p [innerHTML]="comment.content"></p>
-                                                    <button *ngIf="comment?.user.Id === loggedInUserId"
+                                                    <button *ngIf="comment.user?.id === loggedInUserId"
                                                         (click)="editComment(comment)"
-                                                        class="btn btn-secondary">Edit</button>
+                                                        class="btn btn-secondary m-1"><mat-icon>edit</mat-icon></button>
+                                                        <button *ngIf="comment?.user?.id === loggedInUserId" (click)="deleteComment(comment.id)"
+                                                        class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
+                
                                                 </ng-container>
                                                 <ng-template #editMode>
                                                     <textarea [(ngModel)]="comment.editContent" class="form-control"
@@ -241,15 +260,26 @@
 
                                         </div>
                                         <!-- Reply box -->
-                                        <div *ngIf="replyingTo === comment.id">
+                                        <div class="reply-box" *ngIf="replyingTo === comment.id">
                                             <form (ngSubmit)="submitReply()" #replyForm="ngForm">
                                                 <div class="row mb-4">
                                                     <div class="col form-group">
                                                         <label class="form-label" for="replyContent">Reply</label>
-                                                        <textarea id="replyContent" class="form-control" rows="4"
-                                                            cols="8" placeholder="Your reply..."
-                                                            [(ngModel)]="replyContent" name="replyContent"
-                                                            required></textarea>
+                                                        <div class="position-relative">
+                                                            <textarea id="replyContent" class="form-control" rows="2"
+                                                                placeholder=" pour mentionner un pseudo utiliser @username votre message..."
+                                                                [(ngModel)]="replyContent" name="replyContent"
+                                                                (ngModelChange)="onReplyContentChange()"
+                                                                required></textarea>
+                                                            <!-- Suggestions list positioned absolutely within the relative container -->
+                                                            <div *ngIf="userSuggestions.length > 0" class="suggestions-list">
+                                                                <ul>
+                                                                  <li *ngFor="let user of userSuggestions" (click)="selectUser(user.username)">
+                                                                    {{ user.username }}
+                                                                  </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <button type="submit"
@@ -263,13 +293,8 @@
                                             </form>
                                         </div>
                                     </div>
-
-
-
                                 </div>
                             </div>
-
-
 
                             <!--comment box-->
                             <form (ngSubmit)="submitComment()" #commentForm="ngForm">
@@ -277,7 +302,7 @@
                                     <div class="col form-group">
                                         <label class="form-label" for="commentContent">Message</label>
                                         <textarea id="commentContent" class="form-control" rows="8" cols="8"
-                                            placeholder="Pour citer un utilisateur, veuillez utiliser le hashtag ex: @username ...."
+                                            placeholder="votre message ...."
                                             [(ngModel)]="commentContent" name="content" required></textarea>
                                     </div>
                                 </div>
@@ -287,9 +312,7 @@
                                     Commenter
                                 </button>
                             </form>
-
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -308,6 +331,10 @@
                                     option.label}}</option>
                             </select>
                         </div>
+                        <div class="col-md-6 col-6 mb-3">
+                            <label class="form-label">Image (facultative)</label>
+                            <input type="file" class="form-control" #inputFile formControlName="uploadedFile" (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg"/>
+                          </div>  
                         <div class="row mb-4">
                             <div class="col form-group">
                                 <label class="form-label">Contenu</label>

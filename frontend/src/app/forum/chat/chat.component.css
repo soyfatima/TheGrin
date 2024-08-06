@@ -203,3 +203,38 @@ app-navbar {
     margin: 0 0 1em 0; /* Adjust margins as needed */
   }
   
+
+
+.reply-box .suggestions-list {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    transform: translate(0%, -90%);
+    border: 1px solid #ccc;
+    background-color: #fafafa;
+    z-index: 1200; /* Ensure it's on top of other elements */
+    max-height: 150px;
+    overflow-y: auto;
+    width: 100px;
+  }
+  
+  .reply-box .suggestions-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .reply-box .suggestions-list li {
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .reply-box .suggestions-list li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .mention {
+    color: #007bff !important; /* Highlight color */
+    font-weight: bold;
+  }
+  
