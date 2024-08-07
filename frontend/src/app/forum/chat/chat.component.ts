@@ -253,6 +253,7 @@ export class ChatComponent {
           this.lastCommentDetails[folderId] = {
             user: lastComment.user.username,
             time: lastComment.createdAt,
+            //profilePictureUrl:lastComment.user.uploadedFile,
             id: lastComment.id
           };
           this.lastCommentId = lastComment.id; // Set the last comment ID
@@ -264,16 +265,14 @@ export class ChatComponent {
           };
           this.lastCommentId = null; // No comments
         }
-        this.comments = comments.map((comment: any) => {
-          const profilePictureUrl = comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null;
-          console.log('User Profile Picture URL:', profilePictureUrl); // Log URL for debugging
-          return {
-            ...comment,
-            userProfilePictureUrl: profilePictureUrl
-          };
-        });
+        this.comments = comments
+        .map((comment: { uploadedFile: any; user: any; createdAt: Date }) => ({
+          ...comment,
+          userProfileImageUrl: comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null,
+       
+        }))
 
-        console.log('comments', comments)
+
         if (this.selectedCard && this.selectedCard.id === folderId) {
           this.comments = comments;
           //  setTimeout(() => this.scrollToLastComment(), 300); // Ensure comments are rendered
@@ -331,6 +330,7 @@ export class ChatComponent {
       }
     });
   }
+
   ///////////////////////////
   //reply
   submitReply(): void {
@@ -341,6 +341,7 @@ export class ChatComponent {
     this.commentService.addReply(this.replyingTo, this.replyContent)
       .subscribe(
         response => {
+          //response=response;
           this.replyContent = '';
           this.replyingTo = null;
           this.fetchComments(this.selectedCard.id);
@@ -528,26 +529,6 @@ export class ChatComponent {
       );
     }
   }
-
-
-  //create folder
-  // onSubmit() {
-  //   if (this.folderForm.invalid) {
-  //     return;
-  //   }
-
-  //   const folderData = this.folderForm.value;
-  //   this.folderService.createFolder(folderData).subscribe(
-  //     (response) => {
-  //       this.toastrService.success('Poste crée avec succès');
-  //       this.folderForm.reset();
-  //     },
-  //     (error) => {
-  //       this.toastrService.error('Erreur lors de la création');
-  //       //  console.error('Failed to create folder:', error);
-  //     }
-  //   );
-  // }
 
   ////////////////////////////
   ///publish post

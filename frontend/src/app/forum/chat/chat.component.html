@@ -164,8 +164,10 @@
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                 <div
                                                     class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                    <img [src]="comment.userProfilePictureUrl" alt="img"
-                                                        class="img-fluid rounded-circle">
+                                                    <img
+                                                    [src]="comment.userProfileImageUrl" 
+                                                    alt="img" 
+                                                    class="img-fluid rounded-circle">
                                                         
                                                 </div>
                                                 <div class="user-comment-info ms-sm-4">
@@ -185,7 +187,7 @@
                                                                     class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                                     <div
                                                                         class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
-                                                                        <img [src]="reply.user.userProfileImageUrl"
+                                                                        <img [src]="reply.userProfilePictureUrl"
                                                                             alt="img" class="img-fluid rounded-circle">
                                                                     </div>
 
@@ -260,10 +262,9 @@
 
                                         </div>
                                         <!-- Reply box -->
-                                        <div class="reply-box" *ngIf="replyingTo === comment.id">
+                                        <div class="reply-box col-lg-12" *ngIf="replyingTo === comment.id">
                                             <form (ngSubmit)="submitReply()" #replyForm="ngForm">
-                                                <div class="row mb-4">
-                                                    <div class="col form-group">
+                                                    <div class=" form-group">
                                                         <label class="form-label" for="replyContent">Reply</label>
                                                         <div class="position-relative">
                                                             <textarea id="replyContent" class="form-control" rows="2"
@@ -281,7 +282,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
                                                 <button type="submit"
                                                     class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2 m-1"
                                                     [disabled]="!replyForm.form.valid">
