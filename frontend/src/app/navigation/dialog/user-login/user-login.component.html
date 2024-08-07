@@ -34,7 +34,7 @@
               <a (click)="openDialog()">mot de passe oublié ?</a>
             </div> -->
           <div class="btn-submit mb-2">
-            <button type="submit" class="btn btn-success w-100">Connexion</button>
+            <button type="submit" class="bg-color-primary text-white p-2 rounded-3 w-100 w-100">Connexion</button>
           </div>
         </form>
       </div>
@@ -50,29 +50,31 @@
               <input type="email" class="form-control" formControlName="Newemail" placeholder="ex:user@example.com"
                 required>
               <div *ngIf="emailErrorMessage" class="text-danger">{{ emailErrorMessage }}</div>
-
             </div>
-            <label for="gender">Genre</label>
-            <select id="gender" class="form-select" formControlName="gender" required>
-              <option value="">Selectionner un genre</option>
-              <option value="Homme">Homme</option>
-              <option value="Femme">Femme</option>
-              <option value="Autre">Autre</option>
-              <div *ngIf="genderErrorMessage" class="text-danger">{{ genderErrorMessage }}</div>
-            </select>
+            <div class="col-md-6">
+              <label for="gender" class="form-label">Genre</label>
+              <select id="gender" class="form-select" formControlName="gender" required>
+                <option value="">Selectionner un genre</option>
+                <option value="Homme">Homme</option>
+                <option value="Femme">Femme</option>
+                <option value="Autre">Autre</option>
+                <div *ngIf="genderErrorMessage" class="text-danger">{{ genderErrorMessage }}</div>
+              </select>
+            </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Username</label>
-              <input type="text" id="username" placeholder="ex: user00" formControlName="Newusername"
+              <label class="form-label">Pseudo</label>
+              <input type="text" id="username" placeholder="ex: username" formControlName="Newusername"
                 class="form-control" required>
               <div *ngIf="usernameErrorMessage" class="text-danger">{{ usernameErrorMessage }}</div>
             </div>
-          </div>
-          <div class="form-input mb-4">
-            <label class="form-label">Password</label>
+          <div class="col-md-6 mb-4">
+            <label class="form-label">Mot de passe</label>
             <input type="password" id="password" formControlName="Newpassword" class="form-control" required>
           </div>
+        </div>
+
           <div class="btn-submit mb-2">
-            <button type="submit" class="btn btn-success w-100">S'inscrire</button>
+            <button type="submit" class="text-white bg-color-tertiary p-2 rounded-3 w-100">S'inscrire</button>
           </div>
         </form>
       </div>

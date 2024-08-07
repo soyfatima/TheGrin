@@ -9,6 +9,8 @@ import { CommentService } from '../../service/comment.service';
 import { AuthService } from '../../service/auth.service';
 import { TokenService } from '../../service/tokenservice';
 import { debounceTime, Subject } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../navigation/dialog/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-chat',
@@ -42,7 +44,8 @@ export class ChatComponent {
   editContent: string = '';
   /////////////////////////////
   loggedInUserId: number | null = null;
-  isUserReplyVisible: boolean = false
+  isUserReplyVisible: { [key: number]: boolean } = {};
+
   ///////////////////////////
   commentsCount: { [key: number]: number } = {};
   lastCommentDetails: { [key: number]: { user: string, time: string, id: number } } = {};
@@ -98,7 +101,8 @@ export class ChatComponent {
     private route: ActivatedRoute,
     private commentService: CommentService,
     private cdr: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private dialog: MatDialog,
   ) {
 
     this.searchSubject.pipe(
@@ -182,36 +186,40 @@ export class ChatComponent {
 
       },
       (error) => {
-//        console.error('Error fetching folders:', error);
+        //        console.error('Error fetching folders:', error);
       }
     );
   }
 
 
 
-  deleteFolder() {
+  deleteFolder(): void {
     if (this.selectedCard) {
-      const id = this.selectedCard.id;
-      const folderId = id;
-
-      if (confirm('Are you sure you want to delete this folder?')) {
-        this.folderService.deleteFolder(folderId).subscribe(
-          () => {
-            this.toastrService.success('Folder deleted successfully');
-            this.folders = this.folders.filter(folder => folder.id !== folderId); // Remove the folder from the list
-            this.deselectCard();
-            this.fetchFolders();
-            this.cdr.detectChanges();
-          },
-          (error) => {
-            this.toastrService.error('Failed to delete folder');
-        //    console.error('Failed to delete folder:', error);
-          }
-
-        );
-      }
+      const folderId = this.selectedCard.id;
+  
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: { message: 'Êtes-vous sûre de vouloir supprimé ce post ?' }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // User confirmed deletion
+          this.folderService.deleteFolder(folderId).subscribe(
+            () => {
+              this.toastrService.success('Folder deleted successfully');
+              this.folders = this.folders.filter(folder => folder.id !== folderId); // Remove the folder from the list
+              this.deselectCard();
+              this.fetchFolders();
+              this.cdr.detectChanges();
+            },
+            (error) => {
+              this.toastrService.error('Failed to delete folder');
+            }
+          );
+        }
+      });
     }
   }
+  
 
 
   updateTime(): void {
@@ -265,13 +273,35 @@ export class ChatComponent {
           };
           this.lastCommentId = null; // No comments
         }
-        this.comments = comments
-        .map((comment: { uploadedFile: any; user: any; createdAt: Date }) => ({
-          ...comment,
-          userProfileImageUrl: comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null,
-       
-        }))
+       // Transform comments to include user profile image URLs
+       this.comments = comments.map((comment: { user: { uploadedFile: any }; replies: any[] }) => {
+        const commentUserProfileImageUrl = comment.user?.uploadedFile
+          ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}`
+          : null;
 
+        console.log('Comment user profile image URL:', commentUserProfileImageUrl);
+
+        const repliesWithImageUrls = comment.replies.map((reply: { user: { uploadedFile: any } }) => {
+          const replyUserProfileImageUrl = reply.user?.uploadedFile
+            ? `${environment.apiUrl}/blog-backend/uploads/${reply.user.uploadedFile}`
+            : null;
+
+          console.log('Reply user profile image URL:', replyUserProfileImageUrl);
+
+          return {
+            ...reply,
+            userProfileImageUrl: replyUserProfileImageUrl
+          };
+        });
+
+        return {
+          ...comment,
+          userProfileImageUrl: commentUserProfileImageUrl,
+          replies: repliesWithImageUrls
+        };
+      });
+
+      console.log('Updated comments with profile images:', this.comments); // For debugging
 
         if (this.selectedCard && this.selectedCard.id === folderId) {
           this.comments = comments;
@@ -358,7 +388,7 @@ export class ChatComponent {
           this.userSuggestions = suggestions;
         },
         error => {
-         // console.error('Error fetching user suggestions:', error);
+          // console.error('Error fetching user suggestions:', error);
           this.userSuggestions = [];
         }
       );
@@ -427,22 +457,27 @@ export class ChatComponent {
     );
   }
   deleteReply(replyId: number): void {
-    if (confirm('Are you sure you want to delete this comment?')) {
-      this.commentService.deleteReply(replyId).subscribe(
-        () => {
-          this.toastrService.success('commentaire supprimé avec succès');
-          this.comments = this.comments.filter(comment => comment.id !== replyId);
-          this.fetchFolders();
-        },
-        (error) => {
-          this.toastrService.error('Erreur lors de la suppression');
-          //    console.error('Failed to delete comment:', error);
-        }
-      );
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Êtes-vous sûre de vouloir supprimé votre réponse ?' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // User confirmed deletion
+        this.commentService.deleteReply(replyId).subscribe(
+          () => {
+            this.toastrService.success('Comment deleted successfully');
+            this.comments = this.comments.filter(comment => comment.id !== replyId);
+            this.fetchFolders();
+          },
+          (error) => {
+            this.toastrService.error('Failed to delete comment');
+          }
+        );
+      }
+    });
   }
-  showUserReply() {
-    this.isUserReplyVisible = !this.isUserReplyVisible
+  showUserReply(commentId: number) {
+    this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId]
   }
   ///////////////////////////
   //folder edit
@@ -513,22 +548,26 @@ export class ChatComponent {
   }
 
   deleteComment(commentId: number): void {
-    if (confirm('Are you sure you want to delete this comment?')) {
-
-      this.commentService.deleteComment(commentId).subscribe(
-        () => {
-          this.toastrService.success('Commentaire supprimé avec succès');
-          this.comments = this.comments.filter(comment => comment.id !== commentId);
-          this.fetchFolders();
-
-        },
-        (error) => {
-          this.toastrService.error('Erreur lors de la suppression');
-          //  console.error('Failed to delete comment:', error);
-        }
-      );
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Êtes-vous sûre de vouloir supprimé ce commentaire ?' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // User confirmed deletion
+        this.commentService.deleteComment(commentId).subscribe(
+          () => {
+            this.toastrService.success('Commentaire supprimé avec succès');
+            this.comments = this.comments.filter(comment => comment.id !== commentId);
+            this.fetchFolders();
+          },
+          (error) => {
+            this.toastrService.error('Erreur lors de la suppression');
+          }
+        );
+      }
+    });
   }
+  
 
   ////////////////////////////
   ///publish post
@@ -655,7 +694,7 @@ export class ChatComponent {
     this.tab = tab;
   }
 
-
+ 
   getLoggedInUserId(): void {
     const authData = this.tokenService.getAuthData();
     if (authData && authData.accessToken) {

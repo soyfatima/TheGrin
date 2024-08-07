@@ -70,7 +70,7 @@
             <div *ngIf="tab === 'forum'">
                 <div class="content padding">
                     <div class="row" *ngIf="!selectedCard">
-                        <div class="col-md-6 mb-4" type="button" *ngFor="let folder of paginatedForum">
+                        <div class="col-md-4 mb-4" type="button" *ngFor="let folder of paginatedForum">
                             <div class="">
                                 <div class=" p-2 border border-1 bg-color" (click)="selectCard(folder)"
                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
@@ -82,7 +82,9 @@
                                                     class="img-fluid rounded-circle">
                                             </div>
                                             <div class="info ms-sm-4">
-                                                <div class="name fw-bold color-primary"  (click)="goToUserFolders(folder.user.id)">{{folder.user.username}}</div>
+                                                <div class="name fw-bold color-primary"
+                                                    (click)="goToUserFolders(folder.user.id)">{{folder.user.username}}
+                                                </div>
                                                 <div class="time">{{folder.createdAt | date: 'yyyy-MM-dd HH:mm:ss'}}
                                                 </div>
                                             </div>
@@ -96,11 +98,11 @@
                                     <div class="text-end">
                                         <h6 class="mb-1">Commentaires ({{ commentsCount[folder.id] || 0 }})</h6>
                                         <p class="mb-0" *ngIf="lastCommentDetails[folder.id]?.user"
-                                        (click)="handleLastCommentClick(folder.id)">
+                                            (click)="handleLastCommentClick(folder.id)">
                                             Dernier message par
                                             <strong>
                                                 {{ lastCommentDetails[folder.id].user }}
-                                              </strong>
+                                            </strong>
                                         </p>
                                         <time class="fw-bold" *ngIf="lastCommentDetails[folder.id]?.time">
                                             <mat-icon>schedule</mat-icon> {{ lastCommentDetails[folder.id].time | date:
@@ -125,7 +127,7 @@
                                         class="img-fluid rounded-circle">
                                 </div>
 
-                              
+
                                 <div class="info ms-sm-4">
                                     <h4 class="color-primary">{{selectedCard.user.username}}</h4>
                                     <time class="time mb-1">{{selectedCard.createdAt | date: 'yyyy-MM-dd
@@ -133,161 +135,172 @@
                                 </div>
                             </div>
                             <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
-                            <div class="user-uploaded-file"  *ngIf="selectedCard?.FolderUploadedFileUrl">
-                                <img [src]="selectedCard.FolderUploadedFileUrl" alt="img"
-                                class="img-fluid" width="400">
+                            <div class="user-uploaded-file" *ngIf="selectedCard?.FolderUploadedFileUrl">
+                                <img [src]="selectedCard.FolderUploadedFileUrl" alt="img" class="img-fluid" width="400">
                             </div>
                             <div class="content edit-content mb-3">
-                                <ng-container *ngIf="!isEditing; else editMode">
+                                <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
                                     <p [innerHTML]="selectedCard?.content"></p>
                                     <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="EditContent()"
-                                        class="btn btn-primary m-1"><mat-icon>edit</mat-icon></button>
-                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="deleteFolder()"
-                                        class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
+                                        class="bg-transparent border border-0 m-1"><mat-icon
+                                            class="color-primary">edit</mat-icon></button>
+                                    <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="deleteFolder()"
+                                        class="bg-transparent border border-0 m-1"><mat-icon
+                                            class="color-tertiary">delete</mat-icon></button>
 
-                                      
+
                                 </ng-container>
                                 <ng-template #editMode>
                                     <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
-                                    <button (click)="EditFolderContent()" class="btn btn-success m-1">Editer</button>
-                                    <button (click)="cancelEdit()" class="btn btn-secondary m-1">Annuler</button>
+                                    <div class="btn-action d-flex justify-content-end ">
+                                        <button (click)="EditFolderContent()"
+                                            class="bg-color-primary rounded-2 p-2 text-white border border-0 m-1">Editer</button>
+                                        <button (click)="cancelEdit()" class="btn btn-secondary m-1">Annuler</button>
+                                    </div>
                                 </ng-template>
                             </div>
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
                                     <h4 class="mb-4">({{ comments.length }}) Commentaire</h4>
 
-                                    <div class="p-2 mb-3 bg-color rounded-3"
-                                        style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;"
+                                    <div class="p-2 mb-3 bg-color rounded-2 bordr border1"
                                         *ngFor="let comment of comments" [id]="'comment-' + comment.id">
                                         <div class="card-body">
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                 <div
                                                     class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                    <img
-                                                    [src]="comment.userProfileImageUrl" 
-                                                    alt="img" 
-                                                    class="img-fluid rounded-circle">
-                                                        
+                                                    <img [src]="comment.userProfileImageUrl" alt="img"
+                                                        class="img-fluid rounded-circle bg-white">
                                                 </div>
                                                 <div class="user-comment-info ms-sm-4">
-                                                    <p class="name fw-bold color-primary mb-1">{{comment.user.username}}
+                                                    <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
                                                     </p>
                                                     <p class="time text-default mb-0">{{comment.createdAt | date:
                                                         'yyyy-MM-dd
                                                         HH:mm:ss'}}</p>
-                                                    <p class="color-info fw-bold" (click)="showUserReply()">({{comment.replies?.length || 0}}) réponse</p>
-                                                    <!--user-replies-->
-                                                    <div class="user-replies" *ngIf="comment.replies?.length">
-                                                        <div class="reply" *ngIf="isUserReplyVisible">
-                                                            <hr>
-                                                            <div class="p-2 rounded-3 bg-color-white"
-                                                                *ngFor="let reply of comment.replies">
-                                                                <div
-                                                                    class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
-                                                                    <div
-                                                                        class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
-                                                                        <img [src]="reply.userProfilePictureUrl"
-                                                                            alt="img" class="img-fluid rounded-circle">
-                                                                    </div>
+                                                    <p class="color-primary fw-bold" (click)="showUserReply(comment.id)">
+                                                        ({{comment.replies?.length || 0}}) réponse</p>
+                                                </div>
+                                            </div>
+                                            <!--user-replies-->
+                                            <div class="user-replies"
+                                                *ngIf="comment.replies?.length && isUserReplyVisible[comment.id]">
+                                                <div class="reply" data-aos="fade-in">
+                                                    <hr>
+                                                    <div class="bg-color-white p-2 mb-3 shadow-sm "
+                                                        *ngFor="let reply of comment.replies">
+                                                        <div
+                                                            class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
+                                                            <div
+                                                                class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
+                                                                <img [src]="reply.userProfileImageUrl" alt="img"
+                                                                    class="img-fluid rounded-circle">
+                                                            </div>
 
-                                                                    <div class="reply-user-info ms-sm-4">
-                                                                        <p class="mb-0"><strong>{{ reply.user.username
-                                                                                }}</strong></p>
-                                                                        <p class="time text-default">{{ reply.createdAt
-                                                                            | date: 'yyyy-MM-dd
-                                                                            HH:mm' }}</p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="content edit-content">
-                                                                    <ng-container
-                                                                        *ngIf="!reply.isEditing; else editModeReply">
-                                                                        <p class="mb-0"[innerHTML]="getHighlightedContent(reply.content)"></p>
-                                                                        <button
-                                                                        *ngIf="reply.user?.id === loggedInUserId"
-                                                                            (click)="editReply(reply)"
-                                                                            class="btn btn-secondary m-1"><mat-icon>edit</mat-icon></button>
-                                                                            <button
-                                                                            *ngIf="reply.user?.id === loggedInUserId"
-                                                                                (click)="deleteReply(reply.id)"
-                                                                                class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
-                                                                                
-                                                                    </ng-container>
-                                                                    <ng-template #editModeReply>
-                                                                        <textarea [(ngModel)]="reply.editContent"
-                                                                            class="form-control" rows="2"></textarea>
-                                                                        <input type="hidden"
-                                                                            [(ngModel)]="reply.folderId" />
-                                                                        <button (click)="saveReply(reply)"
-                                                                            class="btn btn-success m-1">Editer</button>
-                                                                        <button (click)="cancelEditReply(reply)"
-                                                                            class="btn btn-secondary m-1">Annuler</button>
-                                                                    </ng-template>
-                                                                </div>
-
-
+                                                            <div class="reply-user-info ms-sm-4 mb-3">
+                                                                <p class="mb-0"><strong>{{ reply.user.username
+                                                                        }}</strong></p>
+                                                                <p class="time text-default">{{ reply.createdAt
+                                                                    | date: 'yyyy-MM-dd
+                                                                    HH:mm' }}</p>
                                                             </div>
                                                         </div>
+                                                        <div class="content edit-content">
+                                                            <ng-container *ngIf="!reply.isEditing; else editModeReply">
+                                                                <p class="mb-0"
+                                                                    [innerHTML]="getHighlightedContent(reply.content)">
+                                                                </p>
+                                                                <button *ngIf="reply.user?.id === loggedInUserId"
+                                                                    (click)="editReply(reply)"
+                                                                    class="btn btn-secondary m-1"><mat-icon>edit</mat-icon></button>
+                                                                <button *ngIf="reply.user?.id === loggedInUserId"
+                                                                    (click)="deleteReply(reply.id)"
+                                                                    class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
+
+                                                            </ng-container>
+                                                            <ng-template #editModeReply>
+                                                                <textarea [(ngModel)]="reply.editContent"
+                                                                    class="form-control" rows="2"></textarea>
+                                                                <input type="hidden" [(ngModel)]="reply.folderId" />
+                                                                <button (click)="saveReply(reply)"
+                                                                    class="btn btn-success m-1">Editer</button>
+                                                                <button (click)="cancelEditReply(reply)"
+                                                                    class="btn btn-secondary m-1">Annuler</button>
+                                                            </ng-template>
+                                                        </div>
+
+
                                                     </div>
-                                                    <!---->
                                                 </div>
                                             </div>
                                             <hr>
                                             <div class="content edit-content">
                                                 <ng-container *ngIf="!comment.isEditing; else editMode">
                                                     <p [innerHTML]="comment.content"></p>
-                                                    <button *ngIf="comment.user?.id === loggedInUserId"
-                                                        (click)="editComment(comment)"
-                                                        class="btn btn-secondary m-1"><mat-icon>edit</mat-icon></button>
-                                                        <button *ngIf="comment?.user?.id === loggedInUserId" (click)="deleteComment(comment.id)"
-                                                        class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
-                
+                                                    <hr>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button *ngIf="comment.user?.id === loggedInUserId"
+                                                            (click)="editComment(comment)"
+                                                            class="color-primary bg-color-tertiary border border-0 rounded-3 p-2 m-1 color-default">Editer</button>
+                                                        <button *ngIf="comment?.user?.id === loggedInUserId"
+                                                            (click)="deleteComment(comment.id)"
+                                                            class=" bg-secondary border border-0 rounded-3 p-2 m-1 color-default">Supprimer</button>
+                                                            <button (click)="replyToComment(comment.id)"
+                                                            class="bg-color-primary border border-0 rounded-3 p-2 m-1 color-default">
+                                                            Répondre
+                                                        </button>
+                                                        </div>
                                                 </ng-container>
                                                 <ng-template #editMode>
                                                     <textarea [(ngModel)]="comment.editContent" class="form-control"
                                                         rows="4"></textarea>
-                                                    <button (click)="saveComment(comment)"
-                                                        class="btn btn-success m-1">Editer</button>
-                                                    <button (click)="cancelEditComment(comment)"
-                                                        class="btn btn-secondary m-1">Annuler</button>
+                                                    <div class="btn-action">
+                                                        <button (click)="saveComment(comment)"
+                                                            class="bg-color-primary rounded-2 p-1 text-white border border-0 m-1">Editer</button>
+                                                        <button (click)="cancelEditComment(comment)"
+                                                            class="bg-secondary rounded-2 p-1 text-white border border-0 m-1">Annuler</button>
+                                                    </div>
                                                 </ng-template>
                                             </div>
 
                                         </div>
                                         <div class="d-flex justify-content-end">
-                                            <button (click)="replyToComment(comment.id)"
+                                            <!-- <button (click)="replyToComment(comment.id)"
                                                 class="bg-color-primary border border-0 rounded-3 p-2 color-default">
                                                 Répondre
-                                            </button>
+                                            </button> -->
 
                                         </div>
                                         <!-- Reply box -->
-                                        <div class="reply-box col-lg-12" *ngIf="replyingTo === comment.id">
+                                        <div class="reply-box col-lg-12" *ngIf="replyingTo === comment.id" data-aos="fade-in">
                                             <form (ngSubmit)="submitReply()" #replyForm="ngForm">
-                                                    <div class=" form-group">
-                                                        <label class="form-label" for="replyContent">Reply</label>
-                                                        <div class="position-relative">
-                                                            <textarea id="replyContent" class="form-control" rows="2"
-                                                                placeholder=" pour mentionner un pseudo utiliser @username votre message..."
-                                                                [(ngModel)]="replyContent" name="replyContent"
-                                                                (ngModelChange)="onReplyContentChange()"
-                                                                required></textarea>
-                                                            <!-- Suggestions list positioned absolutely within the relative container -->
-                                                            <div *ngIf="userSuggestions.length > 0" class="suggestions-list">
-                                                                <ul>
-                                                                  <li *ngFor="let user of userSuggestions" (click)="selectUser(user.username)">
+                                                <div class=" form-group">
+                                                    <label class="form-label" for="replyContent"></label>
+                                                    <div class="position-relative">
+                                                        <textarea id="replyContent" class="form-control" rows="2"
+                                                            placeholder=" pour mentionner un pseudo utiliser @userpseudo votre message..."
+                                                            [(ngModel)]="replyContent" name="replyContent"
+                                                            (ngModelChange)="onReplyContentChange()"
+                                                            required></textarea>
+                                                        <!-- Suggestions list positioned absolutely within the relative container -->
+                                                        <div *ngIf="userSuggestions.length > 0"
+                                                            class="suggestions-list">
+                                                            <ul>
+                                                                <li class="color-primary" *ngFor="let user of userSuggestions"
+                                                                    (click)="selectUser(user.username)">
                                                                     {{ user.username }}
-                                                                  </li>
-                                                                </ul>
-                                                            </div>
+                                                                </li>
+                                                            </ul>
                                                         </div>
                                                     </div>
+                                                </div>
                                                 <button type="submit"
-                                                    class="bg-color-primary border border-0 rounded-3 p-2 color-default rounded-2 m-1"
+                                                    class="bg-color-tertiary border border-0 rounded-3 p-2 color-default rounded-2 m-1"
                                                     [disabled]="!replyForm.form.valid">
-                                                    Répondre
+                                                    Valider
                                                 </button>
-                                                <button type="button" class="btn btn-secondary m-1" (click)="cancelReply()">
+                                                <button type="button" class="btn btn-secondary m-1"
+                                                    (click)="cancelReply()">
                                                     Annuler
                                                 </button>
                                             </form>
@@ -302,8 +315,8 @@
                                     <div class="col form-group">
                                         <label class="form-label" for="commentContent">Message</label>
                                         <textarea id="commentContent" class="form-control" rows="8" cols="8"
-                                            placeholder="votre message ...."
-                                            [(ngModel)]="commentContent" name="content" required></textarea>
+                                            placeholder="votre message ...." [(ngModel)]="commentContent" name="content"
+                                            required></textarea>
                                     </div>
                                 </div>
                                 <button type="submit"
@@ -333,8 +346,9 @@
                         </div>
                         <div class="col-md-6 col-6 mb-3">
                             <label class="form-label">Image (facultative)</label>
-                            <input type="file" class="form-control" #inputFile formControlName="uploadedFile" (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg"/>
-                          </div>  
+                            <input type="file" class="form-control" #inputFile formControlName="uploadedFile"
+                                (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg" />
+                        </div>
                         <div class="row mb-4">
                             <div class="col form-group">
                                 <label class="form-label">Contenu</label>

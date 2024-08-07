@@ -13,6 +13,7 @@ import { HomeComponent } from './navigation/home/home.component';
 import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 import { UserLoginComponent } from './navigation/dialog/user-login/user-login.component';
 import { UserFoldersComponent } from './forum/user-folders/user-folders.component';
+import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
 
 const routes: Routes = [
   // { path: '', component: },
@@ -31,6 +32,7 @@ const routes: Routes = [
   { path: 'chat', component: ChatComponent },
   { path: 'chat/:id', component: ChatComponent },
    { path: 'contact-us', component: ContactUsComponent },
+  { path: 'confirm-dialog', component:ConfirmDialogComponent },
 
 
   { path: 'user-login', component: UserLoginComponent },

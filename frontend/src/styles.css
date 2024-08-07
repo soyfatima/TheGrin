@@ -24,6 +24,7 @@
     --color-default: #fafafa;
     --color-primary: #c72e73;
     --color-secondary: #161718;
+    --color-tertiary: #095caf;
     --color-info: #97D9E1;
 }
 
@@ -42,6 +43,9 @@
 .color-secondary {
     color: var(--color-secondary);
 }
+.color-tertiary {
+    color: var(--color-tertiary);
+}
 
 /* bg color */
 .bg-color-primary {
@@ -52,10 +56,11 @@
 
 background: var(--color-info);
 }
-
+.bg-color-tertiary {
+    background: var(--color-tertiary);
+}
 .bg-color-gradient {
     background: linear-gradient(90deg, #095caf, #ff50c2);
-
 }
 
 .bg-color-default {
