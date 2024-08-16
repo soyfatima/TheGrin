@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
@@ -15,14 +15,14 @@ import { AuthService } from '../../../service/auth.service';
 })
 export class UserLoginComponent {
 
-  
+  data: any;
+
   IsUserLogged: boolean = false;
   tab = 'login';
   activeTab: string = 'login';
   loggedInUser: any;
   signupForm!: FormGroup;
   loginForm!: FormGroup;
-  data: any
   usernameErrorMessage: string | null = null;
   userErrorMessage: string | null = null;
   emailErrorMessage: string | null = null;
@@ -41,7 +41,7 @@ export class UserLoginComponent {
     private dialog: MatDialog,
 
   ) {
- 
+
   }
 
   ngOnInit(): void {
@@ -55,7 +55,7 @@ export class UserLoginComponent {
       Newemail: ['', Validators.required],
       Newusername: ['', Validators.required],
       Newpassword: ['', Validators.required],
-      gender: ['',Validators.required],
+      gender: ['', Validators.required],
     });
     this.checkUserLoginStatus();
 
@@ -78,14 +78,14 @@ export class UserLoginComponent {
           this.data = response;
           this.toastrService.success('Compte crée avec succès');
           this.signupForm.reset();
-       //   this.showLoginPopup = true;
+          //   this.showLoginPopup = true;
         } else {
           this.toastrService.error('erreur lors de l\'inscription, veuillez réessayer');
-       //   console.error('Signup failed: No access token received');
+          //   console.error('Signup failed: No access token received');
         }
       },
       (errorMessage) => {
-       // console.error('Signup failed:', errorMessage);
+        // console.error('Signup failed:', errorMessage);
         if (errorMessage === 'Email already exists') {
           this.emailErrorMessage = errorMessage;
         } else if (errorMessage === 'Username already exists') {
@@ -111,7 +111,7 @@ export class UserLoginComponent {
 
     this.authService.userLogin(username, password).subscribe(
       (response) => {
-          this.toastrService.success('Vous êtes connecté avec succès');
+        this.toastrService.success('Vous êtes connecté avec succès');
         if (response.accessToken && response.refreshToken) {
           this.loggedInUser = response.userInfo;
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
@@ -119,18 +119,18 @@ export class UserLoginComponent {
           //console.log('access token', response.accessToken)
           //console.log('user info', response.userinfo)
 
-        this.IsUserLogged = true;
-        this.dialog.closeAll();
+          this.IsUserLogged = true;
+          this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
         } else {
-         // console.error('Login failed: Tokens missing in the response');
+          // console.error('Login failed: Tokens missing in the response');
         }
       },
       (errorMessage) => {
         // Display Toastr message based on active navbar type
-         this.toastrService.error('Erreur de connexion, veuillez réessayer');
-       // console.error('Login failed:', errorMessage);
+        this.toastrService.error('Erreur de connexion, veuillez réessayer');
+        // console.error('Login failed:', errorMessage);
         this.userErrorMessage = errorMessage;
       }
     );
@@ -147,7 +147,7 @@ export class UserLoginComponent {
         return response.valid && response.userId !== null;
       }),
       catchError(error => {
-       // console.error('Error verifying token:', error);
+        // console.error('Error verifying token:', error);
         return of(false);
       })
     );
@@ -165,7 +165,7 @@ export class UserLoginComponent {
           // }
         },
         (error) => {
-        //  console.error('Error verifying token:', error);
+          //  console.error('Error verifying token:', error);
           this.IsUserLogged = false;
         }
       );
@@ -216,12 +216,14 @@ export class UserLoginComponent {
   // }
 
 
-//   openDialog(): void {
-//     this.dialog.open(ResetPasswordComponent, {
-//       width: '400px',
-//       data: { }
-//     });
-//   this.showLoginPopup=false;
-// }
+  //   openDialog(): void {
+  //     this.dialog.open(ResetPasswordComponent, {
+  //       width: '400px',
+  //       data: { }
+  //     });
+  //   this.showLoginPopup=false;
+  // }
+
+
 
 }

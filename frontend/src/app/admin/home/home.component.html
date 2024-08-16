@@ -1,0 +1,109 @@
+<div class="loader5" [hidden]="!loaderVisible">
+    <div class="loader-inner box-1"></div>
+    <div class="loader-inner box-2"></div>
+    <div class="loader-inner box-3"></div>
+    <div class="loader-inner box-4"></div>
+</div>
+
+
+<div class="main-content" [hidden]="loaderVisible">
+    <app-sidebar (menuIndex)="switchMemu($event)"></app-sidebar>
+    <div class="admin-nav">
+        <nav class=" nav navbar navbar-expand-lg bg-color-light fixed-top" id="navbar">
+            <button type="button" id="sidebarCollapse" class="btn custom-btn" id="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </button>
+            <div class="m-2 mt-2">
+                <a class="" style=" color: #000; text-decoration: none; font-size: px;">
+                    <span>Bjr.Docteur</span></a>
+            </div>
+            <button class="navbar-toggler ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">
+                <i class="fa fa-bars text-center"></i>
+            </button>
+            <div class="collapse navbar-collapse" [ngbCollapse]="isNavbarCollapsed" id="navbarSupportedContent">
+                <!-- Left links -->
+                <form class="search d-flex input-group w-auto align-items-center"
+                    style="margin-left:auto; margin-right:auto; display:block;">
+                </form>
+                <div class="d-flex align-items-end justify-content-end mt-3">
+                    <!-- <div class="avatar" (click)="openEnd(content)">
+                        <button class="notification-count bg-transparent border border-0"
+                            matBadge="{{notificationCount}}" [matBadgeHidden]="notificationCount === 0"
+                            matBadgeColor="accent">
+                            <mat-icon class="text-dark">notifications</mat-icon>
+                        </button>
+
+                    </div> -->
+                    <div class="avatar">
+                        <button class="bg-transparent border border-0">
+                            <mat-icon class="text-dark">account_circle</mat-icon>
+                        </button>
+                    </div>
+                    <div class="logout me-3" (click)="logout()">
+                        <button class="bg-transparent border border-0">
+                            <mat-icon matBadgeColor="primary" class="material-icons text-danger"
+                                type="button">logout</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <ng-template #sidebarTitle>
+
+        </ng-template>
+
+        <div id="content">
+            <main id="main" class="content offset-lg-3 p-">
+                <app-add-note *ngIf="menuIndex === 0"></app-add-note>
+                <app-my-note *ngIf="menuIndex === 1"></app-my-note>
+                <app-add-products *ngIf="menuIndex === 2"></app-add-products>
+                <app-list-products *ngIf="menuIndex === 3"></app-list-products>
+                <app-order-list *ngIf="menuIndex === 4"></app-order-list>
+            </main>
+        </div>
+
+
+
+
+
+
+        <ng-template #content let-offcanvas>
+            <div class="bg-color-light">
+                <div class="offcanvas-header">
+                    <h4 class="offcanvas-title fw-bold">Notifications</h4>
+                    <button type="button" class="btn-close" aria-label="Close"
+                        (click)="offcanvas.dismiss('Cross click')"></button>
+                </div>
+                <div class="container-fluid">
+
+                    <div class="d-flex justify-content-end mb-3">
+                        <button class="btn btn-danger fw-bold" (click)="deleteAllNotifications()"><mat-icon>delete</mat-icon>
+                            Tout supprimé</button>
+                    </div>
+
+                    <div class="row">
+                        <ng-container *ngIf="notifications.length > 0; else noNotifications">
+                            <div class="scrollab">
+                                <div class="col-12 mb-2" *ngFor="let notification of notifications; let i = index"
+                                    (swipeleft)="DeleteNotification(notification.id)"
+                                    class="notification-item bg-color shadow-sm border border-1">
+                                    <div class="p-2" (click)="onNotificationClick(notification)">
+                                        <time class="color-primary fw-bold">{{notification.createdAt | date: 'dd-MM-yyyy
+                                            HH:mm'}}</time>
+                                        <p>{{notification.message}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Display message when there are no notifications -->
+                        <ng-template #noNotifications>
+                            <div class="col-12 text-center">
+                                <p>pas de notifications pour le moment</p>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+    </div>

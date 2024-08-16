@@ -1,0 +1,52 @@
+<mat-dialog-content class="bg-color">
+  <div class="admin-modal mat-dialog-centered">
+    <div class="btn-action  d-flex justify-content-end mb-4">
+      <button class="btn btn-danger shadow-none" mat-dialog-close
+        (click)="onYesClick()"><mat-icon>close</mat-icon></button>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-2" *ngFor="let item of order.items">
+        <div class="card bg-color-light ">
+            <div class="d-lg-flex justify-content-between">
+              <div class="bg-image" data-mdb-ripple-color="light">
+            <img [src]="item.product.uploadedFileUrl" class="img-fluid d-md-block"
+            style="object-fit: cover; overflow: hidden; ;width:100%; height: 150px;" />
+           </div>
+          <div class="card-body">
+            <div class="info">
+              <p class="mb-0 text-uppercase fw-bold">
+                 {{ item.product.name }}<br>
+              </p>
+              <p class="mb-0">
+              Quantité: <strong class="text-danger">{{ item.quantity }}</strong><br>
+              </p>
+              <p class="mb-0">
+                Taille: {{ item.selectedSize }}
+              </p>
+
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</mat-dialog-content>
+
+
+
+
+
+
+<!-- 
+<div class="modal-body">
+  <h5>Items:</h5>
+  <ul>
+    <li *ngFor="let item of order.items">
+      Product: {{ item.product.name }}<br>
+      Quantity: {{ item.quantity }}<br>
+      Selected Size: {{ item.selectedSize }}
+    </li>
+  </ul>
+</div> -->

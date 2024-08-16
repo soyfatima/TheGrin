@@ -27,6 +27,15 @@
         </button>
 
         <div class="d-flex" *ngIf="IsUserLogged">
+          <div class="avatar" (click)="openEnd(content)">
+            <!--  -->
+            <button class="notification-count bg-transparent border border-0"
+                matBadge="{{notificationCount}}" [matBadgeHidden]="notificationCount === 0"
+                matBadgeColor="accent">
+                <mat-icon class="text-dark">notifications</mat-icon>
+            </button>
+
+        </div>
            <div class="avatar">
             <button class="bg-success text-white"> <mat-icon>shopping_cart</mat-icon>
             </button>
@@ -161,3 +170,52 @@
     </li>
   </ul>
 </div> -->
+
+
+
+
+
+
+
+
+
+
+<ng-template #content let-offcanvas style="z-index: 999;">
+  <div class="bg-color-light">
+      <div class="offcanvas-header">
+          <h4 class="offcanvas-title fw-bold">Notifications</h4>
+          <button type="button" class="btn-close" aria-label="Close"
+              (click)="offcanvas.dismiss('Cross click')"></button>
+      </div>
+      <div class="container-fluid">
+
+          <div class="d-flex justify-content-end mb-3">
+              <button class="btn btn-danger fw-bold" (click)="deleteAllNotifications()"><mat-icon>delete</mat-icon>
+                  Tout supprimé</button>
+          </div>
+
+          <div class="row">
+              <ng-container *ngIf="notifications.length > 0; else noNotifications">
+                  <div class="scrollab">
+                      <div class="col-12 mb-2" *ngFor="let notification of notifications; let i = index"
+                          (swipeleft)="DeleteNotification(notification)"
+                          (click)="onNotificationClick(notification.id)" style="cursor: pointer;"
+                          class="notification-item bg-color shadow-sm border border-1">
+                          <div class="p-2" >
+                              <time class="color-primary fw-bold">{{notification.createdAt | date: 'dd-MM-yyyy
+                                  HH:mm'}}</time>
+                              <p>{{notification.message}}</p>
+                          </div>
+                      </div>
+                  </div>
+              </ng-container>
+              <!-- Display message when there are no notifications -->
+              <ng-template #noNotifications>
+                  <div class="col-12 text-center">
+                      <p>pas de notifications pour le moment</p>
+                  </div>
+              </ng-template>
+          </div>
+      </div>
+  </div>
+</ng-template>

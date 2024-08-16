@@ -24,15 +24,25 @@ export class ChatComponent {
   isMobile = false;
   folderForm!: FormGroup;
   folders: any[] = [];
+  adminNotes: any[] = [];
   currentDate: Date = new Date();
+
+  selectedCard: any = null;
+  selectedNote: any = null;
 
   forum: any[] = [];
   filteredForum: any[] = [];
   selectedCategory: string = '';
-  currentPage: number = 1;
+  //currentPage: number = 1;
   itemsPerPage: number = 10;
   visiblePageRange: number[] = [];
-  selectedCard: any = null;
+
+  currentPageUserFolders: number = 1;
+  currentPageAdminNotes: number = 1;
+  filteredAdminNotes: any;
+
+  visiblePageRangeUserFolders: number[] = [];
+  visiblePageRangeAdminNotes: number[] = [];
   /////////////////////////////
   commentContent: string = '';
   folderId!: number;
@@ -53,6 +63,8 @@ export class ChatComponent {
   userSuggestions: any[] = [];
   private searchSubject = new Subject<string>();
   formattedReplyContent: string = '';
+  highlightCommentId: number | null = null;
+  highlightReplyId: number | null = null; // To store the ID of the reply to highlight
 
   @ViewChild('commentList') commentList!: ElementRef;
   sanitizedContent!: SafeHtml;
@@ -129,48 +141,77 @@ export class ChatComponent {
       uploadedFile: [null],
 
     });
+
     this.route.paramMap.subscribe(params => {
       const folderId = +params.get('id')!;
+      const commentId = +this.route.snapshot.queryParamMap.get('commentId')!;
+  
       this.folderId = folderId;
-      this.selectedCard = JSON.parse(localStorage.getItem('selectedCard')!);
-      if (this.selectedCard && this.selectedCard.id === folderId) {
+      console.log('Route Folder ID:', this.folderId);
+      console.log('Query Comment ID:', commentId);
+  
+      // Load selected card and comments
+      const savedCard = JSON.parse(localStorage.getItem('selectedCard')!);
+      if (savedCard && savedCard.id === folderId) {
+        this.selectedCard = savedCard;
         this.fetchComments(this.selectedCard.id);
+      }  else {
+          // If no matching card, reset state
+          this.deselectCard();
+        }
+        
+      // Highlight comment if available
+      if (commentId) {
+        this.highlightCommentId = commentId;
+        console.log('Highlight Comment ID:', this.highlightCommentId);
+      } else {
+        // Clear state if the folderId doesn't match
+        this.highlightCommentId = null;
       }
     });
-
-    const savedCard = localStorage.getItem('selectedCard');
-    if (savedCard) {
-      this.selectedCard = JSON.parse(savedCard);
-      this.fetchComments(this.selectedCard.id);
-    }
+  
+    // Clear highlightCommentId from localStorage
+    localStorage.removeItem('highlightCommentId');
+  
+    // Other initialization
     this.onResize();
     this.fetchFolders();
     this.updateTime();
     this.getLoggedInUserId();
+    this.fetchAdminNote();
   }
 
   selectCard(folder: any): void {
     this.selectedCard = folder;
     localStorage.setItem('selectedCard', JSON.stringify(folder));
     this.fetchComments(folder.id);
-    this.cdr.detectChanges(); // Force change detection
-
+    this.cdr.detectChanges();
   }
-
-
   deselectCard(): void {
     this.selectedCard = null;
     localStorage.removeItem('selectedCard');
     this.comments = [];
-    this.cdr.detectChanges(); // Force change detection
-    // this.fetchComments(folder.id);
-
+    this.cdr.detectChanges();
+  
+    // Manually clear query parameters from the URL
+    window.history.replaceState({}, '', '/chat');
   }
+  
+
+  selectNote(note: any): void {
+    this.selectedNote = note;
+    localStorage.setItem('selectedNote', JSON.stringify(note));
+  }
+
+  deselectNote(): void {
+    this.selectedNote = null;
+    localStorage.removeItem('selectedNote');
+  }
+
   //fetch folders and details
   fetchFolders(): void {
     this.folderService.getFolderDetails().subscribe(
       (folders) => {
-        // Assurez-vous que 'createdAt' est le nom correct du champ de date dans votre API
         this.folders = folders
           .map((folder: { uploadedFile: any; user: any; createdAt: Date }) => ({
             ...folder,
@@ -186,29 +227,45 @@ export class ChatComponent {
 
       },
       (error) => {
-        //        console.error('Error fetching folders:', error);
+        //console.error('Error fetching folders:', error);
+      }
+    );
+  }
+
+  fetchAdminNote(): void {
+    this.folderService.fetchAdminNote().subscribe(
+      (folders) => {
+        this.adminNotes = folders.map((folder: { uploadedFile: any; }) => ({
+          ...folder,
+          uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
+        }));
+   //   console.log('admin folder', this.adminNotes);
+        this.adminNotes = folders;
+        this.filteredAdminNotes = this.adminNotes;
+        this.updateVisiblePageRangeAdminNotes();
+      },
+      (error) => {
+        // console.error('Error fetching admin notes:', error);
       }
     );
   }
 
 
-
   deleteFolder(): void {
     if (this.selectedCard) {
       const folderId = this.selectedCard.id;
-  
+
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: { message: 'Êtes-vous sûre de vouloir supprimé ce post ?' }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          // User confirmed deletion
           this.folderService.deleteFolder(folderId).subscribe(
             () => {
               this.toastrService.success('Folder deleted successfully');
               this.folders = this.folders.filter(folder => folder.id !== folderId); // Remove the folder from the list
               this.deselectCard();
-              this.fetchFolders();
+              //   this.fetchFolders();
               this.cdr.detectChanges();
             },
             (error) => {
@@ -219,8 +276,6 @@ export class ChatComponent {
       });
     }
   }
-  
-
 
   updateTime(): void {
     setInterval(() => {
@@ -249,7 +304,7 @@ export class ChatComponent {
       if (this.lastCommentId) {
         this.scrollToLastComment();
       }
-    }, 300); // Adjust the delay as necessary
+    }, 300);
   }
 
   fetchComments(folderId: number): void {
@@ -261,67 +316,44 @@ export class ChatComponent {
           this.lastCommentDetails[folderId] = {
             user: lastComment.user.username,
             time: lastComment.createdAt,
-            //profilePictureUrl:lastComment.user.uploadedFile,
             id: lastComment.id
           };
-          this.lastCommentId = lastComment.id; // Set the last comment ID
+          this.lastCommentId = lastComment.id;
         } else {
           this.lastCommentDetails[folderId] = {
             user: '',
             time: '',
             id: 0
           };
-          this.lastCommentId = null; // No comments
+          this.lastCommentId = null;
         }
-       // Transform comments to include user profile image URLs
-       this.comments = comments.map((comment: { user: { uploadedFile: any }; replies: any[] }) => {
-        const commentUserProfileImageUrl = comment.user?.uploadedFile
-          ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}`
-          : null;
-
-        console.log('Comment user profile image URL:', commentUserProfileImageUrl);
-
-        const repliesWithImageUrls = comment.replies.map((reply: { user: { uploadedFile: any } }) => {
-          const replyUserProfileImageUrl = reply.user?.uploadedFile
-            ? `${environment.apiUrl}/blog-backend/uploads/${reply.user.uploadedFile}`
-            : null;
-
-          console.log('Reply user profile image URL:', replyUserProfileImageUrl);
-
-          return {
-            ...reply,
-            userProfileImageUrl: replyUserProfileImageUrl
-          };
-        });
-
-        return {
-          ...comment,
-          userProfileImageUrl: commentUserProfileImageUrl,
-          replies: repliesWithImageUrls
-        };
-      });
-
-      console.log('Updated comments with profile images:', this.comments); // For debugging
-
+  
         if (this.selectedCard && this.selectedCard.id === folderId) {
           this.comments = comments;
-          //  setTimeout(() => this.scrollToLastComment(), 300); // Ensure comments are rendered
+        }
+  
+        // Optionally handle highlighting here
+        if (this.highlightCommentId) {
+          setTimeout(() => {
+            const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
+            if (commentElement) {
+              commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              commentElement.classList.add('highlight');
+            }
+          }, 100);
         }
       },
       (error) => {
-        // console.error('Error fetching comments for folder ID:', folderId, error);
+        console.error('Error fetching comments for folder ID:', folderId, error);
       }
     );
   }
-
+  
   handleLastCommentClick(folderId: number): void {
-    // Select the card
-    this.selectCard(this.paginatedForum.find(folder => folder.id === folderId));
-
-    // Wait for the view to update and then scroll
+    this.selectCard(this.paginatedUserFolders.find(folder => folder.id === folderId));
     setTimeout(() => {
       this.scrollToLastComment();
-    }, 300); // Adjust the timeout if necessary
+    }, 300);
   }
 
   scrollToLastComment(): void {
@@ -363,6 +395,7 @@ export class ChatComponent {
 
   ///////////////////////////
   //reply
+
   submitReply(): void {
     if (this.replyContent.trim() === '' || this.replyingTo === null) {
       return;
@@ -381,6 +414,7 @@ export class ChatComponent {
         }
       );
   }
+  
   fetchUserSuggestions(prefix: string): void {
     this.commentService.getUserSuggestions(prefix)
       .subscribe(
@@ -395,9 +429,9 @@ export class ChatComponent {
   }
 
   onReplyContentChange(): void {
-    const mentionMatch = this.replyContent.match(/@(\w*)$/); // Capture last mention in the input
+    const mentionMatch = this.replyContent.match(/@(\w*)$/);
     if (mentionMatch) {
-      const prefix = mentionMatch[1]; // Get the prefix after '@'
+      const prefix = mentionMatch[1];
       if (prefix.length > 1) {
         this.fetchUserSuggestions(prefix);
       } else {
@@ -415,10 +449,9 @@ export class ChatComponent {
 
 
   selectUser(username: string): void {
-    // Replace the last mention with the selected username
     const mentionRegex = /@(\w*)$/;
     this.replyContent = this.replyContent.replace(mentionRegex, `@${username} `);
-    this.userSuggestions = []; // Clear suggestions after selection
+    this.userSuggestions = [];
   }
 
   replyToComment(commentId: number): void {
@@ -432,7 +465,7 @@ export class ChatComponent {
 
   editReply(reply: any): void {
     reply.isEditing = true;
-    reply.editContent = reply.content; // Pre-fill the textarea with the existing content
+    reply.editContent = reply.content;
   }
 
   cancelEditReply(reply: any): void {
@@ -442,11 +475,10 @@ export class ChatComponent {
   saveReply(reply: any): void {
     const content = reply.editContent;
     const id = reply.id;
-    const folderId = reply.folderId; // Ensure folderId is correctly retrieved from the reply object
+    const folderId = reply.folderId;
 
     this.commentService.updateReply(id, folderId, content).subscribe(
       (response) => {
-        // Update the reply content
         reply.content = content;
         reply.isEditing = false;
         this.cdr.detectChanges();
@@ -476,8 +508,15 @@ export class ChatComponent {
       }
     });
   }
-  showUserReply(commentId: number) {
-    this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId]
+  showUserReply(commentId: number): void {
+    this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId];
+    
+    // Highlight the replies of the specific comment
+    if (this.isUserReplyVisible[commentId]) {
+      this.highlightReplyId = commentId; // Or set this to the specific reply ID if needed
+    } else {
+      this.highlightReplyId = null;
+    }
   }
   ///////////////////////////
   //folder edit
@@ -532,11 +571,10 @@ export class ChatComponent {
   saveComment(comment: any): void {
     const content = comment.editContent;
     const id = comment.id;
-    const folderId = comment.folderId; // Assuming folderId is available in comment object
+    const folderId = comment.folderId;
 
     this.commentService.updateComment(id, folderId, content).subscribe(
       (response) => {
-        // Update the comment content
         comment.content = content;
         comment.isEditing = false;
         this.cdr.detectChanges();
@@ -553,12 +591,11 @@ export class ChatComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // User confirmed deletion
         this.commentService.deleteComment(commentId).subscribe(
           () => {
             this.toastrService.success('Commentaire supprimé avec succès');
             this.comments = this.comments.filter(comment => comment.id !== commentId);
-            this.fetchFolders();
+            //    this.fetchFolders();
           },
           (error) => {
             this.toastrService.error('Erreur lors de la suppression');
@@ -567,7 +604,7 @@ export class ChatComponent {
       }
     });
   }
-  
+
 
   ////////////////////////////
   ///publish post
@@ -602,7 +639,6 @@ export class ChatComponent {
   }
 
 
-  // Method to handle file selection
   chooseImage(event: Event) {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
@@ -610,7 +646,6 @@ export class ChatComponent {
         uploadedFile: fileInput.files[0]
       });
     } else {
-      // Clear the uploadedFile if no file is selected
       this.folderForm.patchValue({
         uploadedFile: null
       });
@@ -621,63 +656,94 @@ export class ChatComponent {
   toggleCategory() {
     this.isCategoryHidden = !this.isCategoryHidden;
   }
-
-  filterForumByCategory(category: string) {
+  filterForumByCategory(category: string): void {
     this.selectedCategory = category;
-    if (this.selectedCategory) {
-      this.filteredForum = this.folders.filter(forum => forum.category === category);
+    if (category === '') {
+      this.filteredForum = this.folders;  // Reset to all folders if 'Tout afficher'
+      this.filteredAdminNotes = this.adminNotes;  // Reset to all admin notes if 'Tout afficher'
     } else {
-      this.filteredForum = this.folders;
+      this.filteredForum = this.folders.filter(folder => folder.category === category);
+      this.filteredAdminNotes = this.adminNotes.filter(note => note.category === category);
     }
+
+    // Update visible page ranges for both datasets
+    this.updateVisiblePageRangeUserFolders();
+    this.updateVisiblePageRangeAdminNotes();
   }
 
-
-  clearFilter() {
-    this.selectedCategory = '';
-    this.filteredForum = this.forum;
-  }
-
-
-  get paginatedForum(): any[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  get paginatedUserFolders(): any[] {
+    const startIndex = (this.currentPageUserFolders - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     return this.filteredForum.slice(startIndex, endIndex);
   }
 
-  changePage(pageNumber: number): void {
-    this.currentPage = pageNumber;
-    this.updateVisiblePageRange();
+  get paginatedAdminNotes(): any[] {
+    const startIndex = (this.currentPageAdminNotes - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredAdminNotes.slice(startIndex, endIndex);
   }
 
-  previousPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
+  changePageUserFolders(pageNumber: number): void {
+    this.currentPageUserFolders = pageNumber;
+    this.updateVisiblePageRangeUserFolders();
+  }
+
+  changePageAdminNotes(pageNumber: number): void {
+    this.currentPageAdminNotes = pageNumber;
+    this.updateVisiblePageRangeAdminNotes();
+  }
+
+  previousPageUserFolders(): void {
+    if (this.currentPageUserFolders > 1) {
+      this.currentPageUserFolders--;
+      this.updateVisiblePageRangeUserFolders();
     }
   }
 
-  nextPage(): void {
-    if (this.currentPage < this.getTotalPages()) {
-      this.currentPage++;
+  nextPageUserFolders(): void {
+    if (this.currentPageUserFolders < this.getTotalPagesUserFolders()) {
+      this.currentPageUserFolders++;
+      this.updateVisiblePageRangeUserFolders();
     }
   }
 
-  getTotalPages(): number {
+  previousPageAdminNotes(): void {
+    if (this.currentPageAdminNotes > 1) {
+      this.currentPageAdminNotes--;
+      this.updateVisiblePageRangeAdminNotes();
+    }
+  }
+
+  nextPageAdminNotes(): void {
+    if (this.currentPageAdminNotes < this.getTotalPagesAdminNotes()) {
+      this.currentPageAdminNotes++;
+      this.updateVisiblePageRangeAdminNotes();
+    }
+  }
+
+  getTotalPagesUserFolders(): number {
     return Math.ceil(this.filteredForum.length / this.itemsPerPage);
   }
 
-  getPageNumbers(): number[] {
-    const pageCount = Math.ceil(this.filteredForum.length / this.itemsPerPage);
-    return Array.from({ length: pageCount }, (_, index) => index + 1);
+  getTotalPagesAdminNotes(): number {
+    return Math.ceil(this.filteredAdminNotes.length / this.itemsPerPage);
   }
 
-  updateVisiblePageRange(): void {
-    const totalPages = this.getTotalPages();
-    const maxVisiblePages = 5;
-    // Calcul de la plage de pages actuellement affichée
-    let startPage = this.currentPage - Math.floor(maxVisiblePages / 2);
-    let endPage = this.currentPage + Math.ceil(maxVisiblePages / 2) - 1;
+  updateVisiblePageRangeUserFolders(): void {
+    const totalPages = this.getTotalPagesUserFolders();
+    this.visiblePageRangeUserFolders = this.calculateVisiblePageRange(this.currentPageUserFolders, totalPages);
+  }
 
-    // Ajustement de la plage de pages si elle dépasse les limites
+  updateVisiblePageRangeAdminNotes(): void {
+    const totalPages = this.getTotalPagesAdminNotes();
+    this.visiblePageRangeAdminNotes = this.calculateVisiblePageRange(this.currentPageAdminNotes, totalPages);
+  }
+
+  calculateVisiblePageRange(currentPage: number, totalPages: number): number[] {
+    const maxVisiblePages = 5;
+    let startPage = currentPage - Math.floor(maxVisiblePages / 2);
+    let endPage = currentPage + Math.ceil(maxVisiblePages / 2) - 1;
+
     if (startPage < 1) {
       endPage += (1 - startPage);
       startPage = 1;
@@ -686,15 +752,14 @@ export class ChatComponent {
       startPage -= (endPage - totalPages);
       endPage = totalPages;
     }
-    // Mise à jour de la plage de pages actuellement affichée
-    this.visiblePageRange = Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
+    return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
   }
 
   switchTab(tab: string): void {
     this.tab = tab;
   }
 
- 
+
   getLoggedInUserId(): void {
     const authData = this.tokenService.getAuthData();
     if (authData && authData.accessToken) {
@@ -702,7 +767,7 @@ export class ChatComponent {
         (response) => {
           if (response.valid) {
             this.loggedInUserId = response.userId;
-            this.cdr.detectChanges(); // Force change detection
+            this.cdr.detectChanges();
           } else {
             this.loggedInUserId = null;
           }

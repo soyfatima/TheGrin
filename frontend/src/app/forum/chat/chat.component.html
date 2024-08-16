@@ -69,8 +69,9 @@
         <div class="content">
             <div *ngIf="tab === 'forum'">
                 <div class="content padding">
+                    <div class="mb-4" *ngIf="paginatedUserFolders.length ===0">Pas de poste pour le moment</div>
                     <div class="row" *ngIf="!selectedCard">
-                        <div class="col-md-4 mb-4" type="button" *ngFor="let folder of paginatedForum">
+                        <div class="col-md-6 mb-4" type="button" *ngFor="let folder of paginatedUserFolders">
                             <div class="">
                                 <div class=" p-2 border border-1 bg-color" (click)="selectCard(folder)"
                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
@@ -83,7 +84,8 @@
                                             </div>
                                             <div class="info ms-sm-4">
                                                 <div class="name fw-bold color-primary"
-                                                    (click)="goToUserFolders(folder.user.id)">{{folder.user.username}}
+                                                    (click)="goToUserFolders(folder.user?.id)">
+                                                    {{ folder.user?.username }}
                                                 </div>
                                                 <div class="time">{{folder.createdAt | date: 'yyyy-MM-dd HH:mm:ss'}}
                                                 </div>
@@ -112,6 +114,22 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="pagination blog-pagination d-flex align-items-center justify-content-center">
+                            <ul>
+                                <li>
+                                    <button (click)="previousPageUserFolders()">Préc</button>
+                                </li>
+                                <li *ngFor="let pageNumber of visiblePageRangeUserFolders"
+                                    [class.active]="currentPageUserFolders === pageNumber">
+                                    <button (click)="changePageUserFolders(pageNumber)">
+                                        {{ pageNumber }}
+                                    </button>
+                                </li>
+                                <li>
+                                    <button (click)="nextPageUserFolders()">Suiv</button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <!--selected post-->
                     <div *ngIf="selectedCard" class="selectedCard">
@@ -129,15 +147,13 @@
 
 
                                 <div class="info ms-sm-4">
-                                    <h4 class="color-primary">{{selectedCard.user.username}}</h4>
+                                    <h4 class="color-primary">{{selectedCard.user?.username}}</h4>
                                     <time class="time mb-1">{{selectedCard.createdAt | date: 'yyyy-MM-dd
                                         HH:mm:ss'}}</time>
                                 </div>
                             </div>
+                            <div class="content mb-4">
                             <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
-                            <div class="user-uploaded-file" *ngIf="selectedCard?.FolderUploadedFileUrl">
-                                <img [src]="selectedCard.FolderUploadedFileUrl" alt="img" class="img-fluid" width="400">
-                            </div>
                             <div class="content edit-content mb-3">
                                 <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
                                     <p [innerHTML]="selectedCard?.content"></p>
@@ -159,12 +175,17 @@
                                     </div>
                                 </ng-template>
                             </div>
+                            <div class="user-uploaded-file" *ngIf="selectedCard?.FolderUploadedFileUrl">
+                                <img [src]="selectedCard.FolderUploadedFileUrl" alt="img" class="img-fluid" width="400">
+                            </div>
+                            </div>
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
                                     <h4 class="mb-4">({{ comments.length }}) Commentaire</h4>
 
                                     <div class="p-2 mb-3 bg-color rounded-2 bordr border1"
-                                        *ngFor="let comment of comments" [id]="'comment-' + comment.id">
+                                        *ngFor="let comment of comments" [id]="'comment-' + comment.id"
+                                        [ngClass]="{'highlight': comment.id === highlightCommentId}">
                                         <div class="card-body">
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                 <div
@@ -172,13 +193,14 @@
                                                     <img [src]="comment.userProfileImageUrl" alt="img"
                                                         class="img-fluid rounded-circle bg-white">
                                                 </div>
-                                                <div class="user-comment-info ms-sm-4">
+                                                <div class="user-comment-info ms-sm-4" *ngIf="comment.user">
                                                     <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
                                                     </p>
                                                     <p class="time text-default mb-0">{{comment.createdAt | date:
                                                         'yyyy-MM-dd
                                                         HH:mm:ss'}}</p>
-                                                    <p class="color-primary fw-bold" (click)="showUserReply(comment.id)">
+                                                    <p class="color-primary fw-bold"
+                                                        (click)="showUserReply(comment.id)">
                                                         ({{comment.replies?.length || 0}}) réponse</p>
                                                 </div>
                                             </div>
@@ -188,7 +210,8 @@
                                                 <div class="reply" data-aos="fade-in">
                                                     <hr>
                                                     <div class="bg-color-white p-2 mb-3 shadow-sm "
-                                                        *ngFor="let reply of comment.replies">
+                                                        *ngFor="let reply of comment.replies"
+                                                        [ngClass]="{'highlight': reply.id === highlightReplyId}">
                                                         <div
                                                             class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                             <div
@@ -245,11 +268,11 @@
                                                         <button *ngIf="comment?.user?.id === loggedInUserId"
                                                             (click)="deleteComment(comment.id)"
                                                             class=" bg-secondary border border-0 rounded-3 p-2 m-1 color-default">Supprimer</button>
-                                                            <button (click)="replyToComment(comment.id)"
+                                                        <button (click)="replyToComment(comment.id)"
                                                             class="bg-color-primary border border-0 rounded-3 p-2 m-1 color-default">
                                                             Répondre
                                                         </button>
-                                                        </div>
+                                                    </div>
                                                 </ng-container>
                                                 <ng-template #editMode>
                                                     <textarea [(ngModel)]="comment.editContent" class="form-control"
@@ -262,17 +285,10 @@
                                                     </div>
                                                 </ng-template>
                                             </div>
-
-                                        </div>
-                                        <div class="d-flex justify-content-end">
-                                            <!-- <button (click)="replyToComment(comment.id)"
-                                                class="bg-color-primary border border-0 rounded-3 p-2 color-default">
-                                                Répondre
-                                            </button> -->
-
                                         </div>
                                         <!-- Reply box -->
-                                        <div class="reply-box col-lg-12" *ngIf="replyingTo === comment.id" data-aos="fade-in">
+                                        <div class="reply-box col-lg-12" *ngIf="replyingTo === comment.id"
+                                            data-aos="fade-in">
                                             <form (ngSubmit)="submitReply()" #replyForm="ngForm">
                                                 <div class=" form-group">
                                                     <label class="form-label" for="replyContent"></label>
@@ -286,7 +302,8 @@
                                                         <div *ngIf="userSuggestions.length > 0"
                                                             class="suggestions-list">
                                                             <ul>
-                                                                <li class="color-primary" *ngFor="let user of userSuggestions"
+                                                                <li class="color-primary"
+                                                                    *ngFor="let user of userSuggestions"
                                                                     (click)="selectUser(user.username)">
                                                                     {{ user.username }}
                                                                 </li>
@@ -363,10 +380,59 @@
                 </div>
             </div>
             <div *ngIf="tab === 'note'">
-                <div class="content py-5">
+                <div class="content padding">
+                    <div class="mb-4" *ngIf="adminNotes.length === 0">Pas de note disponible.</div>
+                    <!-- Display the list of notes if no note is selected -->
+                    <div class="row" *ngIf="!selectedNote">
+                        <div class="col-md-4 mb-3" *ngFor="let note of paginatedAdminNotes">
+                            <div class="card bg-color" (click)="selectNote(note)">
+                                <div class="card-body">
+                                    <span>Admin</span>
+                                    <h3 class="fw-bold">{{ note.title }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pagination blog-pagination d-flex align-items-center justify-content-center">
+                            <ul>
+                                <li>
+                                    <button class="" (click)="previousPageAdminNotes()">Préc</button>
+                                </li>
+                                <li *ngFor="let pageNumber of visiblePageRangeAdminNotes"
+                                    [class.active]="currentPageAdminNotes === pageNumber">
+                                    <button (click)="changePageAdminNotes(pageNumber)">
+                                        {{ pageNumber }}
+                                    </button>
+                                </li>
+                                <li>
+                                    <button (click)="nextPageAdminNotes()">Suiv</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Display the selected note's details -->
+                    <div *ngIf="selectedNote">
+                        <div class="card-body">
+                            <div class="position-fixed" style="right: 0px; bottom: 0px; z-index: 2;">
+                                <button (click)="deselectNote()" class="btn btn-secondary mb-3">
+                                    <mat-icon>arrow_back</mat-icon> Retour
+                                </button>
+                            </div>
+                            <div class="info">
+                                <div class="user-uploaded-file" *ngIf="selectedNote?.uploadedFileUrl">
+                                    <img [src]="selectedNote.uploadedFileUrl" alt="Note Image" class="img-fluid"
+                                        width="400">
+                                </div>
+                                <h3>{{ selectedNote.title }}</h3>
+                                <p>{{ selectedNote.content }}</p>
+
+
+                                <!-- <img *ngIf="selectedNote.uploadedFileUrl" [src]="selectedNote.uploadedFileUrl"
+                                alt="Uploaded File" /> -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

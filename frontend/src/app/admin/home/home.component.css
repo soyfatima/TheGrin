@@ -1,0 +1,108 @@
+.loader5 {
+    width: 300px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    /* Ensure it appears above other content */
+}
+
+.loader5 .loader-inner {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    position: absolute;
+    transition: all .8s ease-in-out;
+}
+
+.loader5 .box-1 {
+    background: #89fc00;
+    top: 125px;
+    right: 0;
+    animation: loading-1 2.2s infinite;
+}
+
+.loader5 .box-2 {
+    background: #dc0073;
+    top: 125px;
+    animation: loading-2 2.2s infinite;
+}
+
+.loader5 .box-3 {
+    background: #1be7ff;
+    top: 0;
+    left: 125px;
+    animation: loading-3 2.2s infinite;
+}
+
+.loader5 .box-4 {
+    background: #ffb800;
+    bottom: 0;
+    left: 125px;
+    animation: loading-4 2.2s infinite;
+}
+
+@keyframes loading-1 {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-250px);
+    }
+}
+
+@keyframes loading-2 {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(250px);
+    }
+}
+
+@keyframes loading-3 {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(250px);
+    }
+}
+
+@keyframes loading-4 {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-250px);
+    }
+}
+
+
+.scrollab {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 430px;
+}
+
+.notification-item {
+    position: relative;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px 0;
+    transition: transform 0.3s ease;
+}

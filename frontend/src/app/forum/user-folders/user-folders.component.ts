@@ -27,12 +27,12 @@ export class UserFoldersComponent implements OnInit {
   pageSize = 10;
   pageIndexComments = 0;
   pageIndexFolders = 0;
-//////////////////////////
-loggedInUserId: number | null = null;
-isEditing: boolean = false;
-uploadedFile: File | null = null;
-previewImageUrl: string | ArrayBuffer | null = null; // To store the preview image URL
-usernameForm: FormGroup;
+  //////////////////////////
+  loggedInUserId: number | null = null;
+  isEditing: boolean = false;
+  uploadedFile: File | null = null;
+  previewImageUrl: string | ArrayBuffer | null = null; // To store the preview image URL
+  usernameForm: FormGroup;
 
   @ViewChild('paginatorComments', { static: true }) paginatorComments!: MatPaginator;
   @ViewChild('paginatorFolders', { static: true }) paginatorFolders!: MatPaginator;
@@ -48,7 +48,7 @@ usernameForm: FormGroup;
     private tokenService: TokenService,
     private cdr: ChangeDetectorRef,
 
-  ) { 
+  ) {
     this.usernameForm = this.fb.group({
       username: [''],
       uploadedFile: [null]
@@ -91,7 +91,7 @@ usernameForm: FormGroup;
       (folders: any[]) => {
         this.folders = folders || [];
         this.paginateFolders();
-         this.folders = this.folders.map(folder => {
+        this.folders = this.folders.map(folder => {
           const uploadedFileUrl = folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${folder.user.uploadedFile}` : null;
           return {
             ...folder,
@@ -100,7 +100,7 @@ usernameForm: FormGroup;
         });
       },
       (error) => {
-     //   console.error('Error fetching folders:', error);
+        //   console.error('Error fetching folders:', error);
       }
     );
   }
@@ -110,10 +110,10 @@ usernameForm: FormGroup;
       (comments: any[]) => {
         this.comments = comments;
         this.comments = comments || [];
-        this.paginateComments(); 
+        this.paginateComments();
       },
       (error) => {
-     //   console.error('Error fetching comments:', error);
+        //   console.error('Error fetching comments:', error);
       }
     );
   }
@@ -134,14 +134,14 @@ usernameForm: FormGroup;
       return;
     }
 
-    this.selectedCard = this.folders.find(folder => folder.id === folderId); 
+    this.selectedCard = this.folders.find(folder => folder.id === folderId);
     localStorage.setItem('selectedCard', JSON.stringify(this.selectedCard));
 
     const queryParams = commentId ? { commentId } : {};
     this.router.navigate(['/chat', folderId], { queryParams });
   }
 
-  
+
   getLoggedInUserId(): void {
     const authData = this.tokenService.getAuthData();
     if (authData && authData.accessToken) {
@@ -155,7 +155,7 @@ usernameForm: FormGroup;
           }
         },
         (error) => {
-         // console.error('Error verifying token:', error);
+          // console.error('Error verifying token:', error);
           this.loggedInUserId = null;
         }
       );
@@ -170,15 +170,15 @@ usernameForm: FormGroup;
       reader.onload = (e: any) => {
         this.previewImageUrl = e.target.result;
       };
-      reader.readAsDataURL(file);  
+      reader.readAsDataURL(file);
     }
   }
-  
-  
+
+
   EditUserInfo(): void {
     if (this.usernameForm.valid) {
       const username = this.usernameForm.get('username')?.value;
-      
+
       const formData = new FormData();
       formData.append('username', username);
       if (this.uploadedFile) {
@@ -190,12 +190,12 @@ usernameForm: FormGroup;
           this.isEditing = false;
         },
         (error) => {
-//          console.error('Error updating user info:', error);
+          //          console.error('Error updating user info:', error);
         }
       );
     }
   }
-  
+
   cancel(): void {
     this.isEditing = false;
   }

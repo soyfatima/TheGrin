@@ -1,0 +1,74 @@
+<mat-dialog-content class="bg-color-light">
+    <div class="admin-modal mat-dialog-centered">
+        <div class="btn-action d-flex justify-content-end mb-4">
+            <button class="btn btn-danger shadow-none" mat-dialog-close
+                (click)="onYesClick()"><mat-icon>close</mat-icon></button>
+        </div>
+        <form>
+            <div class="input-form mb-3">
+                <label class="form-label">titre</label>
+                <input type="text" class="form-control" [(ngModel)]="folder.title" name="name">
+            </div>
+          <div *ngIf="data.type ==='folder'">
+            <div class="input-form mb-3">
+                <label class="form-label">Contenu</label>
+                <textarea name="content" cols="" rows="5" class="form-control"
+                    [(ngModel)]="folder.content"></textarea>
+            </div>
+          </div>
+
+            <div *ngIf="data.type === 'product'">
+                <div class="input-form mb-3">
+                    <label class="form-label">Nom</label>
+                    <input type="text" class="form-control" [(ngModel)]="product.name" name="name">
+                </div>
+                <div class="input-form mb-3">
+                    <label class="form-label">Remise</label>
+                    <input type="text" class="form-control" [(ngModel)]="product.remise" name="remise">
+                </div>
+                <div class="input-form mb-3">
+                    <label class="form-label">Prix</label>
+                    <input type="text" 
+                    class="form-control"
+                    (input)="onPriceInput($event)"
+                     [(ngModel)]="product.price"
+                     name="price">
+                </div>
+                <div class="input-form mb-3">
+                    <label class="form-label">Changer de catégorie</label>
+                    <select name="category" [(ngModel)]="product.category" class="form-select">
+                        <option [value]="product.category">{{ product.category }}</option>
+                        <!-- Display current category -->
+                        <option *ngFor="let option of ProductCategory" [value]="option.name">{{ option.name }}</option>
+                    </select>
+                </div>
+                <!-- -->
+                  <div class="row">
+                    <div class="col-md-6 mb-3" *ngFor="let size of product.sizes; let i = index">
+                      <div class="form-group d-flex align-items-start">
+                        <label for="size{{ i }}">Taille {{ i + 1 }}</label>
+                        <div class="input-group">
+                          <input type="text" class="mb-3 form-control" id="size{{ i }}" [(ngModel)]="product.sizes[i]" name="size{{ i }}">
+                        <div class="btn-action">
+                          <button type="button" class="btn btn-danger rounded-0" style="padding: 6px;" (click)="removeSize(i)">-</button>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-primary mb-3" (click)="addSize()">+</button>
+                  
+                <div class="input-form mb-3">
+                    <label class="form-label">Contenu</label>
+                    <textarea name="content" cols="" rows="5" class="form-control"
+                        [(ngModel)]="product.content"></textarea>
+                </div>
+            </div>
+
+            <div class="btn-submit d-flex justify-content-end">
+                <button class="btn bg-primary text-white shadow" (click)="onSave()">Modifier</button>
+            </div>
+        </form>
+    </div>
+
+</mat-dialog-content>

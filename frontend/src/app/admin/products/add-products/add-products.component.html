@@ -1,0 +1,75 @@
+<div class="py-4 mt-3"></div>
+
+<div class="admin container-fluid">
+  <div class="bg-color head text-center mb-2 p-2">
+    <h6 class="fw-bold">AJOUTER UN PRODUIT</h6>
+  </div>
+  <div class="row">
+    <div class="col-md-12 m-auto" data-aos="zoom-in">
+      <div class="add-article card bg-color-light shadow-sm border border-0">
+        <div class="card-body">
+          <div class="formClass">
+            <form (ngSubmit)="onSubmit()" [formGroup]="productForm">
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Nom du produit</label>
+                    <input type="text" formControlName="name" class="form-control" placeholder="Veuillez donner un titre à votre article" required>
+                  </div>
+                <div class="col-md-6 col-6 mb-3">
+                  <label class="form-label">Choississez une Catégorie</label>
+                  <select formControlName="category" class="form-select" required>
+                    <option selected disabled>Choississez une option</option>
+                    <option *ngFor="let option of Categories" [value]="option.value">{{ option.label }}</option>
+                  </select>
+                </div>
+               
+                  <div class="col-md-6 col-6 mb-3">
+                  <label class="form-label">Image</label>
+                  <input type="file" class="form-control" #inputFile formControlName="uploadedFile" (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg" required />
+                </div>  
+                <div class="col-md-6 mb-3">
+                 <label class="form-label">Remise</label>
+                 <input type="number" formControlName="remise" class="form-control" placeholder="remise 0 ou + " required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Prix</label>
+                  <input
+                    type="text"
+                    formControlName="price"
+                    class="form-control"
+                    (input)="onPriceInput($event)"
+                    placeholder="Prix du produit"
+                    required
+                  />
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <div formArrayName="sizes">
+                    <div *ngFor="let size of sizes.controls; let i = index">
+                      <div [formGroupName]="i">
+                        <label for="size">Taille</label>
+                        <input id="size" formControlName="size" type="text" class="rounded-0 p-2 border border-1 size mb-3" placeholder="size . . . ">
+                        <button type="button" class="btn btn-danger rounded-0" (click)="removeSize(i)">-</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-primary" (click)="addSize()">+</button>
+              </div>
+              </div>
+              <div class="message mb-4">
+                <label class="form-label">Description</label>
+                <textarea formControlName="content" class="form-control" cols="" rows="5" placeholder="Information supplémentaire ..." required></textarea>
+              </div>
+              <div class="text-center">
+                <button class="btn btn-primary w-100" type="submit" [disabled]="productForm.invalid">Enregistrer</button>
+              </div>
+            </form>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

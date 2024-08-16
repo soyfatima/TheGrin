@@ -1,0 +1,66 @@
+<div class="py-4 mt-3"></div>
+<div class="admin container-fluid">
+  <div class="bg-color text-center mb-3 p-2">
+    <h6 class="fw-bold">LISTE DES COMMANDES</h6>
+  </div>
+
+  <div class="d-flex justify-content-end mb-3">
+<button class="btn btn-danger fw-bold" (click)="deleteAllOrder()"><mat-icon>delete</mat-icon>tout supprimé</button>
+  </div>
+
+  <div class="row" *ngIf="orders.length > 0; else noOrders">
+    <div class="col-sm-4 col-md-6 col-lg-4 mb-3" *ngFor="let order of orders" data-aos="fade-up">
+      <div class="card bg-color-light border border-0 shadow-sm">
+        <div class="card-body">
+          <span class="badge badge-success mb-3">commande {{ order.id }}</span>
+          <div class="info">
+            <p class="mb-0"> <mat-icon class="circle-icon">account_circle</mat-icon> {{ order.username }}</p>
+            <hr>
+            <p class="mb-0"><mat-icon class="circle-icon">home</mat-icon> {{ order.address }}</p>
+            <hr>
+            <p class="mb-0"><mat-icon class="circle-icon">call</mat-icon> {{ order.phoneNumber }}</p>
+            <hr>
+            <div class="d-flex justify-content-end mb-1">
+              <p class="text-danger"><strong>Total : {{formatNumberWithSeparator(order.totalAmount) }}</strong></p>
+            </div>
+            <div class="btn-action d-flex justify-content-end mb-0">
+              <button class="btn btn-danger border border-0 rounded-2 shadow-sm m-1"
+                (click)="deleteOrder(order.id)"><mat-icon>delete</mat-icon></button>
+              <button class="btn btn-primary border border-0 rounded-2 shadow-sm m-1"
+                (click)="openOrderModal(order)"><mat-icon>visibility</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noOrders>
+    <div class="bg-color p-3 text-center">
+        <p>Pas de commande pour le moment</p>
+    </div>
+  </ng-template>
+
+
+
+
+  <!-- <div *ngIf="orders.length > 0; else noOrders">
+            <h2>Orders List</h2>
+            <div *ngFor="let order of orders" class="order-item">
+              <h3>Order ID: {{ order.id }}</h3>
+              <p>Username: {{ order.username }}</p>
+              <p>Address: {{ order.address }}</p>
+              <p>Phone Number: {{ order.phoneNumber }}</p>
+              <p>Total Amount: {{ order.totalAmount }}</p>
+              
+              <h4>Items:</h4>
+              <ul>
+                <li *ngFor="let item of order.items">
+                  <p>Product Name: {{ item.product.name }}</p>
+                  <p>Quantity: {{ item.quantity }}</p>
+                  <p>Selected Size: {{ item.selectedSize }}</p>
+                  <p>Price: {{ item.product.price }}</p>
+                </li>
+              </ul>
+            </div>
+          </div> -->

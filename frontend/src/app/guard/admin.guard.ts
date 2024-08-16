@@ -16,14 +16,11 @@ export class AdminGuard implements CanActivate {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (this.authService.isAdmin()) {
       return true; 
-    } else {
-      // Vérifiez si l'admin est connecté
-      if (this.authService.isLoggedIn()) {
-        this.router.navigate(['/home']); 
-      } else {
+    }  else {
         this.router.navigate(['/login']); 
       }
       return false; 
     }
-  }
+  
+
 }

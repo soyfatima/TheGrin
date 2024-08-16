@@ -1,0 +1,49 @@
+<div class="py-4 mt-3"></div>
+
+<div class="admin container-fluid">
+  <div class="bg-color head text-center mb-2 p-2">
+    <h6 class="fw-bold">AJOUTER UNE NOTE</h6>
+  </div>
+  <div class="row">
+    <div class="col-md-12 m-auto" data-aos="zoom-in">
+      <div class="add-article card bg-color shadow-sm border border-0">
+        <div class="card-body">
+          <div class="formClass">
+            <form (ngSubmit)="onSubmit()" [formGroup]="folderForm">
+                <div class="form-input col-8 mb-3">
+                    <label class="form-label">Titre</label>
+                    <input type="text" class="form-control" formControlName="title" required>
+                </div>
+                <div class="col-md-6 col-6 mb-3">
+                    <label class="form-label">Choississez une Catégorie</label>
+                    <select class="form-select" formControlName="category" required>
+                        <option selected disabled>Choississez une option</option>
+                        <option *ngFor="let option of Categories" [value]="option.value">{{
+                            option.label}}</option>
+                    </select>
+                </div>
+                <div class="col-md-6 col-6 mb-3">
+                    <label class="form-label">Image (facultative)</label>
+                    <input type="file" class="form-control" #inputFile formControlName="uploadedFile"
+                        (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg" />
+                </div>
+                <div class="row mb-4">
+                    <div class="col form-group">
+                        <label class="form-label">Contenu</label>
+                        <textarea class="form-control" formControlName="content" rows="8" cols="8"
+                            placeholder="Votre message ici . . ."></textarea>
+                    </div>
+                </div>
+                <button type="submit"
+                    class="bg-color-primary border border-0 rounded-2 p-2 color-default w-50">Poster</button>
+
+            </form>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

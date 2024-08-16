@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 //import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -22,26 +22,39 @@ import { MatListModule } from '@angular/material/list';
 import { ToastrModule } from 'ngx-toastr';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatBadgeModule } from '@angular/material/badge';
+
+/////
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomepageComponent } from './navigation/homepage/homepage.component';
-import { LoginComponent } from './navigation/login/login.component';
 import { NavbarComponent } from './navigation/navbar/navbar.component';
 import { TopComponent } from './navigation/top/top.component';
 import { OurServicesComponent } from './navigation/our-services/our-services.component';
 import { AboutUsComponent } from './navigation/about-us/about-us.component';
 import { FeaturesComponent } from './navigation/features/features.component';
 import { FooterComponent } from './navigation/footer/footer.component';
-import { SidebarComponent } from './forum/sidebar/sidebar.component';
 import { ChatComponent } from './forum/chat/chat.component';
 import { BlogComponent } from './forum/blog/blog.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { HomeComponent } from './navigation/home/home.component';
 import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 import { UserLoginComponent } from './navigation/dialog/user-login/user-login.component';
 import { UserFoldersComponent } from './forum/user-folders/user-folders.component';
 import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
+import { UserOrderComponent } from './admin/dialog/user-order/user-order.component';
+import { AddProductsComponent } from './admin/products/add-products/add-products.component';
+import { ListProductsComponent } from './admin/products/list-products/list-products.component';
+import { OrderListComponent } from './admin/products/order-list/order-list.component';
+import { HomeComponent } from './admin/home/home.component';
+import { OnConfirmComponent } from './admin/dialog/on-confirm/on-confirm.component';
+import { ResetPasswordComponent } from './navigation/reset-password/reset-password.component';
+import { LoginComponent } from './admin/login/login.component';
+import { SidebarComponent } from './admin/sidebar/sidebar.component';
+import { AddNoteComponent } from './admin/notes/add-note/add-note.component';
+import { MyNoteComponent } from './admin/notes/my-note/my-note.component';
+import { ModifyComponent } from './admin/dialog/modify/modify.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +67,6 @@ import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confi
     AboutUsComponent,
     FeaturesComponent,
     FooterComponent,
-    SidebarComponent,
     ChatComponent,
     BlogComponent,
     HomeComponent,
@@ -63,45 +75,58 @@ import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confi
     UserLoginComponent,
     UserFoldersComponent,
     ConfirmDialogComponent,
+    SidebarComponent,
+    UserOrderComponent,
+    AddProductsComponent,
+    ListProductsComponent,
+    OrderListComponent,
+    OnConfirmComponent,
+    ResetPasswordComponent,
+    AddNoteComponent,
+    MyNoteComponent,
+    ModifyComponent
 
   ],
-  
+
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
     FormsModule,
-     //ang mat
-     MatExpansionModule,
-     ReactiveFormsModule,
-     MatListModule,
-     MatIconModule,
-     MatDialogModule,
-     MatPaginatorModule,
-   HttpClientModule,
-     ToastrModule.forRoot({
-       timeOut: 2000,
-       positionClass: 'toast-top-center',
-       preventDuplicates: true,
-     }),
+    MatSnackBarModule,
+    HammerModule,
+    //ang mat
+    MatExpansionModule,
+    ReactiveFormsModule,
+    MatListModule,
+    MatIconModule,
+    MatDialogModule,
+    MatPaginatorModule,
+    MatBadgeModule,
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 2000,
+      positionClass: 'toast-top-center',
+      preventDuplicates: true,
+    }),
   ],
-  
-providers: [
-  provideAnimationsAsync(),
-   TokenService, CookieService,
+
+  providers: [
+    provideAnimationsAsync(),
+    TokenService, CookieService,
     requestService,
-    TokenInterceptor, 
-  {
-    provide: HTTP_INTERCEPTORS,
-    useClass: TokenInterceptor,
-    multi: true,
-  },
-  
-  //{ provide: LocationStrategy, useClass: HashLocationStrategy },
-  AnimationService,
-  { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true, direction: 'ltr' } },
-  {provide: LocationStrategy, useClass: HashLocationStrategy}
-],
+    TokenInterceptor,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    },
+
+    //{ provide: LocationStrategy, useClass: HashLocationStrategy },
+    AnimationService,
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true, direction: 'ltr' } },
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

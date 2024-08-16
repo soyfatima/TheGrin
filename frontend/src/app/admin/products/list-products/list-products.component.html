@@ -1,0 +1,104 @@
+<div class="py-4 mt-3"></div>
+<div class="admin container-fluid">
+    <div class="bg-color text-center mb-2 p-2">
+      <h6 class="fw-bold">LISTE DES PRODUITS</h6>
+    </div>
+
+     <div class="row">
+                <div class="col-lg-3 mb-3" data-aos="fade-right">
+                    <div class="filter">
+                        <div class="sidebar bg-color shadow-sm p-2">
+                            <div class="sidebar-item recent-posts">
+                                <div class="d-flex justify-content-end mt-2">
+                                    <h6 class="fw-bold color-primary">Filtrer</h6>
+                                </div>
+                                <div class="sidebar-item tags">
+                                    <h3 class="sidebar-title">Tags</h3>
+                                    <ul class="mt-3">
+                                        <li (click)="filterProductsByCategory('')">
+                                            <a [class.active]="selectedCategory === ''">Tout afficher</a>
+                                        </li>
+                                        <li *ngFor="let item of category" (click)="filterProductsByCategory(item.name)">
+                                            <a [class.active]="selectedCategory === item.name">{{item.name}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 mb-3" data-aos="fade-up">
+                    <div class="row" *ngIf="paginatedProducts.length > 0; else noProducts">
+                        <div class="col-sm-4 col-6 col-md-4 mb-4" *ngFor="let product of paginatedProducts">
+                            <div class="article card bg-color-light border border-0 shadow-sm rounded-3 h-100">
+                                <div class="d-lg-flex justify-content-between">
+                                    <div class="bg-image" data-mdb-ripple-color="light">
+                                        <img [src]="product.uploadedFileUrl" class="img-fluid d-md-block"
+                                            style="object-fit: cover; overflow: hidden; ;width:100%; height: 150px;" />
+                                        <div class="reduction">
+                                            <h5><span class="badge bg-warning ms-2">{{product.remise}} %</span></h5>
+                                        </div>
+                                        <div class="hover-overlay">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="info mb-4">
+                                            <!--h5 class="mb-0 fw-bold">{{product.category}}</h5-->
+                                            <p class="mb-1 name">{{product.name}}</p>
+                                            <h6 class="mb-3 fw-bold ">{{formatNumberWithSeparator(product.price)}} fcfa</h6>
+                                        </div>
+                                        <div class="btn-action d-flex justify-content-end">
+                                            <div class="remove mx-1">
+                                                <button class="bg-danger border border-0 rounded-2 shadow-sm" type="submit" (click)="deleteProduct(product.id)">
+                                                    <mat-icon>delete</mat-icon>
+                                                </button>
+                                            </div>
+                                            <div class="modify mx-1">
+                                                <button class="bg-primary border border-0 rounded-2 shadow-sm" (click)="openDialog(product)">
+                                                    <mat-icon>edit</mat-icon>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ng-template #noProducts>
+                      <div class="p-2 bg-color">
+                        <p>Pas de produit pour le moment</p>
+                      </div>
+                    </ng-template>
+                </div>
+            </div> 
+
+
+
+
+            <div class="blog-pagination">
+                <ul class="justify-content-center">
+                  <!-- Bouton Précédent -->
+                  <li>
+                    <button class="btn btn-link" (click)="previousPage()" [disabled]="currentPage === 1">
+                      Préc
+                    </button>
+                  </li>
+                  <!-- Boutons de pagination -->
+                  <ng-container *ngFor="let pageNumber of visiblePageRange">
+                    <li [class.active]="pageNumber === currentPage">
+                      <a (click)="changePage(pageNumber)">{{ pageNumber }}</a>
+                    </li>
+                  </ng-container>
+                  <!-- Bouton Suivant -->
+                  <li>
+                    <button class="btn btn-link" (click)="nextPage()" [disabled]="currentPage === getTotalPages()">
+                      Suiv
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            
+   
+</div>

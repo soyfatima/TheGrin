@@ -1,0 +1,46 @@
+<div id="preloader" [hidden]="!preloaderVisible">
+  <div class="line"></div>
+</div>
+<section class="background-radial-gradient overflow-hidden h-100">
+  <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+    <div class="row gx-lg-5 align-items-center mb-5">
+      <div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
+        <h1 class="my-5 display-5 fw-bold ls-tight" style="color: hsl(218, 81%, 95%)">
+          Bonjour Docteur <br />
+          <span style="color: hsl(218, 81%, 75%)">TABLEAU DE BORD</span>
+        </h1>
+      </div>
+      <div class="col-lg-6 mb-5 mb-lg-0 position-relative" [@SlideIn]=" animationState">
+        <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+        <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
+        <div class="card bg-glass">
+          <div class="d-flex justify-content-end">
+            <div class="logo mb-0">
+              <img src="assets/logo.png" alt="logo" width="90">
+            </div>
+          </div>
+          <div class="card-body px-4 py-5 px-md-5">
+            <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+              <div class="input-form mb-3">
+                <label for="" class="form-label"> Adresse Email</label>
+                <input type="text" class="form-control" formControlName="email" placeholder="ex:name@example.com">
+              </div>
+
+              <div class="input-form mb-4">
+                <label for="" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" formControlName="password" placeholder="******">
+              </div>
+
+              <!-- Submit button -->
+              <button type="submit" class="btn btn-primary btn-block mb-4">
+                Connexion
+              </button>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Section: Design Block -->
