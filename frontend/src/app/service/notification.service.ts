@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -19,7 +19,11 @@ export class NotificationService {
   getNotificationById(id: number): Observable<Notification> {
     return this.http.get<Notification>(`${this.apiUrl}/notifications/${id}`);
   }
-
+  
+  markAsRead(notificationId: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/notifications/${notificationId}/read`, {});
+  } 
+  
   deleteNotification(id:number):Observable<any> {
     const url = `${this.apiUrl}/notifications/${id}`
   return this.http.delete<any>(url);

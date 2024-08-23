@@ -58,7 +58,7 @@ export class AppComponent {
         navbar.classList.add('text-dark');
       }
     }
-    
+
     if (globalNav) {
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
       const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -93,12 +93,12 @@ export class AppComponent {
     setTimeout(() => {
       this.initAOS();
     }, 2000);
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = ''; 
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '';
 
   }
 
   initAOS() {
-    AOS.init(); 
+    AOS.init();
   }
 
 

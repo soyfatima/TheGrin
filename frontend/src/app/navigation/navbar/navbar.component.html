@@ -1,5 +1,6 @@
 <!-- Navbar -->
-<nav class="navbar global-nav navbar-expand-lg fixed-top" [ngClass]="{'bg-color-gradient': showOtherNavbar, 'color-default': showOtherNavbar}">
+<nav class="navbar global-nav navbar-expand-lg fixed-top"
+  [ngClass]="{'bg-color-gradient': showOtherNavbar, 'color-default': showOtherNavbar}">
   <div class="container-fluid">
     <a routerLink="/homepage" class="navbar-brand me-1">
       <h4>THE-GRIN</h4>
@@ -15,7 +16,7 @@
         <li><a href="#about">A propos</a></li>
         <li><a href="#services">Services</a></li>
         <li><a href="#pregnancy">fertilité</a></li>
-        <li><a routerLink="/chat" routerLinkActive="active"  (click)="switchToOtherNavbar()">Forum</a></li>
+        <li><a routerLink="/chat" routerLinkActive="active" (click)="switchToOtherNavbar()">Forum</a></li>
         <li><a routerLink="/store" routerLinkActive="active" (click)="switchToStoreNavbar()">Boutique</a></li>
       </ul>
       <!-- Other Navbar -->
@@ -28,24 +29,23 @@
 
         <div class="d-flex" *ngIf="IsUserLogged">
           <div class="avatar" (click)="openEnd(content)">
-            <!--  -->
             <button class="notification-count bg-transparent border border-0"
-                matBadge="{{notificationCount}}" [matBadgeHidden]="notificationCount === 0"
-                matBadgeColor="accent">
-                <mat-icon class="text-dark">notifications</mat-icon>
+             matBadge="{{notificationCount}}"
+              [matBadgeHidden]="notificationCount === 0" matBadgeColor="accent">
+              <mat-icon class="text-dark">notifications</mat-icon>
             </button>
+          </div>
 
-        </div>
-           <div class="avatar">
+          <div class="avatar">
             <button class="bg-success text-white"> <mat-icon>shopping_cart</mat-icon>
             </button>
           </div>
           <div class="avatar dropdown">
-            <button class="bg-color" > <mat-icon>account_circle</mat-icon></button>
+            <button class="bg-color"> <mat-icon>account_circle</mat-icon></button>
           </div>
           <div class="avatar">
-            <button class="bg-danger text-white" (click)="logout()" > <mat-icon>logout</mat-icon> </button>
-          </div> 
+            <button class="bg-danger text-white" (click)="logout()"> <mat-icon>logout</mat-icon> </button>
+          </div>
         </div>
       </ul>
       <!-- Store Navbar -->
@@ -76,7 +76,7 @@
         </ul>
 
 
-     
+
       </div>
     </div>
   </div>
@@ -103,7 +103,7 @@
     </ul>
   </div>
   <div class="py-3"></div-->
-  <!-- <div class="content">
+<!-- <div class="content">
     <div *ngIf="tab === 'login'">
       <div class="login-popup-content">
         <h4 class="text-uppercase fw-bold h5 mb-3">Se connecter</h4>
@@ -179,43 +179,45 @@
 
 
 
-
-<ng-template #content let-offcanvas style="z-index: 999;">
+<ng-container>
+<ng-template #content let-offcanvas>
   <div class="bg-color-light">
-      <div class="offcanvas-header">
-          <h4 class="offcanvas-title fw-bold">Notifications</h4>
-          <button type="button" class="btn-close" aria-label="Close"
-              (click)="offcanvas.dismiss('Cross click')"></button>
-      </div>
-      <div class="container-fluid">
+    <div class="offcanvas-header">
+      <h4 class="offcanvas-title fw-bold">Notifications</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+    </div>
+    <div class="container-fluid">
 
-          <div class="d-flex justify-content-end mb-3">
-              <button class="btn btn-danger fw-bold" (click)="deleteAllNotifications()"><mat-icon>delete</mat-icon>
-                  Tout supprimé</button>
-          </div>
-
-          <div class="row">
-              <ng-container *ngIf="notifications.length > 0; else noNotifications">
-                  <div class="scrollab">
-                      <div class="col-12 mb-2" *ngFor="let notification of notifications; let i = index"
-                          (swipeleft)="DeleteNotification(notification)"
-                          (click)="onNotificationClick(notification.id)" style="cursor: pointer;"
-                          class="notification-item bg-color shadow-sm border border-1">
-                          <div class="p-2" >
-                              <time class="color-primary fw-bold">{{notification.createdAt | date: 'dd-MM-yyyy
-                                  HH:mm'}}</time>
-                              <p>{{notification.message}}</p>
-                          </div>
-                      </div>
-                  </div>
-              </ng-container>
-              <!-- Display message when there are no notifications -->
-              <ng-template #noNotifications>
-                  <div class="col-12 text-center">
-                      <p>pas de notifications pour le moment</p>
-                  </div>
-              </ng-template>
-          </div>
+      <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-danger fw-bold" (click)="deleteAllNotifications()"><mat-icon>delete</mat-icon>
+         </button>
       </div>
+
+      <div class="row">
+        <ng-container *ngIf="notifications.length > 0; else noNotifications">
+          <div class="scrollab">
+            <div class="col-12 mb-2" *ngFor="let notification of notifications; let i = index"
+              [ngClass]="{'bg-color-new': !notification.read, 'bg-color-read': notification.read}"
+              (click)="onNotificationClick(notification.id)"
+              style="cursor: pointer;" (swipeleft)="DeleteNotification(notification.id)"
+              class="notification-item bg-color shadow-sm border border-1">
+              <div class="p-2">
+                <time class="color-primary fw-bold">{{notification.createdAt | date: 'dd-MM-yyyy
+                  HH:mm'}}</time>
+                <p>{{notification.message}}</p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <!-- Display message when there are no notifications -->
+        <ng-template #noNotifications>
+          <div class="col-12 text-center">
+            <p>pas de notifications pour le moment</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
   </div>
 </ng-template>
+
+</ng-container>

@@ -12,6 +12,7 @@ import { requestService } from './service/request.service';
 import { AnimationService } from './service/animate-service';
 import { CookieService } from 'ngx-cookie-service';
 import { SafeHtmlPipe } from './safe-html.pipe';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 //angular material
 import { MatIconModule } from '@angular/material/icon';
@@ -91,6 +92,7 @@ import { ModifyComponent } from './admin/dialog/modify/modify.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     NgbModule,
     FormsModule,
     MatSnackBarModule,

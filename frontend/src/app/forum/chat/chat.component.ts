@@ -53,7 +53,9 @@ export class ChatComponent {
   isEditingComment: { [key: number]: boolean } = {};
   editContent: string = '';
   /////////////////////////////
+  IsUserLogged: boolean = false;
   loggedInUserId: number | null = null;
+
   isUserReplyVisible: { [key: number]: boolean } = {};
 
   ///////////////////////////
@@ -145,40 +147,35 @@ export class ChatComponent {
     this.route.paramMap.subscribe(params => {
       const folderId = +params.get('id')!;
       const commentId = +this.route.snapshot.queryParamMap.get('commentId')!;
-  
       this.folderId = folderId;
-      console.log('Route Folder ID:', this.folderId);
-      console.log('Query Comment ID:', commentId);
-  
       // Load selected card and comments
       const savedCard = JSON.parse(localStorage.getItem('selectedCard')!);
       if (savedCard && savedCard.id === folderId) {
         this.selectedCard = savedCard;
         this.fetchComments(this.selectedCard.id);
-      }  else {
-          // If no matching card, reset state
-          this.deselectCard();
-        }
-        
-      // Highlight comment if available
+      } else {
+        this.deselectCard();
+      }
       if (commentId) {
         this.highlightCommentId = commentId;
-        console.log('Highlight Comment ID:', this.highlightCommentId);
       } else {
-        // Clear state if the folderId doesn't match
         this.highlightCommentId = null;
       }
     });
-  
-    // Clear highlightCommentId from localStorage
     localStorage.removeItem('highlightCommentId');
-  
+
     // Other initialization
     this.onResize();
     this.fetchFolders();
     this.updateTime();
-    this.getLoggedInUserId();
     this.fetchAdminNote();
+    this.authService.loggedInUser$.subscribe(user => {
+      if (user) {
+        this.loggedInUserId = user.id; // Assuming 'id' is the property name
+      } else {
+        this.loggedInUserId = null; // Handle the case when the user is not logged in
+      }
+    });
   }
 
   selectCard(folder: any): void {
@@ -189,14 +186,14 @@ export class ChatComponent {
   }
   deselectCard(): void {
     this.selectedCard = null;
-    localStorage.removeItem('selectedCard');
     this.comments = [];
-    this.cdr.detectChanges();
-  
-    // Manually clear query parameters from the URL
-    window.history.replaceState({}, '', '/chat');
+    this.highlightCommentId = null;
+    this.router.navigate(['/chat'], {
+      replaceUrl: true 
+    });
+
+    this.cdr.detectChanges(); 
   }
-  
 
   selectNote(note: any): void {
     this.selectedNote = note;
@@ -239,7 +236,6 @@ export class ChatComponent {
           ...folder,
           uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
         }));
-   //   console.log('admin folder', this.adminNotes);
         this.adminNotes = folders;
         this.filteredAdminNotes = this.adminNotes;
         this.updateVisiblePageRangeAdminNotes();
@@ -311,6 +307,7 @@ export class ChatComponent {
     this.commentService.getComments(folderId).subscribe(
       (comments: any[]) => {
         this.commentsCount[folderId] = comments.length;
+
         if (comments.length > 0) {
           const lastComment = comments[comments.length - 1];
           this.lastCommentDetails[folderId] = {
@@ -327,12 +324,10 @@ export class ChatComponent {
           };
           this.lastCommentId = null;
         }
-  
         if (this.selectedCard && this.selectedCard.id === folderId) {
           this.comments = comments;
         }
   
-        // Optionally handle highlighting here
         if (this.highlightCommentId) {
           setTimeout(() => {
             const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
@@ -342,13 +337,31 @@ export class ChatComponent {
             }
           }, 100);
         }
+  
+        // Highlight specific replies
+        comments.forEach(comment => {
+          if (comment.replies) {
+            comment.replies.forEach((reply: { id: number | null; }) => {
+              if (reply.id === this.highlightReplyId) {
+                setTimeout(() => {
+                  const replyElement = document.getElementById(`reply-${reply.id}`);
+                  if (replyElement) {
+                    replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    replyElement.classList.add('highlight');
+                  } else {
+                  }
+                }, 100);
+              }
+            });
+          }
+        });
       },
       (error) => {
-        console.error('Error fetching comments for folder ID:', folderId, error);
+      //  console.error('Error fetching comments for folder ID:', folderId, error);
       }
     );
   }
-  
+
   handleLastCommentClick(folderId: number): void {
     this.selectCard(this.paginatedUserFolders.find(folder => folder.id === folderId));
     setTimeout(() => {
@@ -370,7 +383,6 @@ export class ChatComponent {
       }
     }, 300); // Adjust the timeout as needed
   }
-
 
   CountComments(folderId: number): void {
     this.commentService.getComments(folderId).subscribe(
@@ -414,6 +426,16 @@ export class ChatComponent {
         }
       );
   }
+  showUserReply(commentId: number, replyIdToHighlight: number | null = null): void {
+    this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId];
+  
+    if (this.isUserReplyVisible[commentId]) {
+      // Set highlightReplyId to the specific reply if provided, or null if no specific reply
+      this.highlightReplyId = replyIdToHighlight;
+    } else {
+      this.highlightReplyId = null;
+    }
+  }
   
   fetchUserSuggestions(prefix: string): void {
     this.commentService.getUserSuggestions(prefix)
@@ -446,7 +468,6 @@ export class ChatComponent {
     if (!content) return '';
     return content.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
   }
-
 
   selectUser(username: string): void {
     const mentionRegex = /@(\w*)$/;
@@ -488,6 +509,7 @@ export class ChatComponent {
       }
     );
   }
+
   deleteReply(replyId: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { message: 'Êtes-vous sûre de vouloir supprimé votre réponse ?' }
@@ -508,16 +530,8 @@ export class ChatComponent {
       }
     });
   }
-  showUserReply(commentId: number): void {
-    this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId];
-    
-    // Highlight the replies of the specific comment
-    if (this.isUserReplyVisible[commentId]) {
-      this.highlightReplyId = commentId; // Or set this to the specific reply ID if needed
-    } else {
-      this.highlightReplyId = null;
-    }
-  }
+
+
   ///////////////////////////
   //folder edit
   EditContent(): void {
@@ -757,27 +771,6 @@ export class ChatComponent {
 
   switchTab(tab: string): void {
     this.tab = tab;
-  }
-
-
-  getLoggedInUserId(): void {
-    const authData = this.tokenService.getAuthData();
-    if (authData && authData.accessToken) {
-      this.authService.verifyToken(authData.accessToken).subscribe(
-        (response) => {
-          if (response.valid) {
-            this.loggedInUserId = response.userId;
-            this.cdr.detectChanges();
-          } else {
-            this.loggedInUserId = null;
-          }
-        },
-        (error) => {
-          //console.error('Error verifying token:', error);
-          this.loggedInUserId = null;
-        }
-      );
-    }
   }
 
 

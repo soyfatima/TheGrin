@@ -20,13 +20,14 @@ export class TokenInterceptor implements HttpInterceptor {
     const authData = this.tokenService.getAuthData();
     const accessToken = authData?.accessToken;
     const refreshToken = authData?.refreshToken;
-
+  
     if (accessToken) {
       request = this.addAuthorizationHeader(request, accessToken);
     }
-
+  
     return next.handle(request).pipe(
       catchError((error) => {
+       // console.error('Request error:', error);
         if (error instanceof HttpErrorResponse && error.status === 401 && refreshToken) {
           return this.handleUnauthorizedError(request, next, refreshToken);
         }
@@ -43,13 +44,15 @@ export class TokenInterceptor implements HttpInterceptor {
         return next.handle(newRequest);
       }),
       catchError((refreshError) => {
+//        console.error('Error during token refresh:', refreshError);
         this.tokenService.removeAuthData();
-        //this.router.navigate(['/login']);
+        // this.router.navigate(['/login']);
         return throwError(refreshError);
       })
     );
   }
 
+  
   private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
     return request.clone({
       setHeaders: {
@@ -57,5 +60,4 @@ export class TokenInterceptor implements HttpInterceptor {
       },
     });
   }
-}
-
+}  

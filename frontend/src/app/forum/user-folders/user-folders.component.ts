@@ -29,6 +29,8 @@ export class UserFoldersComponent implements OnInit {
   pageIndexFolders = 0;
   //////////////////////////
   loggedInUserId: number | null = null;
+  IsUserLogged: boolean = false;
+
   isEditing: boolean = false;
   uploadedFile: File | null = null;
   previewImageUrl: string | ArrayBuffer | null = null; // To store the preview image URL
@@ -60,7 +62,12 @@ export class UserFoldersComponent implements OnInit {
       this.userId = +params['id'];
       this.loadFolders();
       this.loadComments();
-      this.getLoggedInUserId();
+      this.authService.loggedInUser$.subscribe(user => {
+        this.IsUserLogged = !!user;
+        if (this.IsUserLogged) {
+          this.loggedInUserId = user.id;
+        }
+      });
     });
   }
 
@@ -141,27 +148,6 @@ export class UserFoldersComponent implements OnInit {
     this.router.navigate(['/chat', folderId], { queryParams });
   }
 
-
-  getLoggedInUserId(): void {
-    const authData = this.tokenService.getAuthData();
-    if (authData && authData.accessToken) {
-      this.authService.verifyToken(authData.accessToken).subscribe(
-        (response) => {
-          if (response.valid) {
-            this.loggedInUserId = response.userId;
-            this.cdr.detectChanges();
-          } else {
-            this.loggedInUserId = null;
-          }
-        },
-        (error) => {
-          // console.error('Error verifying token:', error);
-          this.loggedInUserId = null;
-        }
-      );
-    }
-  }
-
   chooseImage(event: any): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
@@ -174,9 +160,8 @@ export class UserFoldersComponent implements OnInit {
     }
   }
 
-
   EditUserInfo(): void {
-    if (this.usernameForm.valid) {
+    if (this.usernameForm.valid && this.loggedInUserId !== null) { // Check if loggedInUserId is not null
       const username = this.usernameForm.get('username')?.value;
 
       const formData = new FormData();
@@ -184,20 +169,25 @@ export class UserFoldersComponent implements OnInit {
       if (this.uploadedFile) {
         formData.append('uploadedFile', this.uploadedFile, this.uploadedFile.name);
       }
-      this.authService.updateUserInfo(this.loggedInUserId!, formData).subscribe(
+
+      this.authService.updateUserInfo(this.loggedInUserId, formData).subscribe(
         (response) => {
           this.loadFolders();
           this.isEditing = false;
         },
         (error) => {
-          //          console.error('Error updating user info:', error);
+          // Handle error appropriately
         }
       );
+    } else {
+      // console.error('User ID is not available');
     }
   }
+
 
   cancel(): void {
     this.isEditing = false;
   }
+
 
 }

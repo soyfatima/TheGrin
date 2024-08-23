@@ -45,8 +45,6 @@ export class UserLoginComponent {
   }
 
   ngOnInit(): void {
-    // Subscribe to router events to update the current route
-
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -57,9 +55,10 @@ export class UserLoginComponent {
       Newpassword: ['', Validators.required],
       gender: ['', Validators.required],
     });
-    this.checkUserLoginStatus();
-
-
+  
+    this.authService.loggedInUser$.subscribe(user => {
+      this.IsUserLogged = !!user;
+    });
   }
 
   //user signup
@@ -78,7 +77,6 @@ export class UserLoginComponent {
           this.data = response;
           this.toastrService.success('Compte crée avec succès');
           this.signupForm.reset();
-          //   this.showLoginPopup = true;
         } else {
           this.toastrService.error('erreur lors de l\'inscription, veuillez réessayer');
           //   console.error('Signup failed: No access token received');
@@ -115,11 +113,6 @@ export class UserLoginComponent {
         if (response.accessToken && response.refreshToken) {
           this.loggedInUser = response.userInfo;
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
-          //console.log('refresh token', response.refreshToken)
-          //console.log('access token', response.accessToken)
-          //console.log('user info', response.userinfo)
-
-          this.IsUserLogged = true;
           this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
@@ -128,7 +121,6 @@ export class UserLoginComponent {
         }
       },
       (errorMessage) => {
-        // Display Toastr message based on active navbar type
         this.toastrService.error('Erreur de connexion, veuillez réessayer');
         // console.error('Login failed:', errorMessage);
         this.userErrorMessage = errorMessage;
@@ -136,49 +128,8 @@ export class UserLoginComponent {
     );
   }
 
-  isLoggedIn(): Observable<boolean> {
-    const authData = this.tokenService.getAuthData();
 
-    if (!authData || !authData.accessToken) {
-      return of(false);
-    }
-    return this.authService.verifyToken(authData.accessToken).pipe(
-      map(response => {
-        return response.valid && response.userId !== null;
-      }),
-      catchError(error => {
-        // console.error('Error verifying token:', error);
-        return of(false);
-      })
-    );
-  }
-
-  checkUserLoginStatus(): void {
-    const authData = this.tokenService.getAuthData();
-    if (authData && authData.accessToken) {
-      this.authService.verifyToken(authData.accessToken).subscribe(
-        (response) => {
-          const loggedIn = response.valid && response.userId !== null;
-          this.IsUserLogged = loggedIn;
-          // if (this.activeNavbarType === 'store') {
-          this.toastrService.success(loggedIn ? 'Utilisateur connecté' : 'Utilisateur déconnecté');
-          // }
-        },
-        (error) => {
-          //  console.error('Error verifying token:', error);
-          this.IsUserLogged = false;
-        }
-      );
-    } else {
-      this.IsUserLogged = false;
-    }
-  }
-
-
-  logout(): void {
-    this.tokenService.removeAuthData();
-    this.IsUserLogged = false;
-  }
+ 
 
   switchTab(tab: string): void {
     this.tab = tab;

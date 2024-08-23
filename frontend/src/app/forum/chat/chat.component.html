@@ -153,31 +153,34 @@
                                 </div>
                             </div>
                             <div class="content mb-4">
-                            <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
-                            <div class="content edit-content mb-3">
-                                <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
-                                    <p [innerHTML]="selectedCard?.content"></p>
-                                    <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="EditContent()"
-                                        class="bg-transparent border border-0 m-1"><mat-icon
-                                            class="color-primary">edit</mat-icon></button>
-                                    <button *ngIf="selectedCard?.user?.id === loggedInUserId" (click)="deleteFolder()"
-                                        class="bg-transparent border border-0 m-1"><mat-icon
-                                            class="color-tertiary">delete</mat-icon></button>
+                                <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
+                                <div class="content edit-content mb-3">
+                                    <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
+                                        <p [innerHTML]="selectedCard?.content"></p>
+                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId"
+                                            (click)="EditContent()" class="bg-transparent border border-0 m-1"><mat-icon
+                                                class="color-primary">edit</mat-icon></button>
+                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId"
+                                            (click)="deleteFolder()"
+                                            class="bg-transparent border border-0 m-1"><mat-icon
+                                                class="color-tertiary">delete</mat-icon></button>
 
 
-                                </ng-container>
-                                <ng-template #editMode>
-                                    <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
-                                    <div class="btn-action d-flex justify-content-end ">
-                                        <button (click)="EditFolderContent()"
-                                            class="bg-color-primary rounded-2 p-2 text-white border border-0 m-1">Editer</button>
-                                        <button (click)="cancelEdit()" class="btn btn-secondary m-1">Annuler</button>
-                                    </div>
-                                </ng-template>
-                            </div>
-                            <div class="user-uploaded-file" *ngIf="selectedCard?.FolderUploadedFileUrl">
-                                <img [src]="selectedCard.FolderUploadedFileUrl" alt="img" class="img-fluid" width="400">
-                            </div>
+                                    </ng-container>
+                                    <ng-template #editMode>
+                                        <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
+                                        <div class="btn-action d-flex justify-content-end ">
+                                            <button (click)="EditFolderContent()"
+                                                class="bg-color-primary rounded-2 p-2 text-white border border-0 m-1">Editer</button>
+                                            <button (click)="cancelEdit()"
+                                                class="btn btn-secondary m-1">Annuler</button>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                                <div class="user-uploaded-file" *ngIf="selectedCard?.FolderUploadedFileUrl">
+                                    <img [src]="selectedCard.FolderUploadedFileUrl" alt="img" class="img-fluid"
+                                        width="400">
+                                </div>
                             </div>
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
@@ -208,9 +211,8 @@
                                             <div class="user-replies"
                                                 *ngIf="comment.replies?.length && isUserReplyVisible[comment.id]">
                                                 <div class="reply" data-aos="fade-in">
-                                                    <hr>
-                                                    <div class="bg-color-white p-2 mb-3 shadow-sm "
-                                                        *ngFor="let reply of comment.replies"
+                                                    <div class="bg-color-white mb-3 p-2" *ngFor="let reply of comment.replies"
+                                                        [id]="'reply-' + reply.id"
                                                         [ngClass]="{'highlight': reply.id === highlightReplyId}">
                                                         <div
                                                             class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
@@ -251,8 +253,6 @@
                                                                     class="btn btn-secondary m-1">Annuler</button>
                                                             </ng-template>
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                             </div>

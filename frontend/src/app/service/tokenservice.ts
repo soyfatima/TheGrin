@@ -21,7 +21,6 @@ export class TokenService {
     return this.http.post<{ accessToken: string }>(`${environment.apiUrl}/auth/refresh-token`, refreshTokenPayload, { headers })
       .pipe(
         tap(response => {
-          //console.log('Access token refreshed successfully:', response);
         }),
         catchError(error => {
           //  console.error('Refresh Token API Error:', error);
@@ -31,12 +30,11 @@ export class TokenService {
   }
 
   setAccessTokenInCookie(accessToken: string, refreshToken: string, userInfo: string): void {
-    console.log('Storing Tokens:', { accessToken, refreshToken, userInfo }); // Log tokens and userInfo being stored
     const expires = new Date();
   expires.setDate(expires.getDate() + 1);
     const cookieOptions: CookieOptions = {
       expires,
-      secure: false, 
+      secure: true, 
       sameSite: 'Strict',
     };
     this.cookieService.set('authData', JSON.stringify({ accessToken, refreshToken, userInfo }), cookieOptions);
@@ -44,12 +42,8 @@ export class TokenService {
 
   getAuthData(): { accessToken: string; refreshToken: string; userInfo: string } | null {
     const authDataString = this.cookieService.get('authData');
-    //console.log('Retrieved Auth Data String:', authDataString); // Log retrieved auth data string
-
     if (authDataString) {
-   //   return JSON.parse(authDataString) as { accessToken: string; refreshToken: string; userInfo: string };
    const authData = JSON.parse(authDataString) as { accessToken: string; refreshToken: string; userInfo: string };
-   // console.log('Parsed Auth Data:', authData); // Log parsed auth data
     return authData;  
   }
     return null;
@@ -58,4 +52,13 @@ export class TokenService {
   removeAuthData(): void {
     this.cookieService.delete('authData');
   }
+
+  // TokenService.ts
+setAccessToken(accessToken: string): void {
+  const authData = this.getAuthData();
+  if (authData) {
+    this.setAccessTokenInCookie(accessToken, authData.refreshToken, authData.userInfo);
+  }
+}
+
 }

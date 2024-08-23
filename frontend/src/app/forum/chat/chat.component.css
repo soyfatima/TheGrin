@@ -243,3 +243,9 @@ app-navbar {
     transition: background-color 0.3s ease, border 0.3s ease;
   }
   
+  
+  .highlight {
+    color: 2px solid yellow; /* or any color for highlighting */
+    transition: background-color 0.5s ease; /* Optional smooth transition */
+  }
+  
