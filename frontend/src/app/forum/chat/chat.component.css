@@ -33,13 +33,9 @@
     margin-bottom: 10px;
 }
 
-.forum .nav-item .nav-link {
-}
-
 .forum .nav-item .nav-link.active {
     font-weight: bold;
     color: var(--color-primary) !important;
-
 }
 
 
@@ -91,28 +87,23 @@
     }
 }
 
-
-/* @media(min-width:320px) and (max-width:360px){
-    .main-content {
-        position: relative;
-        padding-top: 160px;
-
-    }
-
-} */
-
 app-navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1200;
+    z-index: 1000;
 }
 
 @media (max-width: 768px) {
     app-navbar {
         top: 100px;
-        z-index: 2500;
+        z-index: 1500;
+        /* z-index: 2500; */
+        /* z-index: 1300; */
+    }
+    .title-name{
+        display: none;
     }
 }
 
@@ -159,7 +150,7 @@ app-navbar {
     position: fixed;
     top: 70px;
     right: 10px;
-    z-index: 2000;
+    z-index: 1000;
 }
 
 /* Mobile-specific styles */
@@ -186,21 +177,17 @@ app-navbar {
     }
 }
 
-
-/* Ensure line breaks and white spaces are preserved */
 .selectedCard .content p {
-    white-space: pre-wrap; /* This will preserve both spaces and line breaks */
+    white-space: pre-wrap; 
   }
   
-  /* Additional styling for paragraph text */
   .selectedCard .content {
     font-family: Arial, sans-serif;
     line-height: 1.6;
   }
   
-  /* Optional: Add some margin or padding to paragraphs */
   .selectedCard .content p {
-    margin: 0 0 1em 0; /* Adjust margins as needed */
+    margin: 0 0 1em 0;
   }
   
 
@@ -212,7 +199,7 @@ app-navbar {
     transform: translate(0%, -90%);
     border: 1px solid #ccc;
     background-color: #fafafa;
-    z-index: 1200; /* Ensure it's on top of other elements */
+    z-index: 1200;
     max-height: 150px;
     overflow-y: auto;
     width: 100px;
@@ -234,18 +221,19 @@ app-navbar {
   }
   
   .mention {
-    color: #007bff !important; /* Highlight color */
+    color: #007bff !important;
     font-weight: bold;
   }
+
   .highlight {
-    background-color: #f0f8ff; /* Example highlight color */
-    border: 2px solid #007bff; /* Example border color */
+    background-color: #f0f8ff;
+    border: 2px solid #007bff; 
     transition: background-color 0.3s ease, border 0.3s ease;
   }
   
   
   .highlight {
-    color: 2px solid yellow; /* or any color for highlighting */
-    transition: background-color 0.5s ease; /* Optional smooth transition */
+    color: 2px solid yellow;
+    transition: background-color 0.5s ease;
   }
   

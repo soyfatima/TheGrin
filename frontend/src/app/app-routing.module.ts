@@ -48,7 +48,7 @@ const routes: Routes = [
   { path: 'confirm-dialog', component: ConfirmDialogComponent },
 
   { path: 'user-login', component: UserLoginComponent, canActivate: [LoginGuard] },
-  { path: 'user-folders/:id', component: UserFoldersComponent },
+  { path: 'user-folders/:id', component: UserFoldersComponent, canActivate: [LoginGuard] },
   //  { path: 'reset-password', component: ResetPasswordComponent},
 
 

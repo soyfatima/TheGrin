@@ -23,3 +23,9 @@
     background-color: #fcfcfc; 
   }
   
+  @media(max-width:768px) {
+  .offcanvas-header button {
+    display: none;
+  }
+
+}

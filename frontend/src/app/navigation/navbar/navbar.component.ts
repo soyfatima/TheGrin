@@ -73,11 +73,20 @@ export class NavbarComponent {
   ngOnInit() {
     this.determineNavbarVariant(this.router.url);
     this.googleTranslateElementInit();
-    this.getNotification();
+  this.getNotification();
+    // this.authService.loggedInUser$.subscribe(user => {
+    //   this.IsUserLogged = !!user;
+    // });
+    
     this.authService.loggedInUser$.subscribe(user => {
       this.IsUserLogged = !!user;
+
+      if (user) {
+        this.loggedInUserId = user.id;
+      } else {
+      //  this.loggedInUserId = null;
+      }
     });
-    
   }
   
 
@@ -194,13 +203,13 @@ export class NavbarComponent {
 
             this.router.navigate(['/chat', folderId], { queryParams: { commentId } })
              // .then(success => console.log('Navigation Success:', success))
-              .catch(error => console.error('Navigation Error:', error));
+      //        .catch(error => console.error('Navigation Error:', error));
           } else {
             this.router.navigate(['/chat']);
           }
         }
       },
-      (error) => console.error('Error fetching notification details:', error)
+     // (error) => console.error('Error fetching notification details:', error)
     );
   }
 
@@ -215,7 +224,7 @@ export class NavbarComponent {
           duration: 2000,
         });
       },
-      (error) => console.error('Failed to delete notification:', error)
+     // (error) => console.error('Failed to delete notification:', error)
     );
   }
 
@@ -241,9 +250,14 @@ export class NavbarComponent {
   logout(): void {
     this.tokenService.removeAuthData();
     this.IsUserLogged = false;
+    this.authService.clearAuthData()
     const currentUser = localStorage.getItem('currentUser');
    const accessToken = currentUser ? JSON.parse(currentUser).accessToken : '';
   }
-
-
+  
+  goToUserFolders(): void {
+    if (this.loggedInUserId !== null) {
+      this.router.navigate(['/user-folders', this.loggedInUserId]);
+    }
+  }
 }

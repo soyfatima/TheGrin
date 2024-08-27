@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 
 <div class="container-fluid forum">
-    <div class=" toggle-btn" (click)="toggleCategory()">
+    <div class="toggle-btn" (click)="toggleCategory()">
         <button type="button" class="color-primary bg-transparent border border-0 fw-bold">
             <mat-icon>{{ isCategoryHidden ? 'menu_open' : 'menu' }}</mat-icon>
         </button>
@@ -9,13 +9,18 @@
 
     <div class="categories bg-color-gradient"
         [ngClass]="{'hidden': isCategoryHidden && !isMobile, 'mobile-hidden': isCategoryHidden && isMobile}">
-        <div class="tags">
-            <div class="d-md-none btn-action d-lg-flex justify-content-end">
+        <div class="tags" [ngClass]="isCategoryHidden ? 'col-lg-12' : 'col-md-12' " >
+             <div class="d-flex justify-content-between mb-3">
+            <div class="title-name color-default mt-2">
+                <h4 class="fw-bold">LE-GRIN</h4>
+            </div> 
+            <div class="d-m-none btn-action d-flex justify-content-end">
                 <button type="button" class="bg-color-default border border-0 rounded-2 shadow-sm m-1"
                     (click)="toggleCategory()">
-                    <mat-icon>{{ isCategoryHidden ? 'visibility' : 'visibility_off' }}</mat-icon>
+                    <mat-icon class="color-primary">{{ isCategoryHidden ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
             </div>
+           </div>
             <div class="filter">
                 <div class="sidebar">
                     <div class="sidebar-item recent-posts">
@@ -23,10 +28,10 @@
                             <h3 class="sidebar-title color-default">Tags</h3>
                             <ul class="mt-3">
                                 <li (click)="filterForumByCategory('')">
-                                    <a [class.active]="selectedCategory === ''"> Tout afficher </a>
+                                    <a class="bg-color-white color-secondary" [class.active]="selectedCategory === ''"> Tout afficher </a>
                                 </li>
                                 <li *ngFor="let item of category" (click)="filterForumByCategory(item.name)">
-                                    <a [class.active]="selectedCategory === item.name">{{item.name}}</a>
+                                    <a class="bg-color-white color-secondary" [class.active]="selectedCategory === item.name">{{item.name}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -34,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="online color-default">
+        <!-- <div class="online color-default">
             <p class="fw-bold">Nombre de participants en ligne : <span class="color-info"> 25 personnes </span></p>
             <div class="online-person d-flex flex-wrap mb-1">
                 <p class="participant">Nos</p>
@@ -47,7 +52,7 @@
                 <p class="participant">its_mia</p>
                 <p class="participant">not_me</p>
             </div>
-        </div>
+        </div> -->
     </div>
     <div class="main-content" [ngClass]="{'expanded': isCategoryHidden}">
         <div class="switch-container bg-color-white">
@@ -71,9 +76,9 @@
                 <div class="content padding">
                     <div class="mb-4" *ngIf="paginatedUserFolders.length ===0">Pas de poste pour le moment</div>
                     <div class="row" *ngIf="!selectedCard">
-                        <div class="col-md-6 mb-4" type="button" *ngFor="let folder of paginatedUserFolders">
+                        <div  [ngClass]="isCategoryHidden ? 'col-lg-4 col-md-4 mb-3' : 'col-lg-4 col-md-6 mb-3' "  class="transition" type="button" *ngFor="let folder of paginatedUserFolders">
                             <div class="">
-                                <div class=" p-2 border border-1 bg-color" (click)="selectCard(folder)"
+                                <div class="shadow-sm p-2 border border-1 bg-color" (click)="selectCard(folder)"
                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
                                     <div class="card-body">
                                         <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start">
@@ -145,7 +150,6 @@
                                         class="img-fluid rounded-circle">
                                 </div>
 
-
                                 <div class="info ms-sm-4">
                                     <h4 class="color-primary">{{selectedCard.user?.username}}</h4>
                                     <time class="time mb-1">{{selectedCard.createdAt | date: 'yyyy-MM-dd
@@ -186,15 +190,15 @@
                                 <div class="col-12 mb-3" #commentList>
                                     <h4 class="mb-4">({{ comments.length }}) Commentaire</h4>
 
-                                    <div class="p-2 mb-3 bg-color rounded-2 bordr border1"
-                                        *ngFor="let comment of comments" [id]="'comment-' + comment.id"
+                                    <div class="p-2 mb-3 bg-color rounded-2 bordr border-2 shadow-sm"
+                                        *ngFor="let comment of paginatedComments" [id]="'comment-' + comment.id"
                                         [ngClass]="{'highlight': comment.id === highlightCommentId}">
                                         <div class="card-body">
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
-                                                <div
-                                                    class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                    <img [src]="comment.userProfileImageUrl" alt="img"
-                                                        class="img-fluid rounded-circle bg-white">
+                                                <div class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
+                                                    <img [src]="comment.userProfileImageUrl" alt="User Image" class="img-fluid rounded-circle">
+                                                    <!-- Log image URL -->
+                                                    <p>Profile Image URL: {{ comment.userProfileImageUrl }}</p>
                                                 </div>
                                                 <div class="user-comment-info ms-sm-4" *ngIf="comment.user">
                                                     <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
@@ -211,16 +215,20 @@
                                             <div class="user-replies"
                                                 *ngIf="comment.replies?.length && isUserReplyVisible[comment.id]">
                                                 <div class="reply" data-aos="fade-in">
-                                                    <div class="bg-color-white mb-3 p-2" *ngFor="let reply of comment.replies"
+                                                    <div class="bg-color-white mb-3 p-2 shadow-sm" *ngFor="let reply of comment.replies"
                                                         [id]="'reply-' + reply.id"
                                                         [ngClass]="{'highlight': reply.id === highlightReplyId}">
+                                                <pre>{{ reply | json }}</pre> 
+                                                       
                                                         <div
+                                                        
                                                             class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
-                                                            <div
-                                                                class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
-                                                                <img [src]="reply.userProfileImageUrl" alt="img"
-                                                                    class="img-fluid rounded-circle">
-                                                            </div>
+                                                            <div class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
+                                                                <img [src]="reply.userProfileImageUrl" alt="Reply User Image" class="img-fluid rounded-circle">
+                                                                <!-- Log reply image URL -->
+                                                                <p>Reply Image URL: {{ reply.userProfileImageUrl }}</p>
+                                                              </div>
+                                                              
 
                                                             <div class="reply-user-info ms-sm-4 mb-3">
                                                                 <p class="mb-0"><strong>{{ reply.user.username
@@ -232,15 +240,15 @@
                                                         </div>
                                                         <div class="content edit-content">
                                                             <ng-container *ngIf="!reply.isEditing; else editModeReply">
-                                                                <p class="mb-0"
+                                                                <p class="mb-3"
                                                                     [innerHTML]="getHighlightedContent(reply.content)">
                                                                 </p>
                                                                 <button *ngIf="reply.user?.id === loggedInUserId"
                                                                     (click)="editReply(reply)"
-                                                                    class="btn btn-secondary m-1"><mat-icon>edit</mat-icon></button>
+                                                                    class="bg-transparent border border-0 color-primary m-1"><mat-icon>edit</mat-icon></button>
                                                                 <button *ngIf="reply.user?.id === loggedInUserId"
                                                                     (click)="deleteReply(reply.id)"
-                                                                    class="btn btn-danger m-1"><mat-icon>delete</mat-icon></button>
+                                                                    class="bg-transparent border border-0 color-tertiary m-1 "><mat-icon>delete</mat-icon></button>
 
                                                             </ng-container>
                                                             <ng-template #editModeReply>
@@ -323,6 +331,12 @@
                                             </form>
                                         </div>
                                     </div>
+
+                                    <div class="d-flex justify-content-around mt-3">
+                                        <button class="btn btn-primary" (click)="prevCommentPage()" [disabled]="commentCurrentPage === 1">Préc</button>
+                                        <span>Page {{ commentCurrentPage }} of {{ commentTotalPages }}</span>
+                                        <button class="btn btn-primary" (click)="nextCommentPage()" [disabled]="commentCurrentPage === commentTotalPages">Suiv</button>
+                                      </div>
                                 </div>
                             </div>
 

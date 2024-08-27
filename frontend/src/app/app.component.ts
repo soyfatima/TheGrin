@@ -89,6 +89,7 @@ export class AppComponent {
     });
   }
 
+
   ngAfterViewInit() {
     setTimeout(() => {
       this.initAOS();

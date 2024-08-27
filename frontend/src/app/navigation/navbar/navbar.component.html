@@ -2,8 +2,8 @@
 <nav class="navbar global-nav navbar-expand-lg fixed-top"
   [ngClass]="{'bg-color-gradient': showOtherNavbar, 'color-default': showOtherNavbar}">
   <div class="container-fluid">
-    <a routerLink="/homepage" class="navbar-brand me-1">
-      <h4>THE-GRIN</h4>
+    <a routerLink="/homepage" class="navbar-brand  me-1">
+      <h4 class="color-default fw-bold">LE-GRIN</h4>
     </a>
     <button class="navbar-toggler ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">
       <i class="fa fa-bars text-center"></i>
@@ -21,63 +21,37 @@
       </ul>
       <!-- Other Navbar -->
       <ul class="navbar-nav menu align-items-end" *ngIf="showOtherNavbar">
-        <li><a routerLink="/homepage">Accueil</a></li>
-        <button *ngIf="!IsUserLogged" class="border border-0 bg-transparent" (click)="loginUser()">
+        <div class="avatar">
+          <button class="bg-transparent border border-0 text-white" routerLink="/homepage"> <mat-icon>home</mat-icon>
+          </button>
+        </div>
+        <button *ngIf="!IsUserLogged" class="border border-0 bg-color-white bg-transparent color-default" (click)="loginUser()">
           <li><a>
               Se connecter</a></li>
         </button>
 
         <div class="d-flex" *ngIf="IsUserLogged">
           <div class="avatar" (click)="openEnd(content)">
-            <button class="notification-count bg-transparent border border-0"
+            <button class="notification-count bg-color-white border border-0"
              matBadge="{{notificationCount}}"
               [matBadgeHidden]="notificationCount === 0" matBadgeColor="accent">
-              <mat-icon class="text-dark">notifications</mat-icon>
+              <mat-icon class="text-primary">notifications</mat-icon>
             </button>
           </div>
 
-          <div class="avatar">
-            <button class="bg-success text-white"> <mat-icon>shopping_cart</mat-icon>
+          <div class="avatar" (click)="goToUserFolders()">
+            <button class="bg-color-white border border-0 color-primary"> <mat-icon>account_circle</mat-icon>
             </button>
           </div>
-          <div class="avatar dropdown">
-            <button class="bg-color"> <mat-icon>account_circle</mat-icon></button>
+          <div class="avatar">
+            <button class="bg-color-white border border-0 text-success"> <mat-icon>shopping_cart</mat-icon>
+            </button>
           </div>
           <div class="avatar">
-            <button class="bg-danger text-white" (click)="logout()"> <mat-icon>logout</mat-icon> </button>
+            <button class="bg-color-white border border-0 text-danger" (click)="logout()"> <mat-icon>logout</mat-icon> </button>
           </div>
         </div>
       </ul>
-      <!-- Store Navbar -->
-      <div class="justify-content-end">
-        <ul class="navbar-nav global-nav  menu align-items-end" *ngIf="showStoreNavbar">
-          <!-- <button *ngIf="!IsUserLogged" class="border border-0 bg-transparent" (click)="loginUser()">
-            <li><a>
-                Se connecter</a></li>
-
-          </button> -->
-          <div class="d-flex" *ngIf="IsUserLogged">
-            <!-- <div class="avatar">
-              <button class="bg-success text-white" (click)="fetchUserCart()"> <mat-icon>shopping_cart</mat-icon>
-              </button>
-            </div>
-            <div class="avatar dropdown" [ngClass]="{ 'open': isDropdownOpen }">
-              <button class="bg-color" (click)="toggleDropdown()"> <mat-icon>account_circle</mat-icon></button>
-            </div>
-            <div class="avatar">
-              <button class="bg-danger text-white" (click)="logout()"> <mat-icon>logout</mat-icon> </button>
-            </div> -->
-          </div>
-
-          <!-- Google Translate -->
-          <div class="m-1 mt-2">
-            <div id="google_translate_element"></div>
-          </div>
-        </ul>
-
-
-
-      </div>
     </div>
   </div>
 </nav>
@@ -173,7 +147,7 @@
 
 
 
-
+  
 
 
 
@@ -182,15 +156,17 @@
 <ng-container>
 <ng-template #content let-offcanvas>
   <div class="bg-color-light">
-    <div class="offcanvas-header">
+    <div class="offcanvas-header justify-content-between">
       <h4 class="offcanvas-title fw-bold">Notifications</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+    <button type="button" class="btn btn-outline-primary d-lg-flex d-md-none" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"><mat-icon>close</mat-icon></button>
     </div>
-    <div class="container-fluid">
 
+    <div class="container-fluid">
       <div class="d-flex justify-content-end mb-3">
-        <button class="btn btn-danger fw-bold" (click)="deleteAllNotifications()"><mat-icon>delete</mat-icon>
+        <button class="btn btn-danger fw-bold m-1" (click)="deleteAllNotifications()"><mat-icon>delete</mat-icon>
          </button>
+      <button type="button" class="btn btn-primary m-1 d-lg-none" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"><mat-icon>close</mat-icon></button>
+
       </div>
 
       <div class="row">

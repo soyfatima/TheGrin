@@ -33,7 +33,6 @@ export class ChatComponent {
   forum: any[] = [];
   filteredForum: any[] = [];
   selectedCategory: string = '';
-  //currentPage: number = 1;
   itemsPerPage: number = 10;
   visiblePageRange: number[] = [];
 
@@ -70,6 +69,13 @@ export class ChatComponent {
 
   @ViewChild('commentList') commentList!: ElementRef;
   sanitizedContent!: SafeHtml;
+//////////////////
+paginatedComments: any[] = [];
+commentCurrentPage: number = 1;
+commentsPerPage: number = 10; 
+commentTotalPages: number = 0; 
+
+
 
   category: any[] = [
     { name: 'fertilité' },
@@ -169,6 +175,7 @@ export class ChatComponent {
     this.fetchFolders();
     this.updateTime();
     this.fetchAdminNote();
+    this.updateCommentPagination();
     this.authService.loggedInUser$.subscribe(user => {
       if (user) {
         this.loggedInUserId = user.id; // Assuming 'id' is the property name
@@ -303,64 +310,151 @@ export class ChatComponent {
     }, 300);
   }
 
+  // fetchComments(folderId: number): void {
+  //   this.commentService.getComments(folderId).subscribe(
+  //     (comments: any[]) => {
+     
+        
+  //       this.commentsCount[folderId] = comments.length;
+
+  //       if (comments.length > 0) {
+  //         const lastComment = comments[comments.length - 1];
+  //         this.lastCommentDetails[folderId] = {
+  //           user: lastComment.user.username,
+  //           time: lastComment.createdAt,
+  //           id: lastComment.id
+  //         };
+  //         this.lastCommentId = lastComment.id;
+  //       } else {
+  //         this.lastCommentDetails[folderId] = {
+  //           user: '',
+  //           time: '',
+  //           id: 0
+  //         };
+  //         this.lastCommentId = null;
+  //       }
+  //       if (this.selectedCard && this.selectedCard.id === folderId) {
+  //         this.comments = comments;
+  //       }
+
+  //      this.updateCommentPagination();
+  //      console.log('Comments:', this.comments);
+
+  //       if (this.highlightCommentId) {
+  //         setTimeout(() => {
+  //           const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
+  //           if (commentElement) {
+  //             commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //             commentElement.classList.add('highlight');
+  //           }
+  //         }, 100);
+  //       }
+  //       // Highlight specific replies
+  //       comments.forEach(comment => {
+  //         if (comment.replies) {
+  //           comment.replies.forEach((reply: { id: number | null; }) => {
+  //             if (reply.id === this.highlightReplyId) {
+  //               setTimeout(() => {
+  //                 const replyElement = document.getElementById(`reply-${reply.id}`);
+  //                 if (replyElement) {
+  //                   replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //                   replyElement.classList.add('highlight');
+  //                 } else {
+  //                 }
+  //               }, 100);
+  //             }
+  //           });
+  //         }
+  //       });
+  //     },
+  //     (error) => {
+  //     //  console.error('Error fetching comments for folder ID:', folderId, error);
+  //     }
+  //   );
+  // }
+
   fetchComments(folderId: number): void {
     this.commentService.getComments(folderId).subscribe(
       (comments: any[]) => {
-        this.commentsCount[folderId] = comments.length;
+        // Log the received comments data
+        console.log('Received Comments:', comments);
 
-        if (comments.length > 0) {
-          const lastComment = comments[comments.length - 1];
-          this.lastCommentDetails[folderId] = {
-            user: lastComment.user.username,
-            time: lastComment.createdAt,
-            id: lastComment.id
-          };
-          this.lastCommentId = lastComment.id;
-        } else {
-          this.lastCommentDetails[folderId] = {
-            user: '',
-            time: '',
-            id: 0
-          };
-          this.lastCommentId = null;
-        }
-        if (this.selectedCard && this.selectedCard.id === folderId) {
-          this.comments = comments;
-        }
-  
-        if (this.highlightCommentId) {
-          setTimeout(() => {
-            const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
-            if (commentElement) {
-              commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              commentElement.classList.add('highlight');
-            }
-          }, 100);
-        }
-  
-        // Highlight specific replies
-        comments.forEach(comment => {
-          if (comment.replies) {
-            comment.replies.forEach((reply: { id: number | null; }) => {
-              if (reply.id === this.highlightReplyId) {
-                setTimeout(() => {
-                  const replyElement = document.getElementById(`reply-${reply.id}`);
-                  if (replyElement) {
-                    replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    replyElement.classList.add('highlight');
-                  } else {
-                  }
-                }, 100);
-              }
-            });
-          }
+        this.comments = comments.map(comment => {
+            const mappedComment = {
+                ...comment,
+                userProfileImageUrl: comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null,
+                replies: comment.replies?.map((reply: { user: { uploadedFile: any; }; }) => {
+                    const mappedReply = {
+                        ...reply,
+                        userProfileImageUrl: reply.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${reply.user.uploadedFile}` : null,
+                    };
+                    console.log('Mapped Reply:', mappedReply);
+                    return mappedReply;
+                }) || []
+            };
+            console.log('Mapped Comment:', mappedComment);
+            return mappedComment;
         });
-      },
-      (error) => {
-      //  console.error('Error fetching comments for folder ID:', folderId, error);
-      }
+
+        // Log the final comments array after mapping
+        console.log('Final Mapped Comments:', this.comments);
+
+            this.commentsCount[folderId] = comments.length;
+
+            if (comments.length > 0) {
+                const lastComment = comments[comments.length - 1];
+                this.lastCommentDetails[folderId] = {
+                    user: lastComment.user.username,
+                    time: lastComment.createdAt,
+                    id: lastComment.id
+                };
+                this.lastCommentId = lastComment.id;
+            } else {
+                this.lastCommentDetails[folderId] = {
+                    user: '',
+                    time: '',
+                    id: 0
+                };
+                this.lastCommentId = null;
+            }
+
+            if (this.selectedCard && this.selectedCard.id === folderId) {
+                this.comments = comments;
+            }
+
+            this.updateCommentPagination();
+            if (this.highlightCommentId) {
+                setTimeout(() => {
+                    const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
+                    if (commentElement) {
+                        commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        commentElement.classList.add('highlight');
+                    }
+                }, 100);
+            }
+
+            // Highlight specific replies
+            comments.forEach(comment => {
+                if (comment.replies) {
+                    comment.replies.forEach((reply: { id: number | null; }) => {
+                        if (reply.id === this.highlightReplyId) {
+                            setTimeout(() => {
+                                const replyElement = document.getElementById(`reply-${reply.id}`);
+                                if (replyElement) {
+                                    replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    replyElement.classList.add('highlight');
+                                }
+                            }, 100);
+                        }
+                    });
+                }
+            });
+        },
+        (error) => {
+            console.error('Error fetching comments for folder ID:', folderId, error);
+        }
     );
-  }
+}
 
   handleLastCommentClick(folderId: number): void {
     this.selectCard(this.paginatedUserFolders.find(folder => folder.id === folderId));
@@ -426,6 +520,7 @@ export class ChatComponent {
         }
       );
   }
+  
   showUserReply(commentId: number, replyIdToHighlight: number | null = null): void {
     this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId];
   
@@ -777,4 +872,38 @@ export class ChatComponent {
   goToUserFolders(id: number,): void {
     this.router.navigate(['/user-folders', id]);
   }
+
+
+  updateCommentPagination() {
+    this.commentTotalPages = Math.ceil(this.comments.length / this.commentsPerPage);
+    const startIndex = (this.commentCurrentPage - 1) * this.commentsPerPage;
+    const endIndex = startIndex + this.commentsPerPage;
+    this.paginatedComments = this.comments.slice(startIndex, endIndex);
+  
+  }
+  
+  
+  
+  goToCommentPage(page: number) {
+    if (page > 0 && page <= this.commentTotalPages) {
+      this.commentCurrentPage = page;
+      this.updateCommentPagination();
+    }
+  }
+  
+  
+  nextCommentPage() {
+  if(this.commentCurrentPage < this.commentTotalPages){
+    this.commentCurrentPage ++;
+    this.updateCommentPagination()
+  }
+  }
+  
+  prevCommentPage() {
+  if(this.commentCurrentPage > this.commentTotalPages) {
+    this.commentCurrentPage --;
+    this.updateCommentPagination()
+  }
+  }
+  
 }

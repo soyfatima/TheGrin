@@ -73,12 +73,18 @@ export class AuthService {
   }
 
 
-  private updateLoginStatus(): void {
+  // private updateLoginStatus(): void {
+  //   const currentUser = localStorage.getItem('currentUser');
+  //   const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
+  //   this.loggedInUserSubject.next(loggedInUser);
+  // }
+  updateLoginStatus(): void {
     const currentUser = localStorage.getItem('currentUser');
-    const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
-    this.loggedInUserSubject.next(loggedInUser);
+    const user = currentUser ? JSON.parse(currentUser) : null;
+    this.loggedInUserSubject.next(user);
   }
-
+  
+  
   isLoggedIn(): boolean {
     return !!localStorage.getItem('currentUser');
   }
@@ -102,6 +108,8 @@ export class AuthService {
   }
 
   logout(accessToken: string): Observable<void> {
+   this.clearAuthData();
+
     const url = `${this.apiUrl}/auth/logout`;
     return this.http.post<void>(url, { accessToken }).pipe(
       tap(() => {
@@ -115,6 +123,11 @@ export class AuthService {
     );
   }
 
+clearAuthData() {
+  localStorage.removeItem('currentUser');
+  this.loggedInUserSubject.next(null); 
+}
+    
   requestResetCode(email: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/auth/reset-code`, { email });
   }
@@ -132,4 +145,7 @@ export class AuthService {
     return this.http.put(url, formData);
   }
 
+  getUserInfo(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/auth/user/${id}`);
+  }
 }
