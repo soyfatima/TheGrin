@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 
 export class TokenService {
-  
+
   constructor(private cookieService: CookieService,
     private http: HttpClient,) { }
 
@@ -31,10 +31,10 @@ export class TokenService {
 
   setAccessTokenInCookie(accessToken: string, refreshToken: string, userInfo: string): void {
     const expires = new Date();
-  expires.setDate(expires.getDate() + 1);
+    expires.setDate(expires.getDate() + 1);
     const cookieOptions: CookieOptions = {
       expires,
-      secure: true, 
+      secure: true,
       sameSite: 'Strict',
     };
     this.cookieService.set('authData', JSON.stringify({ accessToken, refreshToken, userInfo }), cookieOptions);
@@ -43,9 +43,9 @@ export class TokenService {
   getAuthData(): { accessToken: string; refreshToken: string; userInfo: string } | null {
     const authDataString = this.cookieService.get('authData');
     if (authDataString) {
-   const authData = JSON.parse(authDataString) as { accessToken: string; refreshToken: string; userInfo: string };
-    return authData;  
-  }
+      const authData = JSON.parse(authDataString) as { accessToken: string; refreshToken: string; userInfo: string };
+      return authData;
+    }
     return null;
   }
 
@@ -54,11 +54,11 @@ export class TokenService {
   }
 
   // TokenService.ts
-setAccessToken(accessToken: string): void {
-  const authData = this.getAuthData();
-  if (authData) {
-    this.setAccessTokenInCookie(accessToken, authData.refreshToken, authData.userInfo);
+  setAccessToken(accessToken: string): void {
+    const authData = this.getAuthData();
+    if (authData) {
+      this.setAccessTokenInCookie(accessToken, authData.refreshToken, authData.userInfo);
+    }
   }
-}
 
 }

@@ -39,6 +39,7 @@ export class ChatComponent {
   currentPageUserFolders: number = 1;
   currentPageAdminNotes: number = 1;
   filteredAdminNotes: any;
+  uploadedFile: File | null = null;
 
   visiblePageRangeUserFolders: number[] = [];
   visiblePageRangeAdminNotes: number[] = [];
@@ -69,11 +70,11 @@ export class ChatComponent {
 
   @ViewChild('commentList') commentList!: ElementRef;
   sanitizedContent!: SafeHtml;
-//////////////////
-paginatedComments: any[] = [];
-commentCurrentPage: number = 1;
-commentsPerPage: number = 10; 
-commentTotalPages: number = 0; 
+  //////////////////
+  paginatedComments: any[] = [];
+  commentCurrentPage: number = 1;
+  commentsPerPage: number = 10;
+  commentTotalPages: number = 0;
 
 
 
@@ -196,10 +197,10 @@ commentTotalPages: number = 0;
     this.comments = [];
     this.highlightCommentId = null;
     this.router.navigate(['/chat'], {
-      replaceUrl: true 
+      replaceUrl: true
     });
 
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
   }
 
   selectNote(note: any): void {
@@ -265,14 +266,14 @@ commentTotalPages: number = 0;
         if (result) {
           this.folderService.deleteFolder(folderId).subscribe(
             () => {
-              this.toastrService.success('Folder deleted successfully');
+              this.toastrService.success('Votre poste a été supprimé ');
               this.folders = this.folders.filter(folder => folder.id !== folderId); // Remove the folder from the list
               this.deselectCard();
               //   this.fetchFolders();
               this.cdr.detectChanges();
             },
             (error) => {
-              this.toastrService.error('Failed to delete folder');
+              this.toastrService.error('Erreur lors de la suppression');
             }
           );
         }
@@ -313,8 +314,8 @@ commentTotalPages: number = 0;
   // fetchComments(folderId: number): void {
   //   this.commentService.getComments(folderId).subscribe(
   //     (comments: any[]) => {
-     
-        
+
+
   //       this.commentsCount[folderId] = comments.length;
 
   //       if (comments.length > 0) {
@@ -379,82 +380,81 @@ commentTotalPages: number = 0;
         // Log the received comments data
         console.log('Received Comments:', comments);
 
-        this.comments = comments.map(comment => {
-            const mappedComment = {
-                ...comment,
-                userProfileImageUrl: comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null,
-                replies: comment.replies?.map((reply: { user: { uploadedFile: any; }; }) => {
-                    const mappedReply = {
-                        ...reply,
-                        userProfileImageUrl: reply.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${reply.user.uploadedFile}` : null,
-                    };
-                    console.log('Mapped Reply:', mappedReply);
-                    return mappedReply;
-                }) || []
+      this.comments = comments.map(comment => {
+      const userProfileImageUrl = comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null;
+      //const userProfileImageUrl = `${environment.apiUrl}/blog-backend/uploads/${comment.user?.uploadedFile}`;
+console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
+
+        return {
+          ...comment,
+          userProfileImageUrl: userProfileImageUrl,
+          replies: comment.replies?.map((reply: { user: { uploadedFile: any; }; }) => {
+            const replyUserProfileImageUrl = reply.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${reply.user.uploadedFile}` : null;
+            console.log('Reply User Profile Image URL:', replyUserProfileImageUrl); // Log URL
+            return {
+              ...reply,
+              userProfileImageUrl: replyUserProfileImageUrl,
             };
-            console.log('Mapped Comment:', mappedComment);
-            return mappedComment;
-        });
+          }) || []
+        };
+      });
 
-        // Log the final comments array after mapping
-        console.log('Final Mapped Comments:', this.comments);
+        this.commentsCount[folderId] = comments.length;
 
-            this.commentsCount[folderId] = comments.length;
-
-            if (comments.length > 0) {
-                const lastComment = comments[comments.length - 1];
-                this.lastCommentDetails[folderId] = {
-                    user: lastComment.user.username,
-                    time: lastComment.createdAt,
-                    id: lastComment.id
-                };
-                this.lastCommentId = lastComment.id;
-            } else {
-                this.lastCommentDetails[folderId] = {
-                    user: '',
-                    time: '',
-                    id: 0
-                };
-                this.lastCommentId = null;
-            }
-
-            if (this.selectedCard && this.selectedCard.id === folderId) {
-                this.comments = comments;
-            }
-
-            this.updateCommentPagination();
-            if (this.highlightCommentId) {
-                setTimeout(() => {
-                    const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
-                    if (commentElement) {
-                        commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        commentElement.classList.add('highlight');
-                    }
-                }, 100);
-            }
-
-            // Highlight specific replies
-            comments.forEach(comment => {
-                if (comment.replies) {
-                    comment.replies.forEach((reply: { id: number | null; }) => {
-                        if (reply.id === this.highlightReplyId) {
-                            setTimeout(() => {
-                                const replyElement = document.getElementById(`reply-${reply.id}`);
-                                if (replyElement) {
-                                    replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    replyElement.classList.add('highlight');
-                                }
-                            }, 100);
-                        }
-                    });
-                }
-            });
-        },
-        (error) => {
-            console.error('Error fetching comments for folder ID:', folderId, error);
+        if (comments.length > 0) {
+          const lastComment = comments[comments.length - 1];
+          this.lastCommentDetails[folderId] = {
+            user: lastComment.user.username,
+            time: lastComment.createdAt,
+            id: lastComment.id
+          };
+          this.lastCommentId = lastComment.id;
+        } else {
+          this.lastCommentDetails[folderId] = {
+            user: '',
+            time: '',
+            id: 0
+          };
+          this.lastCommentId = null;
         }
+
+        if (this.selectedCard && this.selectedCard.id === folderId) {
+          this.comments = comments;
+        }
+
+        this.updateCommentPagination();
+        if (this.highlightCommentId) {
+          setTimeout(() => {
+            const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
+            if (commentElement) {
+              commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              commentElement.classList.add('highlight');
+            }
+          }, 100);
+        }
+
+        // Highlight specific replies
+        comments.forEach(comment => {
+          if (comment.replies) {
+            comment.replies.forEach((reply: { id: number | null; }) => {
+              if (reply.id === this.highlightReplyId) {
+                setTimeout(() => {
+                  const replyElement = document.getElementById(`reply-${reply.id}`);
+                  if (replyElement) {
+                    replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    replyElement.classList.add('highlight');
+                  }
+                }, 100);
+              }
+            });
+          }
+        });
+      },
+      (error) => {
+        console.error('Error fetching comments for folder ID:', folderId, error);
+      }
     );
-}
+  }
 
   handleLastCommentClick(folderId: number): void {
     this.selectCard(this.paginatedUserFolders.find(folder => folder.id === folderId));
@@ -520,10 +520,10 @@ commentTotalPages: number = 0;
         }
       );
   }
-  
+
   showUserReply(commentId: number, replyIdToHighlight: number | null = null): void {
     this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId];
-  
+
     if (this.isUserReplyVisible[commentId]) {
       // Set highlightReplyId to the specific reply if provided, or null if no specific reply
       this.highlightReplyId = replyIdToHighlight;
@@ -531,7 +531,7 @@ commentTotalPages: number = 0;
       this.highlightReplyId = null;
     }
   }
-  
+
   fetchUserSuggestions(prefix: string): void {
     this.commentService.getUserSuggestions(prefix)
       .subscribe(
@@ -614,12 +614,12 @@ commentTotalPages: number = 0;
         // User confirmed deletion
         this.commentService.deleteReply(replyId).subscribe(
           () => {
-            this.toastrService.success('Comment deleted successfully');
+            this.toastrService.success('Votre réponse a été supprimé');
             this.comments = this.comments.filter(comment => comment.id !== replyId);
             this.fetchFolders();
           },
           (error) => {
-            this.toastrService.error('Failed to delete comment');
+            this.toastrService.error('Erreur lors de la suppression');
           }
         );
       }
@@ -879,31 +879,31 @@ commentTotalPages: number = 0;
     const startIndex = (this.commentCurrentPage - 1) * this.commentsPerPage;
     const endIndex = startIndex + this.commentsPerPage;
     this.paginatedComments = this.comments.slice(startIndex, endIndex);
-  
+
   }
-  
-  
-  
+
+
+
   goToCommentPage(page: number) {
     if (page > 0 && page <= this.commentTotalPages) {
       this.commentCurrentPage = page;
       this.updateCommentPagination();
     }
   }
-  
-  
+
+
   nextCommentPage() {
-  if(this.commentCurrentPage < this.commentTotalPages){
-    this.commentCurrentPage ++;
-    this.updateCommentPagination()
+    if (this.commentCurrentPage < this.commentTotalPages) {
+      this.commentCurrentPage++;
+      this.updateCommentPagination()
+    }
   }
-  }
-  
+
   prevCommentPage() {
-  if(this.commentCurrentPage > this.commentTotalPages) {
-    this.commentCurrentPage --;
-    this.updateCommentPagination()
+    if (this.commentCurrentPage > this.commentTotalPages) {
+      this.commentCurrentPage--;
+      this.updateCommentPagination()
+    }
   }
-  }
-  
+
 }

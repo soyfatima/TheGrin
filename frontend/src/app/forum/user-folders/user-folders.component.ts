@@ -41,6 +41,7 @@ export class UserFoldersComponent implements OnInit {
   @ViewChild('paginatorComments', { static: true }) paginatorComments!: MatPaginator;
   @ViewChild('paginatorFolders', { static: true }) paginatorFolders!: MatPaginator;
   selectedCard: any;
+  username: any;
 
   constructor(
     private fb: FormBuilder,
@@ -65,7 +66,7 @@ export class UserFoldersComponent implements OnInit {
       this.loadFolders();
       this.loadComments();
       this.loadLoggedInUser();
-      // this.loadUserInfo();
+       this.loadUserInfo();
       this.authService.loggedInUser$.subscribe(user => {
         this.IsUserLogged = !!user;
         if (this.IsUserLogged) {
@@ -151,8 +152,9 @@ export class UserFoldersComponent implements OnInit {
 
     const queryParams = commentId ? { commentId } : {};
     this.router.navigate(['/chat', folderId], { queryParams });
-  }
 
+  }
+  
   chooseImage(event: any): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
@@ -165,67 +167,64 @@ export class UserFoldersComponent implements OnInit {
     }
   }
 
-  EditUserInfo(): void {
-    if (this.usernameForm.valid && this.loggedInUserId !== null) { // Check if loggedInUserId is not null
-      const username = this.usernameForm.get('username')?.value;
 
+  EditUserInfo(): void {
+    if (this.usernameForm.valid && this.loggedInUserId !== null) {
+      const username = this.usernameForm.get('username')?.value;
+  
       const formData = new FormData();
       formData.append('username', username);
       if (this.uploadedFile) {
         formData.append('uploadedFile', this.uploadedFile, this.uploadedFile.name);
       }
-
+  
       this.authService.updateUserInfo(this.loggedInUserId, formData).subscribe(
-        (response) => {
-          this.loadFolders();
-          this.loadLoggedInUser();
+        response => {
+          this.loggedInUser.username = response.username;
+          if (response.uploadedFile) {
+            this.previewImageUrl = `${environment.apiUrl}/blog-backend/uploads/${response.uploadedFile}?t=${new Date().getTime()}`;
+          }
+          this.loadLoggedInUser(); // Reload user info to get the updated image URL
           this.isEditing = false;
-           this.cdr.detectChanges();
+          this.cdr.detectChanges();
         },
-        (error) => {
-          // Handle error appropriately
+        error => {
+          console.error('Error updating user info:', error);
         }
       );
-    } else {
-      // console.error('User ID is not available');
     }
   }
 
-
-
-  loadLoggedInUser(): void {
-    this.authService.loggedInUser$.subscribe(user => {
-      this.IsUserLogged = !!user;
-      if (this.IsUserLogged) {
-        this.loggedInUser = user; // Store user info
-        this.loggedInUserId = user.id;
   
-        // Update image URL with cache-busting query parameter
-        if (user.uploadedFile) {
-          this.previewImageUrl = `${environment.apiUrl}/blog-backend/uploads/${user.uploadedFile}?t=${new Date().getTime()}`;
-          console.log('Updated previewImageUrl:', this.previewImageUrl);
-        } else {
-          console.log('No uploaded file found for user.');
-        }
-      } else {
-        console.log('User is not logged in.');
-      }
-    });
-  }
+loadLoggedInUser(): void {
+  this.authService.loggedInUser$.subscribe(user => {
+    this.IsUserLogged = !!user;
+    if (this.IsUserLogged) {
+      this.loggedInUser = user;
+      this.loggedInUserId = user.id;
+    }
+  });
+}
 
   loadUserInfo(): void {
     this.authService.getUserInfo(this.userId).subscribe(
-      (user: any) => {
+      user => {
         this.user = user;
+
+        if (user.uploadedFile) {
+          this.user.uploadedFileUrl = `${environment.apiUrl}/blog-backend/uploads/${user.uploadedFile}?t=${new Date().getTime()}`;
+        } else {
+          console.log('No uploaded file found for this user.');
+        }
       },
-      (error) => {
+      error => {
         console.error('Error fetching user info:', error);
       }
     );
   }
+  
   cancel(): void {
     this.isEditing = false;
   }
-
 
 }

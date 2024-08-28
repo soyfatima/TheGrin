@@ -143,10 +143,10 @@ export class NavbarComponent {
 
   loginUser(): void {
     this.dialog.open(UserLoginComponent, {
-      width: '400px',
+     // width: '400px',
       data: {}
     });
-    this.showLoginPopup = false;
+   // this.showLoginPopup = false;
   }
 
 

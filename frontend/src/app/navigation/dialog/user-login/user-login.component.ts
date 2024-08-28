@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { catchError, map, Observable, of } from 'rxjs';
 import { TokenService } from '../../../service/tokenservice';
 import { AuthService } from '../../../service/auth.service';
+import { ResetPasswordComponent } from '../../reset-password/reset-password.component';
 
 @Component({
   selector: 'app-user-login',
@@ -111,9 +112,10 @@ export class UserLoginComponent {
       (response) => {
         this.toastrService.success('Vous êtes connecté avec succès');
         if (response.accessToken && response.refreshToken) {
-          this.loggedInUser = response.userInfo;
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
           this.dialog.closeAll();
+          console.log('refreshtoken', response.refreshToken);
+          console.log('accesstoken', response.accessToken);
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
         } else {
@@ -167,13 +169,12 @@ export class UserLoginComponent {
   // }
 
 
-  //   openDialog(): void {
-  //     this.dialog.open(ResetPasswordComponent, {
-  //       width: '400px',
-  //       data: { }
-  //     });
-  //   this.showLoginPopup=false;
-  // }
+    openDialog(): void {
+      this.dialog.open(ResetPasswordComponent, {
+        width: '400px',
+        data: { }
+      });
+  }
 
 
 

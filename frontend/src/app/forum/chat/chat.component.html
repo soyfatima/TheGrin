@@ -6,21 +6,21 @@
             <mat-icon>{{ isCategoryHidden ? 'menu_open' : 'menu' }}</mat-icon>
         </button>
     </div>
-
     <div class="categories bg-color-gradient"
         [ngClass]="{'hidden': isCategoryHidden && !isMobile, 'mobile-hidden': isCategoryHidden && isMobile}">
-        <div class="tags" [ngClass]="isCategoryHidden ? 'col-lg-12' : 'col-md-12' " >
-             <div class="d-flex justify-content-between mb-3">
-            <div class="title-name color-default mt-2">
-                <h4 class="fw-bold">LE-GRIN</h4>
-            </div> 
-            <div class="d-m-none btn-action d-flex justify-content-end">
-                <button type="button" class="bg-color-default border border-0 rounded-2 shadow-sm m-1"
-                    (click)="toggleCategory()">
-                    <mat-icon class="color-primary">{{ isCategoryHidden ? 'visibility' : 'visibility_off' }}</mat-icon>
-                </button>
+        <div class="tags" [ngClass]="isCategoryHidden ? 'col-lg-12' : 'col-md-12' ">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="title-name color-default mt-2">
+                    <h4 class="fw-bold">LE-GRIN</h4>
+                </div>
+                <div class="d-m-none btn-action d-flex justify-content-end">
+                    <button type="button" class="bg-color-default border border-0 rounded-2 shadow-sm m-1"
+                        (click)="toggleCategory()">
+                        <mat-icon class="color-primary">{{ isCategoryHidden ? 'visibility' : 'visibility_off'
+                            }}</mat-icon>
+                    </button>
+                </div>
             </div>
-           </div>
             <div class="filter">
                 <div class="sidebar">
                     <div class="sidebar-item recent-posts">
@@ -28,10 +28,12 @@
                             <h3 class="sidebar-title color-default">Tags</h3>
                             <ul class="mt-3">
                                 <li (click)="filterForumByCategory('')">
-                                    <a class="bg-color-white color-secondary" [class.active]="selectedCategory === ''"> Tout afficher </a>
+                                    <a class="color-default" [class.active]="selectedCategory === ''">
+                                        Tout afficher </a>
                                 </li>
                                 <li *ngFor="let item of category" (click)="filterForumByCategory(item.name)">
-                                    <a class="bg-color-white color-secondary" [class.active]="selectedCategory === item.name">{{item.name}}</a>
+                                    <a class="color-default"
+                                        [class.active]="selectedCategory === item.name">{{item.name}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -76,7 +78,8 @@
                 <div class="content padding">
                     <div class="mb-4" *ngIf="paginatedUserFolders.length ===0">Pas de poste pour le moment</div>
                     <div class="row" *ngIf="!selectedCard">
-                        <div  [ngClass]="isCategoryHidden ? 'col-lg-4 col-md-4 mb-3' : 'col-lg-4 col-md-6 mb-3' "  class="transition" type="button" *ngFor="let folder of paginatedUserFolders">
+                        <div [ngClass]="isCategoryHidden ? 'col-lg-4 col-md-4 mb-3' : 'col-lg-4 col-md-6 mb-3' "
+                            class="transition" type="button" *ngFor="let folder of paginatedUserFolders">
                             <div class="">
                                 <div class="shadow-sm p-2 border border-1 bg-color" (click)="selectCard(folder)"
                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
@@ -87,12 +90,12 @@
                                                 <img [src]="folder.userProfileImageUrl" alt="img"
                                                     class="img-fluid rounded-circle">
                                             </div>
-                                            <div class="info ms-sm-4">
+                                            <div class="info ms-sm-4 p-1">
                                                 <div class="name fw-bold color-primary"
                                                     (click)="goToUserFolders(folder.user?.id)">
                                                     {{ folder.user?.username }}
                                                 </div>
-                                                <div class="time">{{folder.createdAt | date: 'yyyy-MM-dd HH:mm:ss'}}
+                                                <div class="time">{{folder.createdAt | date: 'yyyy-MM-dd HH:mm'}}
                                                 </div>
                                             </div>
                                         </div>
@@ -113,7 +116,7 @@
                                         </p>
                                         <time class="fw-bold" *ngIf="lastCommentDetails[folder.id]?.time">
                                             <mat-icon>schedule</mat-icon> {{ lastCommentDetails[folder.id].time | date:
-                                            'yyyy-MM-dd HH:mm:ss' }}
+                                            'yyyy-MM-dd HH:mm' }}
                                         </time>
                                     </div>
                                 </div>
@@ -122,16 +125,16 @@
                         <div class="pagination blog-pagination d-flex align-items-center justify-content-center">
                             <ul>
                                 <li>
-                                    <button (click)="previousPageUserFolders()">Préc</button>
+                                    <button class="color-secondary" (click)="previousPageUserFolders()">Préc</button>
                                 </li>
                                 <li *ngFor="let pageNumber of visiblePageRangeUserFolders"
                                     [class.active]="currentPageUserFolders === pageNumber">
-                                    <button (click)="changePageUserFolders(pageNumber)">
+                                    <button class="color-secondary" (click)="changePageUserFolders(pageNumber)">
                                         {{ pageNumber }}
                                     </button>
                                 </li>
                                 <li>
-                                    <button (click)="nextPageUserFolders()">Suiv</button>
+                                    <button class="color-secondary" (click)="nextPageUserFolders()">Suiv</button>
                                 </li>
                             </ul>
                         </div>
@@ -144,20 +147,19 @@
                                     <mat-icon>arrow_back</mat-icon> Retour
                                 </button>
                             </div>
-                            <div class="d-flex mb-2 flex0-column flex-sm-row align-items-start">
+                            <div class="d-flex mb-4 flex0-column flex-sm-row align-items-start">
                                 <div class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
                                     <img [src]="selectedCard.userProfileImageUrl" alt="img"
                                         class="img-fluid rounded-circle">
                                 </div>
-
-                                <div class="info ms-sm-4">
-                                    <h4 class="color-primary">{{selectedCard.user?.username}}</h4>
+                                <div class="info ms-sm-4 p-1">
+                                    <h4 class="color-primary fw-bold mb-0">{{selectedCard.user?.username}}</h4>
                                     <time class="time mb-1">{{selectedCard.createdAt | date: 'yyyy-MM-dd
-                                        HH:mm:ss'}}</time>
+                                        HH:mm'}}</time>
                                 </div>
                             </div>
                             <div class="content mb-4">
-                                <p><strong class="color-primary">Titre:</strong> {{selectedCard.title}}</p>
+                                <p><strong class="color-primary mb-0">Titre:</strong> {{selectedCard.title}}</p>
                                 <div class="content edit-content mb-3">
                                     <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
                                         <p [innerHTML]="selectedCard?.content"></p>
@@ -168,8 +170,6 @@
                                             (click)="deleteFolder()"
                                             class="bg-transparent border border-0 m-1"><mat-icon
                                                 class="color-tertiary">delete</mat-icon></button>
-
-
                                     </ng-container>
                                     <ng-template #editMode>
                                         <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
@@ -188,25 +188,27 @@
                             </div>
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
-                                    <h4 class="mb-4">({{ comments.length }}) Commentaire</h4>
-
-                                    <div class="p-2 mb-3 bg-color rounded-2 bordr border-2 shadow-sm"
+                                    <h4 class="mb-4">({{ comments.length }}) Commentaires</h4>
+                                    <div class="p-2 mb-5 bg-color-chat rounded-2 bordr border-2 shadow-sm"
                                         *ngFor="let comment of paginatedComments" [id]="'comment-' + comment.id"
                                         [ngClass]="{'highlight': comment.id === highlightCommentId}">
                                         <div class="card-body">
+                                            <div class="d-flex justify-content-end">
+                                                <p class="time color-default fw-bold mb-0"> <em> {{comment.createdAt | date:
+                                                    'yyyy-MM-dd
+                                                    HH:mm'}} </em> </p> 
+                                            </div>
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
-                                                <div class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                    <img [src]="comment.userProfileImageUrl" alt="User Image" class="img-fluid rounded-circle">
-                                                    <!-- Log image URL -->
-                                                    <p>Profile Image URL: {{ comment.userProfileImageUrl }}</p>
+                                                <div
+                                                    class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
+                                                    <img [src]="comment.userProfileImageUrl" alt=""
+                                                        class="img-fluid rounded-circle">
                                                 </div>
-                                                <div class="user-comment-info ms-sm-4" *ngIf="comment.user">
+                                                <div class="user-comment-info ms-sm-4 p-1 " *ngIf="comment.user">
                                                     <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
                                                     </p>
-                                                    <p class="time text-default mb-0">{{comment.createdAt | date:
-                                                        'yyyy-MM-dd
-                                                        HH:mm:ss'}}</p>
-                                                    <p class="color-primary fw-bold"
+
+                                                    <p class="color-tertiary fw-bold"
                                                         (click)="showUserReply(comment.id)">
                                                         ({{comment.replies?.length || 0}}) réponse</p>
                                                 </div>
@@ -215,32 +217,28 @@
                                             <div class="user-replies"
                                                 *ngIf="comment.replies?.length && isUserReplyVisible[comment.id]">
                                                 <div class="reply" data-aos="fade-in">
-                                                    <div class="bg-color-white mb-3 p-2 shadow-sm" *ngFor="let reply of comment.replies"
-                                                        [id]="'reply-' + reply.id"
+                                                    <div class="bg-color-chat border border-1 rounded-2 mb-3 p-2 shadow-sm"
+                                                        *ngFor="let reply of comment.replies" [id]="'reply-' + reply.id"
                                                         [ngClass]="{'highlight': reply.id === highlightReplyId}">
-                                                <pre>{{ reply | json }}</pre> 
-                                                       
                                                         <div
-                                                        
                                                             class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
-                                                            <div class="circle-icon bg-white mb-sm-0 d-flex justify-content-center align-items-center">
-                                                                <img [src]="reply.userProfileImageUrl" alt="Reply User Image" class="img-fluid rounded-circle">
-                                                                <!-- Log reply image URL -->
-                                                                <p>Reply Image URL: {{ reply.userProfileImageUrl }}</p>
-                                                              </div>
-                                                              
+                                                            <div
+                                                                class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
+                                                                <img [src]="reply.userProfileImageUrl" alt="img"
+                                                                    class="img-fluid rounded-circle">
+                                                            </div>
 
-                                                            <div class="reply-user-info ms-sm-4 mb-3">
+                                                            <div class="reply-user-info ms-sm-4 mb-3 p-1 color-default">
                                                                 <p class="mb-0"><strong>{{ reply.user.username
                                                                         }}</strong></p>
-                                                                <p class="time text-default">{{ reply.createdAt
+                                                                <p class="time color-default">{{ reply.createdAt
                                                                     | date: 'yyyy-MM-dd
                                                                     HH:mm' }}</p>
                                                             </div>
                                                         </div>
                                                         <div class="content edit-content">
                                                             <ng-container *ngIf="!reply.isEditing; else editModeReply">
-                                                                <p class="mb-3"
+                                                                <p class="mb-3 color-default"
                                                                     [innerHTML]="getHighlightedContent(reply.content)">
                                                                 </p>
                                                                 <button *ngIf="reply.user?.id === loggedInUserId"
@@ -248,17 +246,17 @@
                                                                     class="bg-transparent border border-0 color-primary m-1"><mat-icon>edit</mat-icon></button>
                                                                 <button *ngIf="reply.user?.id === loggedInUserId"
                                                                     (click)="deleteReply(reply.id)"
-                                                                    class="bg-transparent border border-0 color-tertiary m-1 "><mat-icon>delete</mat-icon></button>
+                                                                    class="bg-transparent border border-0 color-info m-1 "><mat-icon>delete</mat-icon></button>
 
                                                             </ng-container>
                                                             <ng-template #editModeReply>
                                                                 <textarea [(ngModel)]="reply.editContent"
-                                                                    class="form-control" rows="2"></textarea>
+                                                                    class="form-control mb-2" rows="2"></textarea>
                                                                 <input type="hidden" [(ngModel)]="reply.folderId" />
                                                                 <button (click)="saveReply(reply)"
-                                                                    class="btn btn-success m-1">Editer</button>
+                                                                    class="bg-color-primary p-1 text-white border border-0 rounded-2 m-1">Editer</button>
                                                                 <button (click)="cancelEditReply(reply)"
-                                                                    class="btn btn-secondary m-1">Annuler</button>
+                                                                    class="bg-secondary rounded-2 p-1 text-white border border-0 m-1">Annuler</button>
                                                             </ng-template>
                                                         </div>
                                                     </div>
@@ -267,23 +265,29 @@
                                             <hr>
                                             <div class="content edit-content">
                                                 <ng-container *ngIf="!comment.isEditing; else editMode">
-                                                    <p [innerHTML]="comment.content"></p>
+                                                    <p class=" color-default" [innerHTML]="comment.content"></p>
                                                     <hr>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button *ngIf="comment.user?.id === loggedInUserId"
-                                                            (click)="editComment(comment)"
-                                                            class="color-primary bg-color-tertiary border border-0 rounded-3 p-2 m-1 color-default">Editer</button>
-                                                        <button *ngIf="comment?.user?.id === loggedInUserId"
-                                                            (click)="deleteComment(comment.id)"
-                                                            class=" bg-secondary border border-0 rounded-3 p-2 m-1 color-default">Supprimer</button>
-                                                        <button (click)="replyToComment(comment.id)"
-                                                            class="bg-color-primary border border-0 rounded-3 p-2 m-1 color-default">
-                                                            Répondre
-                                                        </button>
+
+                                                    <div class="d-flex justify-content-between">
+                                                        <div class="left-side">
+                                                            <button *ngIf="comment?.user?.id === loggedInUserId"
+                                                                (click)="deleteComment(comment.id)"
+                                                                class="bg-transparent border border-0 p-2 m-1 color-info"><mat-icon>delete</mat-icon></button>
+                                                        </div>
+                                                        <div class="right-side">
+                                                            <button *ngIf="comment.user?.id === loggedInUserId"
+                                                                (click)="editComment(comment)"
+                                                                class="color-primary bg-color-tertiary border border-0 rounded-3 p-2 m-1 color-default">Editer</button>
+                                                            <button (click)="replyToComment(comment.id)"
+                                                                class="bg-color-primary border border-0 rounded-3 p-2 m-1 color-default">
+                                                                Répondre
+                                                            </button>
+                                                        </div>
                                                     </div>
+
                                                 </ng-container>
                                                 <ng-template #editMode>
-                                                    <textarea [(ngModel)]="comment.editContent" class="form-control"
+                                                    <textarea [(ngModel)]="comment.editContent" class="form-control mb-2"
                                                         rows="4"></textarea>
                                                     <div class="btn-action">
                                                         <button (click)="saveComment(comment)"
@@ -301,7 +305,7 @@
                                                 <div class=" form-group">
                                                     <label class="form-label" for="replyContent"></label>
                                                     <div class="position-relative">
-                                                        <textarea id="replyContent" class="form-control" rows="2"
+                                                        <textarea id="replyContent" class="form-control mb-2" rows="2"
                                                             placeholder=" pour mentionner un pseudo utiliser @userpseudo votre message..."
                                                             [(ngModel)]="replyContent" name="replyContent"
                                                             (ngModelChange)="onReplyContentChange()"
@@ -333,13 +337,14 @@
                                     </div>
 
                                     <div class="d-flex justify-content-around mt-3">
-                                        <button class="btn btn-primary" (click)="prevCommentPage()" [disabled]="commentCurrentPage === 1">Préc</button>
+                                        <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="prevCommentPage()"
+                                            [disabled]="commentCurrentPage === 1">Préc</button>
                                         <span>Page {{ commentCurrentPage }} of {{ commentTotalPages }}</span>
-                                        <button class="btn btn-primary" (click)="nextCommentPage()" [disabled]="commentCurrentPage === commentTotalPages">Suiv</button>
-                                      </div>
+                                        <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="nextCommentPage()"
+                                            [disabled]="commentCurrentPage === commentTotalPages">Suiv</button>
+                                    </div>
                                 </div>
                             </div>
-
                             <!--comment box-->
                             <form (ngSubmit)="submitComment()" #commentForm="ngForm">
                                 <div class="row mb-4">
@@ -361,7 +366,7 @@
                 </div>
             </div>
             <div *ngIf="tab === 'publish'">
-                <div class="content padding">
+                <div class="content shadow-sm border border-1 mt-2 mb-3 p-2  padding">
                     <form (ngSubmit)="onSubmit()" [formGroup]="folderForm">
                         <div class="form-input col-8 mb-3">
                             <label class="form-label">Titre</label>
@@ -409,16 +414,16 @@
                         <div class="pagination blog-pagination d-flex align-items-center justify-content-center">
                             <ul>
                                 <li>
-                                    <button class="" (click)="previousPageAdminNotes()">Préc</button>
+                                    <button class="color-secondary" (click)="previousPageAdminNotes()">Préc</button>
                                 </li>
                                 <li *ngFor="let pageNumber of visiblePageRangeAdminNotes"
                                     [class.active]="currentPageAdminNotes === pageNumber">
-                                    <button (click)="changePageAdminNotes(pageNumber)">
+                                    <button class="color-secondary" (click)="changePageAdminNotes(pageNumber)">
                                         {{ pageNumber }}
                                     </button>
                                 </li>
                                 <li>
-                                    <button (click)="nextPageAdminNotes()">Suiv</button>
+                                    <button class="color-secondary" (click)="nextPageAdminNotes()">Suiv</button>
                                 </li>
                             </ul>
                         </div>

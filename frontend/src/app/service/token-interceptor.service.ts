@@ -13,22 +13,24 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private tokenService: TokenService, private router: Router) {}
+  constructor(private tokenService: TokenService, private router: Router) { }
 
- 
+
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authData = this.tokenService.getAuthData();
     const accessToken = authData?.accessToken;
     const refreshToken = authData?.refreshToken;
-  
+
     if (accessToken) {
       request = this.addAuthorizationHeader(request, accessToken);
     }
-  
+
     return next.handle(request).pipe(
       catchError((error) => {
-       // console.error('Request error:', error);
+        // console.error('Request error:', error);
+
         if (error instanceof HttpErrorResponse && error.status === 401 && refreshToken) {
+          console.log('Handling 401 Unauthorized error with refresh token.');
           return this.handleUnauthorizedError(request, next, refreshToken);
         }
         return throwError(error);
@@ -44,7 +46,7 @@ export class TokenInterceptor implements HttpInterceptor {
         return next.handle(newRequest);
       }),
       catchError((refreshError) => {
-//        console.error('Error during token refresh:', refreshError);
+        //        console.error('Error during token refresh:', refreshError);
         this.tokenService.removeAuthData();
         // this.router.navigate(['/login']);
         return throwError(refreshError);
@@ -52,7 +54,7 @@ export class TokenInterceptor implements HttpInterceptor {
     );
   }
 
-  
+
   private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
     return request.clone({
       setHeaders: {

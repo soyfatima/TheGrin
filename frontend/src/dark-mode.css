@@ -76,4 +76,8 @@
     background-image: linear-gradient(to top, #7c0bbd 0%, #7f0255 100%) !important;
 
   }
+
+  .color-secondary {
+    color: #fff !important;
+  }
 }

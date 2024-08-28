@@ -31,16 +31,15 @@
         </button>
 
         <div class="d-flex" *ngIf="IsUserLogged">
+          <div class="avatar" (click)="goToUserFolders()">
+            <button class="bg-color-white border border-0"> <mat-icon>account_circle</mat-icon>
+            </button>
+          </div>
           <div class="avatar" (click)="openEnd(content)">
             <button class="notification-count bg-color-white border border-0"
              matBadge="{{notificationCount}}"
               [matBadgeHidden]="notificationCount === 0" matBadgeColor="accent">
               <mat-icon class="text-primary">notifications</mat-icon>
-            </button>
-          </div>
-
-          <div class="avatar" (click)="goToUserFolders()">
-            <button class="bg-color-white border border-0 color-primary"> <mat-icon>account_circle</mat-icon>
             </button>
           </div>
           <div class="avatar">
@@ -55,8 +54,6 @@
     </div>
   </div>
 </nav>
-
-
 
 
 

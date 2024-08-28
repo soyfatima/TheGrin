@@ -38,35 +38,43 @@
     </div> -->
 
     <div class="user-info">
-        <div class="circle-icon mb-3 d-flex justify-content-center align-items-center">
-          <img [src]="previewImageUrl || folders[0]?.uploadedFileUrl || 'default-image-url'" alt="img" class="img-fluid rounded-circle">
-        </div>
-        <ng-container *ngIf="!isEditing; else editMode">
-          <button *ngIf="folders[0]?.user?.id === loggedInUserId" (click)="isEditing = true" class="border border-0 bg-transparent m-1">
-            <mat-icon class="color-primary">edit</mat-icon>
-          </button>
-          <p class="mb-1">Utilisateur : <strong class="color-primary"> {{ folders[0]?.user?.username }}</strong></p>
-          <p class="mb-1">Genre: {{folders[0]?.user?.gender}}</p>
-        </ng-container>
-        <ng-template #editMode>
-          <form [formGroup]="usernameForm" (ngSubmit)="EditUserInfo()">
-            <div class="row">
-              <div class="col-md-4 mb-2">
-                <label class="form-label">Pseudo</label>
-                <input formControlName="username" class="form-control" placeholder="Nouveau pseudo">
-              </div>
-              <div class="col-md-4 mb-2">
-                <label class="form-label">Profil</label>
-                <input type="file" class="form-control" (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg" />
-              </div>
+
+      <div class="circle-icon mb-3 d-flex justify-content-center align-items-center">
+      <img 
+        [src]="previewImageUrl || user?.uploadedFileUrl || 'default-image-url'" 
+        alt="img" 
+        class="img-fluid rounded-circle">
+    </div> 
+    
+      <ng-container *ngIf="!isEditing; else editMode">
+        <!-- Show edit button only if user is logged in and it's their own profile -->
+        <button *ngIf="IsUserLogged && userId === loggedInUserId" (click)="isEditing = true" class="border border-0 bg-transparent m-1">
+          <mat-icon class="color-primary">edit</mat-icon>
+        </button>
+        <p class="mb-1">Utilisateur : <strong class="color-primary">{{loggedInUser?.username }}</strong></p>
+        <p class="mb-1">Genre: {{ user?.gender }}</p>
+        <p class="mb-1">Date d'inscription : <em>{{ user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
+        <p>Connexion : <em>{{ user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
+      </ng-container>
+    
+      <ng-template #editMode>
+        <form [formGroup]="usernameForm" (ngSubmit)="EditUserInfo()">
+          <div class="row">
+            <div class="col-md-4 mb-2">
+              <label class="form-label">Pseudo</label>
+              <input formControlName="username" class="form-control" placeholder="Nouveau pseudo">
             </div>
-            <button type="submit" class="btn btn-primary m-1">Enregistrer</button>
-            <button type="button" (click)="cancel()" class="btn btn-secondary m-1">Annuler</button>
-          </form>
-        </ng-template>
-        <p class="mb-1">Date d'inscription : <em>{{ folders[0]?.user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
-        <p>Connexion : <em>{{ folders[0]?.user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
-      </div>
+            <div class="col-md-4 mb-2">
+              <label class="form-label">Profil</label>
+              <input type="file" class="form-control" (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary m-1">Enregistrer</button>
+          <button type="button" (click)="cancel()" class="btn btn-secondary m-1">Annuler</button>
+        </form>
+      </ng-template>
+    </div>
+    
       
     <div class="switch-container bg-color-white">
         <ul class="nav nav-tabs justify-content-center align-items-center mb-0" id="myTab" role="tablist">
