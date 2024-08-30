@@ -1,7 +1,7 @@
-<div class="bg-color">
-  <div class="d-flex justify-content-end mb-2">
-    <!-- <button class="close-button btn-outline-danger border border-1 btn"
-        (click)="closeLoginPopup()"><mat-icon>close</mat-icon></button> -->
+<div class="bg-color" style="z-index: 999;">
+  <div class="btn-action d-flex justify-content-end p-2 mb-2">
+    <button class="bg-color-primary border border-0  shadow-none" mat-dialog-close
+      (click)="onYesClick()"><mat-icon>close</mat-icon></button>
   </div>
   <div class="switch-container">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -13,28 +13,29 @@
       </li>
     </ul>
   </div>
-  <div class="py-3"></div>
   <div class="content p-3">
     <div *ngIf="tab === 'login'">
       <div class="login-popup-content">
         <h4 class="text-uppercase fw-bold h5 mb-3">Se connecter</h4>
         <form (ngSubmit)="login()" [formGroup]="loginForm">
-          <div class="form-input mb-3">
-            <label class="form-label">Username</label>
-            <input type="text" id="username" formControlName="username" placeholder="ex: username" class="form-control"
+          <div class="form-input mb-2">
+            <label class="form-label">nom d'utilisateur</label>
+            <input type="text" id="username" formControlName="username" placeholder="ex: ali " class="form-control"
               required>
             <div *ngIf="usernameErrorMessage" class="text-danger">{{ userErrorMessage }}</div>
           </div>
 
-          <div class="form-input mb-4">
-            <label class="form-label">Password</label>
-            <input type="password" id="password" formControlName="password" class="form-control" required>
+          <div class="form-input mb-2">
+            <label class="form-label">Mot de passe</label>
+            <input type="password" id="password" formControlName="password" placeholder="*****" class="form-control"
+              required>
           </div>
-           <div class="mb-3">
-              <a class="text-decoration text-white" (click)="openDialog()">mot de passe oublié ?</a>
-            </div> 
-          <div class="btn-submit mb-2">
-            <button type="submit" class="bg-color-primary text-white p-2 rounded-3 w-100 w-100">Connexion</button>
+          <div class="mb-2">
+            <a class="text-decoration" (click)="openDialog()">mot de passe oublié ?</a>
+          </div>
+          <div class="btn-submit">
+            <button type="submit"
+              class="bg-color-primary text-white p-2 rounded-3 w-100 border border-0">Connexion</button>
           </div>
         </form>
       </div>
@@ -44,37 +45,40 @@
       <div class="login-popup-content">
         <h4 class="text-uppercase fw-bold h5 mb-3">S'inscrire</h4>
         <form (ngSubmit)="signup()" [formGroup]="signupForm">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">email</label>
-              <input type="email" class="form-control" formControlName="Newemail" placeholder="ex:user@example.com"
-                required>
-              <div *ngIf="emailErrorMessage" class="text-danger">{{ emailErrorMessage }}</div>
+          <div class="scrolltab">
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <label class="form-label">email</label>
+                <input type="email" class="form-control" formControlName="Newemail" placeholder="ex:user@example.com"
+                  required>
+                <div *ngIf="emailErrorMessage" class="text-danger">{{ emailErrorMessage }}</div>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label for="gender" class="form-label">Genre</label>
+                <select id="gender" class="form-select" formControlName="gender" required>
+                  <option value="">Selectionner un genre</option>
+                  <option value="Homme">Homme</option>
+                  <option value="Femme">Femme</option>
+                  <option value="Autre">Autre</option>
+                  <div *ngIf="genderErrorMessage" class="text-danger">{{ genderErrorMessage }}</div>
+                </select>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Nom d'utilisateur</label>
+                <input type="text" id="username" placeholder="votre pseudo ex: ali" formControlName="Newusername"
+                  class="form-control" required>
+                <div *ngIf="usernameErrorMessage" class="text-danger">{{ usernameErrorMessage }}</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Mot de passe</label>
+                <input type="password" id="password" formControlName="Newpassword" class="form-control"
+                  placeholder="*****" required>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label for="gender" class="form-label">Genre</label>
-              <select id="gender" class="form-select" formControlName="gender" required>
-                <option value="">Selectionner un genre</option>
-                <option value="Homme">Homme</option>
-                <option value="Femme">Femme</option>
-                <option value="Autre">Autre</option>
-                <div *ngIf="genderErrorMessage" class="text-danger">{{ genderErrorMessage }}</div>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Pseudo</label>
-              <input type="text" id="username" placeholder="ex: username" formControlName="Newusername"
-                class="form-control" required>
-              <div *ngIf="usernameErrorMessage" class="text-danger">{{ usernameErrorMessage }}</div>
-            </div>
-          <div class="col-md-6 mb-4">
-            <label class="form-label">Mot de passe</label>
-            <input type="password" id="password" formControlName="Newpassword" class="form-control" required>
           </div>
-        </div>
-
-          <div class="btn-submit mb-2">
-            <button type="submit" class="text-white bg-color-tertiary p-2 rounded-3 w-100">S'inscrire</button>
+          <div class="btn-submit">
+            <button type="submit"
+              class="text-white bg-color-tertiary p-2 border border-0  rounded-3 w-100">S'inscrire</button>
           </div>
         </form>
       </div>

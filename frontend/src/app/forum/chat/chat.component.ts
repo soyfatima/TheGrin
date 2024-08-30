@@ -24,28 +24,22 @@ export class ChatComponent {
   isMobile = false;
   folderForm!: FormGroup;
   folders: any[] = [];
-  adminNotes: any[] = [];
-  currentDate: Date = new Date();
+  folderId!: number;
+
 
   selectedCard: any = null;
   selectedNote: any = null;
 
   forum: any[] = [];
   filteredForum: any[] = [];
-  selectedCategory: string = '';
-  itemsPerPage: number = 10;
-  visiblePageRange: number[] = [];
-
-  currentPageUserFolders: number = 1;
-  currentPageAdminNotes: number = 1;
   filteredAdminNotes: any;
+  adminNotes: any[] = [];
+  currentDate: Date = new Date();
+  selectedCategory: string = '';
   uploadedFile: File | null = null;
 
-  visiblePageRangeUserFolders: number[] = [];
-  visiblePageRangeAdminNotes: number[] = [];
   /////////////////////////////
   commentContent: string = '';
-  folderId!: number;
   comments: any[] = [];
   replyContent: string = '';
   replyingTo: number | null = null;
@@ -55,7 +49,6 @@ export class ChatComponent {
   /////////////////////////////
   IsUserLogged: boolean = false;
   loggedInUserId: number | null = null;
-
   isUserReplyVisible: { [key: number]: boolean } = {};
 
   ///////////////////////////
@@ -72,10 +65,17 @@ export class ChatComponent {
   sanitizedContent!: SafeHtml;
   //////////////////
   paginatedComments: any[] = [];
-  commentCurrentPage: number = 1;
-  commentsPerPage: number = 10;
-  commentTotalPages: number = 0;
+  paginatedAdminNote: any[] = [];
+  paginatedFolder: any[] = [];
 
+  commentCurrentPage: number = 1;
+  folderCurrentPage: number = 1;
+  adminNotescurrentPage: number = 1;
+
+  commentTotalPages: number = 0;
+  folderTotalPage: number = 0;
+  adminNotesTotalPage: number = 0;
+  itemsPerPage: number = 10;
 
 
   category: any[] = [
@@ -102,6 +102,7 @@ export class ChatComponent {
     { label: 'autre', value: 'autre', }
   ]
 
+
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth <= 768;
@@ -125,9 +126,15 @@ export class ChatComponent {
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
   ) {
+    this.folderForm = this.fb.group({
+      category: ['', Validators.required],
+      title: ['', Validators.required],
+      content: ['', Validators.required],
+      uploadedFile: [null],
+    });
 
     this.searchSubject.pipe(
-      debounceTime(300) // Adjust debounce time as needed
+      debounceTime(300)
     ).subscribe(prefix => {
       if (prefix.length > 1) {
         this.fetchUserSuggestions(prefix);
@@ -143,14 +150,6 @@ export class ChatComponent {
   }
 
   ngOnInit() {
-    this.folderForm = this.fb.group({
-      category: ['', Validators.required],
-      title: ['', Validators.required],
-      content: ['', Validators.required],
-      uploadedFile: [null],
-
-    });
-
     this.route.paramMap.subscribe(params => {
       const folderId = +params.get('id')!;
       const commentId = +this.route.snapshot.queryParamMap.get('commentId')!;
@@ -170,28 +169,44 @@ export class ChatComponent {
       }
     });
     localStorage.removeItem('highlightCommentId');
-
+    //logged user
+    this.authService.loggedInUser$.subscribe(user => {
+      if (user) {
+        this.loggedInUserId = user.id;
+      } else {
+        this.loggedInUserId = null;
+      }
+    });
     // Other initialization
     this.onResize();
     this.fetchFolders();
     this.updateTime();
     this.fetchAdminNote();
     this.updateCommentPagination();
-    this.authService.loggedInUser$.subscribe(user => {
-      if (user) {
-        this.loggedInUserId = user.id; // Assuming 'id' is the property name
-      } else {
-        this.loggedInUserId = null; // Handle the case when the user is not logged in
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.lastCommentId) {
+        this.scrollToLastComment();
       }
-    });
+    }, 300);
+  }
+
+  updateTime(): void {
+    setInterval(() => {
+      this.currentDate = new Date();
+    }, 1000);
   }
 
   selectCard(folder: any): void {
+    console.log('Folder selected:', folder);
     this.selectedCard = folder;
     localStorage.setItem('selectedCard', JSON.stringify(folder));
     this.fetchComments(folder.id);
     this.cdr.detectChanges();
   }
+
   deselectCard(): void {
     this.selectedCard = null;
     this.comments = [];
@@ -213,7 +228,8 @@ export class ChatComponent {
     localStorage.removeItem('selectedNote');
   }
 
-  //fetch folders and details
+  ////////////////////////////////
+  //folders
   fetchFolders(): void {
     this.folderService.getFolderDetails().subscribe(
       (folders) => {
@@ -221,13 +237,14 @@ export class ChatComponent {
           .map((folder: { uploadedFile: any; user: any; createdAt: Date }) => ({
             ...folder,
             FolderUploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/userFile/${folder.uploadedFile}` : null,
-            userProfileImageUrl: folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${folder.user.uploadedFile}` : null,
+            userProfileImageUrl: folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${folder.user.uploadedFile}` : null,
           }))
           .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Trier par date décroissante
 
         this.filteredForum = this.folders;
         this.folders.forEach(folder => {
           this.fetchComments(folder.id);
+          this.paginatedFolders();
         });
 
       },
@@ -246,14 +263,13 @@ export class ChatComponent {
         }));
         this.adminNotes = folders;
         this.filteredAdminNotes = this.adminNotes;
-        this.updateVisiblePageRangeAdminNotes();
+        this.paginatedAdminNotes();
       },
       (error) => {
         // console.error('Error fetching admin notes:', error);
       }
     );
   }
-
 
   deleteFolder(): void {
     if (this.selectedCard) {
@@ -281,11 +297,44 @@ export class ChatComponent {
     }
   }
 
-  updateTime(): void {
-    setInterval(() => {
-      this.currentDate = new Date();
-    }, 1000);
+  ///////////////////////////
+  //folder edit
+  EditContent(): void {
+    if (this.selectedCard) {
+      this.isEditing = true;
+      this.editContent = this.selectedCard.content;
+    }
   }
+
+  EditFolderContent(): void {
+    if (this.selectedCard) {
+      const content = this.editContent;
+      const id = this.selectedCard.id;
+      const folderId = id;
+      this.folderService.updateFolderContent(folderId, content).subscribe(
+        (response) => {
+          this.selectedCard.content = content;
+          const folderIndex = this.folders.findIndex(folder => folder.id === id);
+          if (folderIndex !== -1) {
+            this.folders[folderIndex].content = content;
+          }
+          this.isEditing = false;
+
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          // console.error('Error updating folder', error);
+        }
+      );
+    }
+  }
+
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.editContent = '';
+  }
+  ///////////////////////////
+  //comment
 
   submitComment(): void {
     if (this.commentContent.trim() === '') {
@@ -303,103 +352,27 @@ export class ChatComponent {
       );
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      if (this.lastCommentId) {
-        this.scrollToLastComment();
-      }
-    }, 300);
-  }
-
-  // fetchComments(folderId: number): void {
-  //   this.commentService.getComments(folderId).subscribe(
-  //     (comments: any[]) => {
-
-
-  //       this.commentsCount[folderId] = comments.length;
-
-  //       if (comments.length > 0) {
-  //         const lastComment = comments[comments.length - 1];
-  //         this.lastCommentDetails[folderId] = {
-  //           user: lastComment.user.username,
-  //           time: lastComment.createdAt,
-  //           id: lastComment.id
-  //         };
-  //         this.lastCommentId = lastComment.id;
-  //       } else {
-  //         this.lastCommentDetails[folderId] = {
-  //           user: '',
-  //           time: '',
-  //           id: 0
-  //         };
-  //         this.lastCommentId = null;
-  //       }
-  //       if (this.selectedCard && this.selectedCard.id === folderId) {
-  //         this.comments = comments;
-  //       }
-
-  //      this.updateCommentPagination();
-  //      console.log('Comments:', this.comments);
-
-  //       if (this.highlightCommentId) {
-  //         setTimeout(() => {
-  //           const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
-  //           if (commentElement) {
-  //             commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  //             commentElement.classList.add('highlight');
-  //           }
-  //         }, 100);
-  //       }
-  //       // Highlight specific replies
-  //       comments.forEach(comment => {
-  //         if (comment.replies) {
-  //           comment.replies.forEach((reply: { id: number | null; }) => {
-  //             if (reply.id === this.highlightReplyId) {
-  //               setTimeout(() => {
-  //                 const replyElement = document.getElementById(`reply-${reply.id}`);
-  //                 if (replyElement) {
-  //                   replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  //                   replyElement.classList.add('highlight');
-  //                 } else {
-  //                 }
-  //               }, 100);
-  //             }
-  //           });
-  //         }
-  //       });
-  //     },
-  //     (error) => {
-  //     //  console.error('Error fetching comments for folder ID:', folderId, error);
-  //     }
-  //   );
-  // }
-
   fetchComments(folderId: number): void {
     this.commentService.getComments(folderId).subscribe(
       (comments: any[]) => {
-        // Log the received comments data
-        console.log('Received Comments:', comments);
+        console.log('comment', comments);
 
-      this.comments = comments.map(comment => {
-      const userProfileImageUrl = comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${comment.user.uploadedFile}` : null;
-      //const userProfileImageUrl = `${environment.apiUrl}/blog-backend/uploads/${comment.user?.uploadedFile}`;
-console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
-
-        return {
+        this.comments = comments.map((comment: { user: any, replies?: any[] }) => ({
           ...comment,
-          userProfileImageUrl: userProfileImageUrl,
-          replies: comment.replies?.map((reply: { user: { uploadedFile: any; }; }) => {
-            const replyUserProfileImageUrl = reply.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/uploads/${reply.user.uploadedFile}` : null;
-            console.log('Reply User Profile Image URL:', replyUserProfileImageUrl); // Log URL
-            return {
-              ...reply,
-              userProfileImageUrl: replyUserProfileImageUrl,
-            };
-          }) || []
-        };
-      });
+          userProfileImageUrl: comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${comment.user.uploadedFile}` : null,
+          replies: comment.replies?.map((reply: { user: any }) => ({
+            ...reply,
+            userProfileImageUrl: reply.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${reply.user.uploadedFile}` : null
+          })) || []
+        }));
 
-        this.commentsCount[folderId] = comments.length;
+
+        const totalCommentsCount = comments.reduce((acc, comment) => {
+          return acc + 1 + (comment.replies ? comment.replies.length : 0);
+        }, 0);
+
+        this.commentsCount[folderId] = totalCommentsCount;
+        this.cdr.detectChanges();
 
         if (comments.length > 0) {
           const lastComment = comments[comments.length - 1];
@@ -423,6 +396,7 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
         }
 
         this.updateCommentPagination();
+
         if (this.highlightCommentId) {
           setTimeout(() => {
             const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
@@ -433,7 +407,6 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
           }, 100);
         }
 
-        // Highlight specific replies
         comments.forEach(comment => {
           if (comment.replies) {
             comment.replies.forEach((reply: { id: number | null; }) => {
@@ -457,12 +430,11 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
   }
 
   handleLastCommentClick(folderId: number): void {
-    this.selectCard(this.paginatedUserFolders.find(folder => folder.id === folderId));
+    this.selectCard(this.paginatedFolder.find(folder => folder.id === folderId));
     setTimeout(() => {
       this.scrollToLastComment();
     }, 300);
   }
-
   scrollToLastComment(): void {
     setTimeout(() => {
       if (this.lastCommentId) {
@@ -475,7 +447,7 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
       } else {
         //console.error('No last comment ID available');
       }
-    }, 300); // Adjust the timeout as needed
+    }, 300);
   }
 
   CountComments(folderId: number): void {
@@ -499,6 +471,52 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
     });
   }
 
+  editComment(comment: any): void {
+    comment.isEditing = true;
+    comment.editContent = comment.content;
+  }
+
+  cancelEditComment(comment: any): void {
+    comment.isEditing = false;
+  }
+
+  saveComment(comment: any): void {
+    const content = comment.editContent;
+    const id = comment.id;
+    const folderId = comment.folderId;
+
+    this.commentService.updateComment(id, folderId, content).subscribe(
+      (response) => {
+        comment.content = content;
+        comment.isEditing = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        // console.error('Error updating comment', error);
+      }
+    );
+  }
+
+  deleteComment(commentId: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Êtes-vous sûre de vouloir supprimé ce commentaire ?' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commentService.deleteComment(commentId).subscribe(
+          () => {
+            this.toastrService.success('Commentaire supprimé avec succès');
+            this.comments = this.comments.filter(comment => comment.id !== commentId);
+            //    this.fetchFolders();
+          },
+          (error) => {
+            this.toastrService.error('Erreur lors de la suppression');
+          }
+        );
+      }
+    });
+  }
+
   ///////////////////////////
   //reply
 
@@ -510,7 +528,6 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
     this.commentService.addReply(this.replyingTo, this.replyContent)
       .subscribe(
         response => {
-          //response=response;
           this.replyContent = '';
           this.replyingTo = null;
           this.fetchComments(this.selectedCard.id);
@@ -523,9 +540,7 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
 
   showUserReply(commentId: number, replyIdToHighlight: number | null = null): void {
     this.isUserReplyVisible[commentId] = !this.isUserReplyVisible[commentId];
-
     if (this.isUserReplyVisible[commentId]) {
-      // Set highlightReplyId to the specific reply if provided, or null if no specific reply
       this.highlightReplyId = replyIdToHighlight;
     } else {
       this.highlightReplyId = null;
@@ -626,95 +641,6 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
     });
   }
 
-
-  ///////////////////////////
-  //folder edit
-  EditContent(): void {
-    if (this.selectedCard) {
-      this.isEditing = true;
-      this.editContent = this.selectedCard.content;
-    }
-  }
-
-  EditFolderContent(): void {
-    if (this.selectedCard) {
-      const content = this.editContent;
-      const id = this.selectedCard.id;
-      const folderId = id;
-      this.folderService.updateFolderContent(folderId, content).subscribe(
-        (response) => {
-          this.selectedCard.content = content;
-          const folderIndex = this.folders.findIndex(folder => folder.id === id);
-          if (folderIndex !== -1) {
-            this.folders[folderIndex].content = content;
-          }
-          this.isEditing = false;
-
-          this.cdr.detectChanges();
-        },
-        (error) => {
-          // console.error('Error updating folder', error);
-        }
-      );
-    }
-  }
-
-
-  cancelEdit(): void {
-    this.isEditing = false;
-    this.editContent = '';
-  }
-
-  ///////////////////////////
-  //comment
-
-  editComment(comment: any): void {
-    comment.isEditing = true;
-    comment.editContent = comment.content;
-  }
-
-  cancelEditComment(comment: any): void {
-    comment.isEditing = false;
-  }
-
-  saveComment(comment: any): void {
-    const content = comment.editContent;
-    const id = comment.id;
-    const folderId = comment.folderId;
-
-    this.commentService.updateComment(id, folderId, content).subscribe(
-      (response) => {
-        comment.content = content;
-        comment.isEditing = false;
-        this.cdr.detectChanges();
-      },
-      (error) => {
-        // console.error('Error updating comment', error);
-      }
-    );
-  }
-
-  deleteComment(commentId: number): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { message: 'Êtes-vous sûre de vouloir supprimé ce commentaire ?' }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.commentService.deleteComment(commentId).subscribe(
-          () => {
-            this.toastrService.success('Commentaire supprimé avec succès');
-            this.comments = this.comments.filter(comment => comment.id !== commentId);
-            //    this.fetchFolders();
-          },
-          (error) => {
-            this.toastrService.error('Erreur lors de la suppression');
-          }
-        );
-      }
-    });
-  }
-
-
   ////////////////////////////
   ///publish post
 
@@ -747,7 +673,6 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
     );
   }
 
-
   chooseImage(event: Event) {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
@@ -761,6 +686,8 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
     }
   }
 
+  ////////////////////////////
+  //filter category
 
   toggleCategory() {
     this.isCategoryHidden = !this.isCategoryHidden;
@@ -768,121 +695,82 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
   filterForumByCategory(category: string): void {
     this.selectedCategory = category;
     if (category === '') {
-      this.filteredForum = this.folders;  // Reset to all folders if 'Tout afficher'
-      this.filteredAdminNotes = this.adminNotes;  // Reset to all admin notes if 'Tout afficher'
+      this.filteredForum = this.folders;
+      this.filteredAdminNotes = this.adminNotes;
     } else {
       this.filteredForum = this.folders.filter(folder => folder.category === category);
       this.filteredAdminNotes = this.adminNotes.filter(note => note.category === category);
     }
-
-    // Update visible page ranges for both datasets
-    this.updateVisiblePageRangeUserFolders();
-    this.updateVisiblePageRangeAdminNotes();
+    //  this.updateVisiblePageRangeUserFolders();
+    //this.updateVisiblePageRangeAdminNotes();
   }
 
-  get paginatedUserFolders(): any[] {
-    const startIndex = (this.currentPageUserFolders - 1) * this.itemsPerPage;
+  //////////////////////////
+  //pagination
+
+  paginatedFolders() {
+    this.folderTotalPage = Math.ceil(this.folders.length / this.itemsPerPage)
+    const startIndex = (this.folderCurrentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.filteredForum.slice(startIndex, endIndex);
+    this.paginatedFolder = this.folders.slice(startIndex, endIndex);
+
+  }
+  goToFolderPage(page: number) {
+    if (page > 0 && page <= this.folderTotalPage) {
+      this.folderCurrentPage = page;
+      this.paginatedFolders();
+    }
   }
 
-  get paginatedAdminNotes(): any[] {
-    const startIndex = (this.currentPageAdminNotes - 1) * this.itemsPerPage;
+  nextFolderPage() {
+    if (this.folderCurrentPage < this.folderTotalPage) {
+      this.folderCurrentPage++;
+      this.paginatedFolders();
+    }
+  }
+
+  prevFolderPage() {
+    if (this.folderCurrentPage > 1) {
+      this.folderCurrentPage--;
+      this.paginatedFolders()
+    }
+  }
+  ///////////////////////////
+  paginatedAdminNotes() {
+    this.adminNotesTotalPage = Math.ceil(this.adminNotes.length / this.itemsPerPage)
+    const startIndex = (this.adminNotescurrentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.filteredAdminNotes.slice(startIndex, endIndex);
+    this.paginatedAdminNote = this.adminNotes.slice(startIndex, endIndex);
+
   }
 
-  changePageUserFolders(pageNumber: number): void {
-    this.currentPageUserFolders = pageNumber;
-    this.updateVisiblePageRangeUserFolders();
-  }
-
-  changePageAdminNotes(pageNumber: number): void {
-    this.currentPageAdminNotes = pageNumber;
-    this.updateVisiblePageRangeAdminNotes();
-  }
-
-  previousPageUserFolders(): void {
-    if (this.currentPageUserFolders > 1) {
-      this.currentPageUserFolders--;
-      this.updateVisiblePageRangeUserFolders();
+  goToAdminPage(page: number) {
+    if (page > 0 && page <= this.adminNotesTotalPage) {
+      this.adminNotescurrentPage = page;
+      this.paginatedAdminNotes()
     }
   }
 
-  nextPageUserFolders(): void {
-    if (this.currentPageUserFolders < this.getTotalPagesUserFolders()) {
-      this.currentPageUserFolders++;
-      this.updateVisiblePageRangeUserFolders();
+  nextAdminPage() {
+    if (this.adminNotescurrentPage < this.adminNotesTotalPage) {
+      this.adminNotescurrentPage++;
+      this.paginatedAdminNotes()
     }
   }
 
-  previousPageAdminNotes(): void {
-    if (this.currentPageAdminNotes > 1) {
-      this.currentPageAdminNotes--;
-      this.updateVisiblePageRangeAdminNotes();
+  prevAdminPage() {
+    if (this.adminNotescurrentPage > this.adminNotesTotalPage) {
+      this.adminNotescurrentPage--;
+      this.paginatedAdminNotes()
     }
   }
-
-  nextPageAdminNotes(): void {
-    if (this.currentPageAdminNotes < this.getTotalPagesAdminNotes()) {
-      this.currentPageAdminNotes++;
-      this.updateVisiblePageRangeAdminNotes();
-    }
-  }
-
-  getTotalPagesUserFolders(): number {
-    return Math.ceil(this.filteredForum.length / this.itemsPerPage);
-  }
-
-  getTotalPagesAdminNotes(): number {
-    return Math.ceil(this.filteredAdminNotes.length / this.itemsPerPage);
-  }
-
-  updateVisiblePageRangeUserFolders(): void {
-    const totalPages = this.getTotalPagesUserFolders();
-    this.visiblePageRangeUserFolders = this.calculateVisiblePageRange(this.currentPageUserFolders, totalPages);
-  }
-
-  updateVisiblePageRangeAdminNotes(): void {
-    const totalPages = this.getTotalPagesAdminNotes();
-    this.visiblePageRangeAdminNotes = this.calculateVisiblePageRange(this.currentPageAdminNotes, totalPages);
-  }
-
-  calculateVisiblePageRange(currentPage: number, totalPages: number): number[] {
-    const maxVisiblePages = 5;
-    let startPage = currentPage - Math.floor(maxVisiblePages / 2);
-    let endPage = currentPage + Math.ceil(maxVisiblePages / 2) - 1;
-
-    if (startPage < 1) {
-      endPage += (1 - startPage);
-      startPage = 1;
-    }
-    if (endPage > totalPages) {
-      startPage -= (endPage - totalPages);
-      endPage = totalPages;
-    }
-    return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
-  }
-
-  switchTab(tab: string): void {
-    this.tab = tab;
-  }
-
-
-  goToUserFolders(id: number,): void {
-    this.router.navigate(['/user-folders', id]);
-  }
-
-
+  //////////////////////////
   updateCommentPagination() {
-    this.commentTotalPages = Math.ceil(this.comments.length / this.commentsPerPage);
-    const startIndex = (this.commentCurrentPage - 1) * this.commentsPerPage;
-    const endIndex = startIndex + this.commentsPerPage;
+    this.commentTotalPages = Math.ceil(this.comments.length / this.itemsPerPage);
+    const startIndex = (this.commentCurrentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
     this.paginatedComments = this.comments.slice(startIndex, endIndex);
-
   }
-
-
 
   goToCommentPage(page: number) {
     if (page > 0 && page <= this.commentTotalPages) {
@@ -890,7 +778,6 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
       this.updateCommentPagination();
     }
   }
-
 
   nextCommentPage() {
     if (this.commentCurrentPage < this.commentTotalPages) {
@@ -904,6 +791,15 @@ console.log('User Profile Image URL:', userProfileImageUrl); // Log URL
       this.commentCurrentPage--;
       this.updateCommentPagination()
     }
+  }
+
+  ////////////////////////////
+  switchTab(tab: string): void {
+    this.tab = tab;
+  }
+
+  goToUserProfil(id: number,): void {
+    this.router.navigate(['/user-profil', id]);
   }
 
 }

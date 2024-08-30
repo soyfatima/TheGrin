@@ -10,7 +10,6 @@ import { FooterComponent } from './navigation/footer/footer.component';
 import { ChatComponent } from './forum/chat/chat.component';
 import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 import { UserLoginComponent } from './navigation/dialog/user-login/user-login.component';
-import { UserFoldersComponent } from './forum/user-folders/user-folders.component';
 import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
 import { AddProductsComponent } from './admin/products/add-products/add-products.component';
 import { ListProductsComponent } from './admin/products/list-products/list-products.component';
@@ -26,13 +25,14 @@ import { SidebarComponent } from './admin/sidebar/sidebar.component';
 import { AddNoteComponent } from './admin/notes/add-note/add-note.component';
 import { MyNoteComponent } from './admin/notes/my-note/my-note.component';
 import { ModifyComponent } from './admin/dialog/modify/modify.component';
+import { UserProfilComponent } from './forum/user-profil/user-profil.component';
+import { CommentsComponent } from './forum/comments/comments.component';
 
 const routes: Routes = [
   // { path: '', component: },
 
   { path: '', component: HomepageComponent, pathMatch: 'full' },
   { path: 'homepage', component: HomepageComponent },
-  { path: 'navbar', component: NavbarComponent },
   { path: 'top', component: TopComponent },
   { path: 'our-services', component: OurServicesComponent },
   { path: 'about-us', component: AboutUsComponent },
@@ -42,15 +42,16 @@ const routes: Routes = [
   // { path: 'home', component: HomeComponent},
   { path: 'chat', component: ChatComponent },
   { path: 'chat/:id', component: ChatComponent },
-  
+
   //{ path: 'chat/:id/:commentId', component: ChatComponent },
   { path: 'contact-us', component: ContactUsComponent },
   { path: 'confirm-dialog', component: ConfirmDialogComponent },
 
+  { path: 'navbar', component: NavbarComponent, canActivate: [LoginGuard] },
   { path: 'user-login', component: UserLoginComponent, canActivate: [LoginGuard] },
-  { path: 'user-folders/:id', component: UserFoldersComponent, canActivate: [LoginGuard] },
-  //  { path: 'reset-password', component: ResetPasswordComponent},
-
+  { path: 'user-profil/:id', component: UserProfilComponent, canActivate: [LoginGuard] },
+  { path: 'reset-password', component: ResetPasswordComponent, canActivate: [LoginGuard] },
+  { path: 'comments', component: CommentsComponent },
 
   // Admin routes
   { path: 'login', component: LoginComponent, canActivate: [AdminGuard] },

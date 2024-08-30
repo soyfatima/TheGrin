@@ -73,22 +73,22 @@ export class NavbarComponent {
   ngOnInit() {
     this.determineNavbarVariant(this.router.url);
     this.googleTranslateElementInit();
-  this.getNotification();
+    this.getNotification();
     // this.authService.loggedInUser$.subscribe(user => {
     //   this.IsUserLogged = !!user;
     // });
-    
+
     this.authService.loggedInUser$.subscribe(user => {
       this.IsUserLogged = !!user;
 
       if (user) {
         this.loggedInUserId = user.id;
       } else {
-      //  this.loggedInUserId = null;
+        //  this.loggedInUserId = null;
       }
     });
   }
-  
+
 
   googleTranslateElementInit() {
     new google.translate.TranslateElement({ pageLanguage: 'fr' }, 'google_translate_element');
@@ -142,11 +142,15 @@ export class NavbarComponent {
   }
 
   loginUser(): void {
-    this.dialog.open(UserLoginComponent, {
-     // width: '400px',
+    const dialogRef = this.dialog.open(UserLoginComponent, {
+       width: 'auto',
+       height:'auto',
       data: {}
     });
-   // this.showLoginPopup = false;
+
+    dialogRef.afterClosed().subscribe(result => {
+    });
+
   }
 
 
@@ -161,7 +165,7 @@ export class NavbarComponent {
         this.notificationCount = this.notifications.filter(n => !n.read).length;
       },
       (error) => {
-       // console.error('Failed to fetch notifications:', error);
+        // console.error('Failed to fetch notifications:', error);
       }
 
     )
@@ -174,11 +178,11 @@ export class NavbarComponent {
         this.getNotification();
       },
       (error) => {
-       // console.error('Failed to mark notification as read:', error);
+        // console.error('Failed to mark notification as read:', error);
       }
     );
   }
-  
+
 
   onNotificationClick(notificationId: number): void {
     this.notifService.getNotificationById(notificationId).subscribe(
@@ -186,10 +190,10 @@ export class NavbarComponent {
         if (notifDetails && notifDetails.folder) {
           const folderId = notifDetails.folder.id;
           const commentId = notifDetails.comment?.id;
-         
-          this.markNotificationAsRead(notificationId);   
-         
-          
+
+          this.markNotificationAsRead(notificationId);
+
+
           if (folderId) {
             const selectedCard = {
               ...notifDetails.folder,
@@ -202,14 +206,14 @@ export class NavbarComponent {
             }
 
             this.router.navigate(['/chat', folderId], { queryParams: { commentId } })
-             // .then(success => console.log('Navigation Success:', success))
-      //        .catch(error => console.error('Navigation Error:', error));
+            // .then(success => console.log('Navigation Success:', success))
+            //        .catch(error => console.error('Navigation Error:', error));
           } else {
             this.router.navigate(['/chat']);
           }
         }
       },
-     // (error) => console.error('Error fetching notification details:', error)
+      // (error) => console.error('Error fetching notification details:', error)
     );
   }
 
@@ -224,7 +228,7 @@ export class NavbarComponent {
           duration: 2000,
         });
       },
-     // (error) => console.error('Failed to delete notification:', error)
+      // (error) => console.error('Failed to delete notification:', error)
     );
   }
 
@@ -246,18 +250,18 @@ export class NavbarComponent {
   }
 
 
- 
+
   logout(): void {
     this.tokenService.removeAuthData();
     this.IsUserLogged = false;
     this.authService.clearAuthData()
     const currentUser = localStorage.getItem('currentUser');
-   const accessToken = currentUser ? JSON.parse(currentUser).accessToken : '';
+    const accessToken = currentUser ? JSON.parse(currentUser).accessToken : '';
   }
-  
-  goToUserFolders(): void {
+
+  goToUserProfil(): void {
     if (this.loggedInUserId !== null) {
-      this.router.navigate(['/user-folders', this.loggedInUserId]);
+      this.router.navigate(['/user-profil', this.loggedInUserId]);
     }
   }
 }

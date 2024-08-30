@@ -17,6 +17,7 @@ import { ResetPasswordComponent } from '../../reset-password/reset-password.comp
 export class UserLoginComponent {
 
   data: any;
+  dialogRef:any;
 
   IsUserLogged: boolean = false;
   tab = 'login';
@@ -56,7 +57,7 @@ export class UserLoginComponent {
       Newpassword: ['', Validators.required],
       gender: ['', Validators.required],
     });
-  
+
     this.authService.loggedInUser$.subscribe(user => {
       this.IsUserLogged = !!user;
     });
@@ -113,11 +114,15 @@ export class UserLoginComponent {
         this.toastrService.success('Vous êtes connecté avec succès');
         if (response.accessToken && response.refreshToken) {
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
-          this.dialog.closeAll();
           console.log('refreshtoken', response.refreshToken);
           console.log('accesstoken', response.accessToken);
+          console.log('user-info',response.userInfo);
+
+          this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
+          console.log(this.loggedInUser, 'response userinfo');
+          console.log(this.loggedInUser.role, ' response.role')
         } else {
           // console.error('Login failed: Tokens missing in the response');
         }
@@ -131,7 +136,7 @@ export class UserLoginComponent {
   }
 
 
- 
+
 
   switchTab(tab: string): void {
     this.tab = tab;
@@ -169,13 +174,18 @@ export class UserLoginComponent {
   // }
 
 
-    openDialog(): void {
-      this.dialog.open(ResetPasswordComponent, {
-        width: '400px',
-        data: { }
-      });
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ResetPasswordComponent, {
+      width: 'auto',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
   }
 
-
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
 
 }

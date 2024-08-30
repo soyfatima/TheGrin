@@ -78,6 +78,7 @@ export class AuthService {
   //   const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
   //   this.loggedInUserSubject.next(loggedInUser);
   // }
+  
   updateLoginStatus(): void {
     const currentUser = localStorage.getItem('currentUser');
     const user = currentUser ? JSON.parse(currentUser) : null;

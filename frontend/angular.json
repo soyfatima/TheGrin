@@ -31,10 +31,8 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
+              "src/assets",
+              "src/favicon.ico"
             ],
             "styles": [
               "src/custom-theme.scss",
@@ -46,7 +44,6 @@
               "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/popper.js/dist/umd/popper.min.js"
-            
             ]
           },
           "configurations": {
@@ -97,10 +94,8 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
+              "src/assets",
+              "src/favicon.ico"
             ],
             "styles": [
               "src/styles.css"

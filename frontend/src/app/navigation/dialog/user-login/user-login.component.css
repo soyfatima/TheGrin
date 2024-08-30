@@ -1,0 +1,4 @@
+.scrolltab {
+    overflow-y: auto;
+    max-height: 250px;
+}

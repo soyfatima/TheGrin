@@ -42,7 +42,6 @@ import { BlogComponent } from './forum/blog/blog.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 import { UserLoginComponent } from './navigation/dialog/user-login/user-login.component';
-import { UserFoldersComponent } from './forum/user-folders/user-folders.component';
 import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
 import { UserOrderComponent } from './admin/dialog/user-order/user-order.component';
 import { AddProductsComponent } from './admin/products/add-products/add-products.component';
@@ -56,6 +55,8 @@ import { SidebarComponent } from './admin/sidebar/sidebar.component';
 import { AddNoteComponent } from './admin/notes/add-note/add-note.component';
 import { MyNoteComponent } from './admin/notes/my-note/my-note.component';
 import { ModifyComponent } from './admin/dialog/modify/modify.component';
+import { UserProfilComponent } from './forum/user-profil/user-profil.component';
+import { CommentsComponent } from './forum/comments/comments.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,6 @@ import { ModifyComponent } from './admin/dialog/modify/modify.component';
     ContactUsComponent,
     SafeHtmlPipe,
     UserLoginComponent,
-    UserFoldersComponent,
     ConfirmDialogComponent,
     SidebarComponent,
     UserOrderComponent,
@@ -85,7 +85,9 @@ import { ModifyComponent } from './admin/dialog/modify/modify.component';
     ResetPasswordComponent,
     AddNoteComponent,
     MyNoteComponent,
-    ModifyComponent
+    ModifyComponent,
+    UserProfilComponent,
+    CommentsComponent
 
   ],
 

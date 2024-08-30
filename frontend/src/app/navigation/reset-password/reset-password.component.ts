@@ -10,6 +10,7 @@ import { AuthService } from '../../service/auth.service';
 
 // your-component.component.ts
 export class ResetPasswordComponent {
+  dialogRef:any;
   email: string = '';
   resetCode: string = '';
   password: string = '';
@@ -77,4 +78,8 @@ export class ResetPasswordComponent {
     }
   }
 
+
+  onYesClick():void {
+    this.dialogRef.close(true)
+  }
 }
