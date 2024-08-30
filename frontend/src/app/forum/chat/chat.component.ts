@@ -31,8 +31,6 @@ export class ChatComponent {
   selectedNote: any = null;
 
   forum: any[] = [];
-  filteredForum: any[] = [];
-  filteredAdminNotes: any;
   adminNotes: any[] = [];
   currentDate: Date = new Date();
   selectedCategory: string = '';
@@ -241,7 +239,7 @@ export class ChatComponent {
           }))
           .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Trier par date décroissante
 
-        this.filteredForum = this.folders;
+        this.paginatedFolder = this.folders;
         this.folders.forEach(folder => {
           this.fetchComments(folder.id);
           this.paginatedFolders();
@@ -262,7 +260,7 @@ export class ChatComponent {
           uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
         }));
         this.adminNotes = folders;
-        this.filteredAdminNotes = this.adminNotes;
+        this.paginatedAdminNote = this.adminNotes;
         this.paginatedAdminNotes();
       },
       (error) => {
@@ -692,17 +690,16 @@ export class ChatComponent {
   toggleCategory() {
     this.isCategoryHidden = !this.isCategoryHidden;
   }
+
   filterForumByCategory(category: string): void {
     this.selectedCategory = category;
     if (category === '') {
-      this.filteredForum = this.folders;
-      this.filteredAdminNotes = this.adminNotes;
+      this.paginatedFolder = this.folders;
+      this.paginatedAdminNote = this.adminNotes;
     } else {
-      this.filteredForum = this.folders.filter(folder => folder.category === category);
-      this.filteredAdminNotes = this.adminNotes.filter(note => note.category === category);
+      this.paginatedFolder = this.folders.filter(folder => folder.category === category);
+      this.paginatedAdminNote = this.adminNotes.filter(note => note.category === category);
     }
-    //  this.updateVisiblePageRangeUserFolders();
-    //this.updateVisiblePageRangeAdminNotes();
   }
 
   //////////////////////////
@@ -759,7 +756,7 @@ export class ChatComponent {
   }
 
   prevAdminPage() {
-    if (this.adminNotescurrentPage > this.adminNotesTotalPage) {
+    if (this.adminNotescurrentPage > 1) {
       this.adminNotescurrentPage--;
       this.paginatedAdminNotes()
     }
@@ -787,7 +784,7 @@ export class ChatComponent {
   }
 
   prevCommentPage() {
-    if (this.commentCurrentPage > this.commentTotalPages) {
+    if (this.commentCurrentPage > 1) {
       this.commentCurrentPage--;
       this.updateCommentPagination()
     }

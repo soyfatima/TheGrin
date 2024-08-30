@@ -77,6 +77,10 @@
 
   }
 
+  .bg-color-gradient {
+    background: linear-gradient(90deg, #013b74, #640141) !important;
+}
+
   .color-secondary {
     color: #fff !important;
   }
