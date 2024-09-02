@@ -198,7 +198,6 @@ export class ChatComponent {
   }
 
   selectCard(folder: any): void {
-    console.log('Folder selected:', folder);
     this.selectedCard = folder;
     localStorage.setItem('selectedCard', JSON.stringify(folder));
     this.fetchComments(folder.id);
@@ -353,17 +352,22 @@ export class ChatComponent {
   fetchComments(folderId: number): void {
     this.commentService.getComments(folderId).subscribe(
       (comments: any[]) => {
-        console.log('comment', comments);
 
-        this.comments = comments.map((comment: { user: any, replies?: any[] }) => ({
-          ...comment,
-          userProfileImageUrl: comment.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${comment.user.uploadedFile}` : null,
-          replies: comment.replies?.map((reply: { user: any }) => ({
-            ...reply,
-            userProfileImageUrl: reply.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${reply.user.uploadedFile}` : null
-          })) || []
-        }));
-
+        this.comments = comments.map(comment => {
+          comment.userProfileImageUrl = comment.user?.uploadedFile 
+            ? `${environment.apiUrl}/blog-backend/ProfilPic/${comment.user.uploadedFile}` 
+            : 'path/to/default-profile.png';
+  
+          if (comment.replies) {
+            comment.replies = comment.replies.map((reply: { userProfileImageUrl: string; user: { uploadedFile: any; }; }) => {
+              reply.userProfileImageUrl = reply.user?.uploadedFile 
+                ? `${environment.apiUrl}/blog-backend/ProfilPic/${reply.user.uploadedFile}` 
+                : 'path/to/default-profile.png'; 
+              return reply;
+            });
+          }
+          return comment;
+        });
 
         const totalCommentsCount = comments.reduce((acc, comment) => {
           return acc + 1 + (comment.replies ? comment.replies.length : 0);
@@ -422,7 +426,7 @@ export class ChatComponent {
         });
       },
       (error) => {
-        console.error('Error fetching comments for folder ID:', folderId, error);
+       // console.error('Error fetching comments for folder ID:', folderId, error);
       }
     );
   }
@@ -791,6 +795,7 @@ export class ChatComponent {
   }
 
   ////////////////////////////
+
   switchTab(tab: string): void {
     this.tab = tab;
   }

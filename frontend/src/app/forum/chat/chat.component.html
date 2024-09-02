@@ -191,10 +191,7 @@
                                             </div>
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                 <div class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                    <img [src]="comment.userProfileImageUrl" 
-                                                         alt="img" 
-                                                         class="img-fluid rounded-circle"
-                                                       >
+                                                    <img [src]="comment.userProfileImageUrl" alt="img" class="img-fluid rounded-circle">
                                                   </div>
                                                 <div class="user-comment-info ms-sm-4 p-1 " *ngIf="comment.user">
                                                     <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
@@ -205,7 +202,6 @@
                                                         ({{comment.replies?.length || 0}}) réponse</p>
                                                 </div>
                                             </div>
-                                            <p> profil pic {{ comment.userProfileImageUrl }}</p>
 
                                             <!--user-replies-->
                                             <div class="user-replies"
@@ -217,10 +213,7 @@
                                                         <div
                                                             class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                             <div class="small-circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                                <img [src]="reply.userProfileImageUrl" 
-                                                                     alt="img" 
-                                                                     class="img-fluid rounded-circle"
-                                                                    >
+                                                                <img [src]="reply.userProfileImageUrl" alt="img" class="img-fluid rounded-circle">
                                                               </div>
 
                                                             <div class="reply-user-info ms-sm-4 mb-3 p-1 color-default">
