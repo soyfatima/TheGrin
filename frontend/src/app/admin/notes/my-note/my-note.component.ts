@@ -55,8 +55,6 @@ export class MyNoteComponent {
           ...folder,
           uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
       }));
-        console.log('folder', this.folders)
-
            this.filteredFolders = this.folders;
       },
       (error) => {

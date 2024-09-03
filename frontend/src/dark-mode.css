@@ -43,8 +43,9 @@
 
   .section-title h2,
   .section-title p,
-  .forum .nav-item .nav-link,
-  .info p,
+  .forum .nav-item .nav-link, ::placeholder,
+  .form-select, ::selection
+  .info p, .sidebar .mat-nav a,
   mat-expansion-indicator {
     color: #fff !important;
   }
@@ -67,6 +68,7 @@
   .form-control,
   ::placeholder,
   .bg-color-white,
+  .size,
   .sidebar mat-expansion-panel {
     background: #2a2929 !important;
     color: #fff !important;

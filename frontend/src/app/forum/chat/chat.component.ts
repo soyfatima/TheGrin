@@ -74,7 +74,9 @@ export class ChatComponent {
   folderTotalPage: number = 0;
   adminNotesTotalPage: number = 0;
   itemsPerPage: number = 10;
-
+/////////////////
+isAdmin: boolean = false;
+userId!:number
 
   category: any[] = [
     { name: 'fertilité' },
@@ -140,6 +142,11 @@ export class ChatComponent {
         this.userSuggestions = [];
       }
     });
+
+    this.route.params.subscribe(params => {
+      this.userId = +params['id'];
+
+    });
   }
 
 
@@ -148,7 +155,10 @@ export class ChatComponent {
   }
 
   ngOnInit() {
+    this.isAdmin = this.authService.isAdmin();
+   
     this.route.paramMap.subscribe(params => {
+      
       const folderId = +params.get('id')!;
       const commentId = +this.route.snapshot.queryParamMap.get('commentId')!;
       this.folderId = folderId;
@@ -171,6 +181,11 @@ export class ChatComponent {
     this.authService.loggedInUser$.subscribe(user => {
       if (user) {
         this.loggedInUserId = user.id;
+  
+        // If the logged-in user is an admin, ensure admin-specific actions are available
+        if (this.isAdmin) {
+          this.loggedInUserId = null; // To prevent the admin from being treated as the comment owner
+        }
       } else {
         this.loggedInUserId = null;
       }
@@ -231,6 +246,7 @@ export class ChatComponent {
     this.folderService.getFolderDetails().subscribe(
       (folders) => {
         this.folders = folders
+        .filter((folder: { isAdmin: any; }) => !folder.isAdmin)
           .map((folder: { uploadedFile: any; user: any; createdAt: Date }) => ({
             ...folder,
             FolderUploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/userFile/${folder.uploadedFile}` : null,
@@ -238,12 +254,12 @@ export class ChatComponent {
           }))
           .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Trier par date décroissante
 
-        this.paginatedFolder = this.folders;
-        this.folders.forEach(folder => {
-          this.fetchComments(folder.id);
-          this.paginatedFolders();
-        });
-
+          this.paginatedFolder = this.folders;
+          this.folders.forEach(folder => {
+            this.fetchComments(folder.id);
+            this.paginatedFolders();
+          });
+        
       },
       (error) => {
         //console.error('Error fetching folders:', error);
@@ -254,13 +270,15 @@ export class ChatComponent {
   fetchAdminNote(): void {
     this.folderService.fetchAdminNote().subscribe(
       (folders) => {
-        this.adminNotes = folders.map((folder: { uploadedFile: any; }) => ({
+        this.adminNotes = folders
+        .filter((note: { isAdmin: any; }) => note.isAdmin) 
+        .map((folder: { uploadedFile: any; }) => ({
           ...folder,
           uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
         }));
-        this.adminNotes = folders;
-        this.paginatedAdminNote = this.adminNotes;
-        this.paginatedAdminNotes();
+       this.adminNotes = folders;
+       this.paginatedAdminNote = this.adminNotes;
+       this.paginatedAdminNotes();
       },
       (error) => {
         // console.error('Error fetching admin notes:', error);
@@ -337,7 +355,8 @@ export class ChatComponent {
     if (this.commentContent.trim() === '') {
       return;
     }
-    this.commentService.addComment(this.selectedCard.id, this.commentContent)
+    
+    this.commentService.addComment(this.selectedCard.id, this.commentContent, this.isAdmin)
       .subscribe(
         response => {
           this.commentContent = '';
@@ -509,7 +528,7 @@ export class ChatComponent {
           () => {
             this.toastrService.success('Commentaire supprimé avec succès');
             this.comments = this.comments.filter(comment => comment.id !== commentId);
-            //    this.fetchFolders();
+            this.fetchFolders();
           },
           (error) => {
             this.toastrService.error('Erreur lors de la suppression');
@@ -765,6 +784,7 @@ export class ChatComponent {
       this.paginatedAdminNotes()
     }
   }
+  
   //////////////////////////
   updateCommentPagination() {
     this.commentTotalPages = Math.ceil(this.comments.length / this.itemsPerPage);
@@ -794,7 +814,7 @@ export class ChatComponent {
     }
   }
 
-  ////////////////////////////
+  /////////////////////////
 
   switchTab(tab: string): void {
     this.tab = tab;
@@ -802,6 +822,36 @@ export class ChatComponent {
 
   goToUserProfil(id: number,): void {
     this.router.navigate(['/user-profil', id]);
-  }
+  }    
 
+  toggleBlockUser(userId: number, currentBlockedState: boolean): void {
+    if (userId) {
+      const newBlockedState = !currentBlockedState; // Toggle the state
+      console.log(`Toggling block state for user ID ${userId}. Current state: ${currentBlockedState}. New state: ${newBlockedState}`);
+      
+      this.authService.blockUser(userId, newBlockedState).subscribe(
+        () => {
+          const action = newBlockedState ? 'blocked' : 'unblocked';
+          console.log(`User with ID ${userId} has been ${action}.`);
+          // Update the UI or notify the user about the action
+          this.updateCommentState(userId, newBlockedState);
+        },
+        error => {
+          console.error(`Error ${newBlockedState ? 'blocking' : 'unblocking'} user:`, error);
+        }
+      );
+    } else {
+      console.error('Invalid user ID');
+    }
+  }
+  
+  updateCommentState(userId: number, newBlockedState: boolean): void {
+    // Assuming `comments` is an array of comment objects in your component
+    const comment = this.comments.find(c => c.user.id === userId);
+    if (comment) {
+      comment.user.blocked = newBlockedState;
+    }
+  }
+  
+  
 }

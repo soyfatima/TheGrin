@@ -81,7 +81,7 @@
                         <div [ngClass]="isCategoryHidden ? 'col-lg-4 col-md-4 mb-3' : 'col-lg-4 col-md-6 mb-3' "
                             class="transition" type="button" *ngFor="let folder of paginatedFolder">
                             <div class="">
-                                <div class="shadow-sm p-2 border border-1 bg-color" (click)="selectCard(folder)"
+                                <div class="shadow-sm p-2 border border-0 bg-color" (click)="selectCard(folder)"
                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
                                     <div class="card-body">
                                         <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start">
@@ -95,7 +95,7 @@
                                                     (click)="goToUserProfil(folder.user?.id)">
                                                     {{ folder.user?.username }}
                                                 </div>
-                                                <div class="time">{{folder.createdAt | date: 'yyyy-MM-dd HH:mm'}}
+                                                <div class="time">{{folder.createdAt | date: 'MM-dd-yyyy HH:mm'}}
                                                 </div>
                                             </div>
                                         </div>
@@ -123,13 +123,14 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-around mt-3">
-                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="prevFolderPage()"
-                                [disabled]="folderCurrentPage === 1">Préc</button>
+                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white"
+                                (click)="prevFolderPage()" [disabled]="folderCurrentPage === 1">Préc</button>
                             <span>Page {{ folderCurrentPage }} of {{ folderTotalPage }}</span>
-                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="nextFolderPage()"
+                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white"
+                                (click)="nextFolderPage()"
                                 [disabled]="folderCurrentPage === folderTotalPage">Suiv</button>
                         </div>
-                        </div>
+                    </div>
                     <!--selected post-->
                     <div *ngIf="selectedCard" class="selectedCard">
                         <div class="card-body">
@@ -145,7 +146,7 @@
                                 </div>
                                 <div class="info ms-sm-4 p-1">
                                     <h4 class="color-primary fw-bold mb-0">{{selectedCard.user?.username}}</h4>
-                                    <time class="time mb-1">{{selectedCard.createdAt | date: 'yyyy-MM-dd
+                                    <time class="time mb-1">{{selectedCard.createdAt | date: 'MM-dd-yyyy
                                         HH:mm'}}</time>
                                 </div>
                             </div>
@@ -154,14 +155,17 @@
                                 <div class="content edit-content mb-3">
                                     <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
                                         <p [innerHTML]="selectedCard?.content"></p>
-                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId"
+                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId && !isAdmin"
                                             (click)="EditContent()" class="bg-transparent border border-0 m-1"><mat-icon
                                                 class="color-primary">edit</mat-icon></button>
-                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId"
+                                        <button *ngIf="selectedCard?.user?.id === loggedInUserId && !isAdmin"
                                             (click)="deleteFolder()"
                                             class="bg-transparent border border-0 m-1"><mat-icon
                                                 class="color-tertiary">delete</mat-icon></button>
                                     </ng-container>
+
+
+
                                     <ng-template #editMode>
                                         <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
                                         <div class="btn-action d-flex justify-content-end ">
@@ -185,16 +189,20 @@
                                         [ngClass]="{'highlight': comment.id === highlightCommentId}">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-end">
-                                                <p class="time color-default fw-bold mb-0"> <em> {{comment.createdAt | date:
-                                                    'yyyy-MM-dd
-                                                    HH:mm'}} </em> </p> 
+                                                <p class="time color-default fw-bold mb-0"> <em> {{comment.createdAt |
+                                                        date:
+                                                        'MM-dd-yyyy
+                                                        HH:mm'}} </em> </p>
                                             </div>
                                             <div class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
-                                                <div class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                    <img [src]="comment.userProfileImageUrl" alt="img" class="img-fluid rounded-circle">
-                                                  </div>
+                                                <div
+                                                    class="circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
+                                                    <img [src]="comment.userProfileImageUrl" alt="img"
+                                                        class="img-fluid rounded-circle">
+                                                </div>
                                                 <div class="user-comment-info ms-sm-4 p-1 " *ngIf="comment.user">
-                                                    <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
+                                                    <p class="name fw-bold color-primary mb-0">{{ comment.isAdmin ?
+                                                        'Admin' : comment.user.username}}
                                                     </p>
 
                                                     <p class="color-tertiary fw-bold"
@@ -212,15 +220,17 @@
                                                         [ngClass]="{'highlight': reply.id === highlightReplyId}">
                                                         <div
                                                             class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
-                                                            <div class="small-circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
-                                                                <img [src]="reply.userProfileImageUrl" alt="img" class="img-fluid rounded-circle">
-                                                              </div>
+                                                            <div
+                                                                class="small-circle-icon mb-sm-0 d-flex justify-content-center align-items-center">
+                                                                <img [src]="reply.userProfileImageUrl" alt="img"
+                                                                    class="img-fluid rounded-circle">
+                                                            </div>
 
                                                             <div class="reply-user-info ms-sm-4 mb-3 p-1 color-default">
                                                                 <p class="mb-0"><strong>{{ reply.user.username
                                                                         }}</strong></p>
                                                                 <p class="time color-default">{{ reply.createdAt
-                                                                    | date: 'yyyy-MM-dd
+                                                                    | date: 'MM-dd-yyyy
                                                                     HH:mm' }}</p>
                                                             </div>
                                                         </div>
@@ -229,10 +239,12 @@
                                                                 <p class="mb-3 color-default"
                                                                     [innerHTML]="getHighlightedContent(reply.content)">
                                                                 </p>
-                                                                <button *ngIf="reply.user?.id === loggedInUserId"
+                                                                <button
+                                                                    *ngIf="reply.user?.id === loggedInUserId && !isAdmin"
                                                                     (click)="editReply(reply)"
                                                                     class="bg-transparent border border-0 color-primary m-1"><mat-icon>edit</mat-icon></button>
-                                                                <button *ngIf="reply.user?.id === loggedInUserId"
+                                                                <button
+                                                                    *ngIf="reply.user?.id === loggedInUserId && !isAdmin"
                                                                     (click)="deleteReply(reply.id)"
                                                                     class="bg-transparent border border-0 color-info m-1 "><mat-icon>delete</mat-icon></button>
 
@@ -258,12 +270,20 @@
 
                                                     <div class="d-flex justify-content-between">
                                                         <div class="left-side">
-                                                            <button *ngIf="comment?.user?.id === loggedInUserId"
+                                                            <button
+                                                                *ngIf="comment?.user?.id === loggedInUserId && !isAdmin"
                                                                 (click)="deleteComment(comment.id)"
-                                                                class="bg-transparent border border-0 p-2 m-1 neutral"><mat-icon>delete</mat-icon></button>
+                                                                class="bg-transparent border border-0 p-2 m-1 color-secondary"><mat-icon>delete</mat-icon></button>
                                                         </div>
                                                         <div class="right-side">
-                                                            <button *ngIf="comment.user?.id === loggedInUserId"
+                                                            <button
+                                                                class="bg-color-default border border-0 rounded-3 p-2 m-1 text-dark"
+                                                                *ngIf="isAdmin"
+                                                                (click)="toggleBlockUser(comment.user.id, comment.user.blocked)">
+                                                                {{ comment.user.blocked ? 'Débloquer' : 'Bloquer' }}
+                                                            </button>
+                                                            <button
+                                                                *ngIf="comment.user?.id === loggedInUserId && !isAdmin"
                                                                 (click)="editComment(comment)"
                                                                 class="color-primary bg-color-tertiary border border-0 rounded-3 p-2 m-1 color-default">Editer</button>
                                                             <button (click)="replyToComment(comment.id)"
@@ -275,8 +295,8 @@
 
                                                 </ng-container>
                                                 <ng-template #editMode>
-                                                    <textarea [(ngModel)]="comment.editContent" class="form-control mb-2"
-                                                        rows="4"></textarea>
+                                                    <textarea [(ngModel)]="comment.editContent"
+                                                        class="form-control mb-2" rows="4"></textarea>
                                                     <div class="btn-action">
                                                         <button (click)="saveComment(comment)"
                                                             class="bg-color-primary rounded-2 p-1 text-white border border-0 m-1">Editer</button>
@@ -325,10 +345,12 @@
                                     </div>
 
                                     <div class="d-flex justify-content-around mt-3">
-                                        <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="prevCommentPage()"
+                                        <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white"
+                                            (click)="prevCommentPage()"
                                             [disabled]="commentCurrentPage === 1">Préc</button>
                                         <span>Page {{ commentCurrentPage }} of {{ commentTotalPages }}</span>
-                                        <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="nextCommentPage()"
+                                        <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white"
+                                            (click)="nextCommentPage()"
                                             [disabled]="commentCurrentPage === commentTotalPages">Suiv</button>
                                     </div>
                                 </div>
@@ -351,9 +373,9 @@
                             </form>
                         </div>
                     </div>
-                
+
+                </div>
             </div>
-</div>
             <div *ngIf="tab === 'publish'">
                 <div class="content shadow-sm mt-2 mb-3 p-2  padding">
                     <form (ngSubmit)="onSubmit()" [formGroup]="folderForm">
@@ -393,20 +415,25 @@
                     <div class="mb-4" *ngIf="adminNotes.length === 0">Pas de note disponible.</div>
                     <!-- Display the list of notes if no note is selected -->
                     <div class="row" *ngIf="!selectedNote">
-                        <div class="col-md-4 mb-3" *ngFor="let note of paginatedAdminNote">
-                            <div class="card bg-color" (click)="selectNote(note)">
+                        <div class="col-md-6 mb-3" *ngFor="let note of paginatedAdminNote">
+                            <div class="card bg-color-chat border border-0" (click)="selectNote(note)">
                                 <div class="card-body">
-                                    <span>Admin</span>
-                                    <h3 class="fw-bold">{{ note.title }}</h3>
+                                    <div class="d-flex justify-content-end">
+                                        <p><em class="color-primary fw-bold">{{note.createdAt | date: 'MM-dd-yyyy
+                                                HH:mm' }}</em></p>
+                                    </div>
+                                    <h5 class="fw-bold color-tertiary">Admin</h5>
+                                    <p class="color-default">{{ note.title }}</p>
                                 </div>
                             </div>
                         </div>
-                       
+
                         <div class="d-flex justify-content-around mt-3">
-                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="prevAdminPage()"
-                                [disabled]="adminNotescurrentPage === 1">Préc</button>
+                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white"
+                                (click)="prevAdminPage()" [disabled]="adminNotescurrentPage === 1">Préc</button>
                             <span>Page {{ adminNotescurrentPage }} of {{ adminNotesTotalPage }}</span>
-                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white" (click)="nextAdminPage()"
+                            <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white"
+                                (click)="nextAdminPage()"
                                 [disabled]="adminNotescurrentPage === adminNotesTotalPage">Suiv</button>
                         </div>
 
@@ -420,12 +447,15 @@
                                 </button>
                             </div>
                             <div class="info">
+                                <div class="mb-4">
+                                    <h3>{{ selectedNote.title }}</h3>
+                                    <p>{{ selectedNote.content }}</p>
+                                </div>
                                 <div class="user-uploaded-file" *ngIf="selectedNote?.uploadedFileUrl">
                                     <img [src]="selectedNote.uploadedFileUrl" alt="Note Image" class="img-fluid"
                                         width="400">
                                 </div>
-                                <h3>{{ selectedNote.title }}</h3>
-                                <p>{{ selectedNote.content }}</p>
+
 
 
                                 <!-- <img *ngIf="selectedNote.uploadedFileUrl" [src]="selectedNote.uploadedFileUrl"

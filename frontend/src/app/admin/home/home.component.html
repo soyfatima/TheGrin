@@ -9,12 +9,12 @@
 <div class="main-content" [hidden]="loaderVisible">
     <app-sidebar (menuIndex)="switchMemu($event)"></app-sidebar>
     <div class="admin-nav">
-        <nav class=" nav navbar navbar-expand-lg bg-color-light fixed-top" id="navbar">
+        <nav class=" nav navbar-expand-lg bg-color fixed-top" id="navbar">
             <button type="button" id="sidebarCollapse" class="btn custom-btn" id="menu-toggle">
                 <i class="fa fa-bars"></i>
             </button>
             <div class="m-2 mt-2">
-                <a class="" style=" color: #000; text-decoration: none; font-size: px;">
+                <a class="color-secondary text-decoration-none">
                     <span>Bjr.Docteur</span></a>
             </div>
             <button class="navbar-toggler ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">

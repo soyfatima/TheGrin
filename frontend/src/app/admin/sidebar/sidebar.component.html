@@ -1,29 +1,3 @@
-<!-- <div class="d-flex admin-sidebar" id="wrapper">
-
-  <div class="sidebar" id="sidebar-wrapper">
-    <div class="group-list">
-      <div class="list-group list-group-flush mx-2 py-5 mt-4">
-       
-         <a class="list-group-item list-group-item-action" (click)="switchMemu(0)" role="button" [ngClass]="
-        stateList[0] === true ? 'nav-link cActive' : 'nav-link link-white'">
-          <mat-icon>add_circle</mat-icon>
-          &nbsp; ajouter article
-        </a> 
-         <a class="list-group-item list-group-item-action" (click)="switchMemu(1)" role="button" [ngClass]="
-        stateList[1] === true ? 'nav-link cActive' : 'nav-link link-white'">
-          <mat-icon>edit_note</mat-icon>
-          &nbsp; Modifier article
-        </a> 
-      </div>
-    </div>
-
-    <div class="sidebar-logo">
-      <img src="assets/logo.png" alt="" width="55">
-    </div>
-
-  </div>
-</div> -->
-
 <div class="d-flex admin-sidebar bg-color-light" id="wrapper">
 
   <div class="sidebar" id="sidebar-wrapper">
@@ -42,7 +16,7 @@
 
               <mat-nav-list class="mat-nav">
                 <a *ngFor="let subitem of menuItem.subitems"
-                  class="panel-content list-group-item list-group-item-action" (click)="switchMemu(subitem.index)"
+                  class="color-secondary list-group-item list-group-item-action" (click)="switchMemu(subitem.index)"
                   role="button"
                   [ngClass]="stateList[subitem.index] === true ? 'nav-link cActive' : 'nav-link link-white'">
                   {{ subitem.label }}

@@ -39,6 +39,7 @@ export class AuthService {
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
       const user = JSON.parse(currentUser);
+      console.log('Current user role:', user.role); // Ch
       return user.role === 'admin';
     }
     return false;
@@ -98,6 +99,7 @@ export class AuthService {
 
         if (response && response.accessToken) {
           localStorage.setItem('currentUser', JSON.stringify(response.userInfo));
+          
           this.updateLoginStatus();
         }
       }),
@@ -148,5 +150,13 @@ clearAuthData() {
 
   getUserInfo(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/auth/user/${id}`);
+  }
+  
+  getAdminInfo(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/auth/admin/${id}`);
+  }
+
+  blockUser(id: number, blocked: boolean): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/auth/blockUser/${id}`, { blocked });
   }
 }

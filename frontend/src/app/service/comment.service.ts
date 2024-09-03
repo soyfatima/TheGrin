@@ -12,11 +12,16 @@ export class CommentService {
   constructor(private http: HttpClient) { }
 
   // Frontend service method to add a comment
-  addComment(folderId: number, content: string): Observable<Comment> {
-    const url = `${this.apiUrl}/comments/${folderId}`;
-    return this.http.post<Comment>(url, { content });
-  }
+  // addComment(folderId: number, content: string): Observable<Comment> {
+  //   const url = `${this.apiUrl}/comments/${folderId}`;
+  //   return this.http.post<Comment>(url, { content });
+  // }
 
+  addComment(folderId: number, content: string, isAdmin: boolean): Observable<Comment> {
+    const url = `${this.apiUrl}/comments/${folderId}`;
+    return this.http.post<Comment>(url, { content, isAdmin });
+  }
+  
   //fetch comments
   getComments(folderId: number): Observable<any[]> {
     const url = `${this.apiUrl}/comments/folder/${folderId}`;

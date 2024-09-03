@@ -1,134 +1,110 @@
 <app-navbar></app-navbar>
 <div class="py-4 mb-4"></div>
 <div class="container-fluid">
-    <!-- <div class="user-info" *ngIf="folders.length > 0">
-        <div class=" circle-icon mb-3 d-flex justify-content-center align-items-center">
-            <img [src]="previewImageUrl || folders[0]?.uploadedFileUrl || 'default-image-url'" alt="img" class="img-fluid rounded-circle">
-          </div>
-          <ng-container *ngIf="!isEditing; else editMode">
-            <button *ngIf="folders[0]?.user?.id === loggedInUserId" (click)="isEditing = true" class="border border-0 bg-transparent m-1">
-                <mat-icon class="color-primary">edit</mat-icon>
-              </button>
-            <p class="mb-1">Utilisateur : <strong class="color-primary"> {{ folders[0]?.user?.username }}</strong></p>
-            <p class="mb-1">Genre: {{folders[0]?.user?.gender}}</p>
-         
-            <button *ngIf="folders[0]?.user?.id === loggedInUserId" (click)="cancel()" class="btn btn-danger m-1">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </ng-container>
-          <ng-template #editMode>
-            <form [formGroup]="usernameForm" (ngSubmit)="EditUserInfo()">
-                <div class="row">
-                <div class="col-md-4 mb-2">
-                <label class="form-label">Pseudo</label>
-              <input formControlName="username" class="form-control" placeholder="Nouveau de pseudo">
-              </div>
-              <div class="col-md-4 mb-2">
-                <label class="form-label">Profil</label>
-              <input type="file" class="form-control" (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg" />
-              </div>
-              </div>
-              <button type="submit" class="btn btn-primary m-1">enregistrer</button>
-              <button type="button" (click)="cancel()" class="btn btn-secondary m-1">Annuler</button>
-            </form>
-          </ng-template>
-          <p class="mb-1">Date d'inscription : <em>{{ folders[0]?.user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
-          <p>Connexion : <em>{{ folders[0]?.user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
-          
-    </div> -->
 
-    <div class="user-info">
-
-      <div class="circle-icon mb-3 d-flex justify-content-center align-items-center">
-      <img 
-        [src]="previewImageUrl || user?.uploadedFileUrl || 'default-image-url'" 
-        alt="img" 
+  <div class="user-info" *ngIf="isUser">
+    <div class="circle-icon mb-3 d-flex justify-content-center align-items-center">
+      <img [src]="previewImageUrl || user?.uploadedFileUrl || 'default-image-url'" alt="img"
         class="img-fluid rounded-circle">
-    </div> 
-    
-      <ng-container *ngIf="!isEditing; else editMode">
-        <!-- Show edit button only if user is logged in and it's their own profile -->
-        <button *ngIf="IsUserLogged && userId === loggedInUserId" (click)="isEditing = true" class="border border-0 bg-transparent m-1">
-          <mat-icon class="color-primary">edit</mat-icon>
-        </button>
-        <p class="mb-1">Utilisateur : <strong class="color-primary">{{loggedInUser?.username }}</strong></p>
-        <p class="mb-1">Genre: {{ user?.gender }}</p>
-        <p class="mb-1">Date d'inscription : <em>{{ user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
-        <p>Connexion : <em>{{ user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
-      </ng-container>
-    
-      <ng-template #editMode>
-        <form [formGroup]="usernameForm" (ngSubmit)="EditUserInfo()">
-          <div class="row">
-            <div class="col-md-4 mb-2">
-              <label class="form-label">Pseudo</label>
-              <input formControlName="username" class="form-control" placeholder="Nouveau pseudo">
-            </div>
-            <div class="col-md-4 mb-2">
-              <label class="form-label">Profil</label>
-              <input type="file" class="form-control" (change)="chooseImage($event)" accept="image/png, image/jpeg, image/jpg" />
-            </div>
+    </div>
+
+    <ng-container *ngIf="!isEditing; else editMode">
+      <!-- Show edit button only if user is logged in and it's their own profile -->
+      <button *ngIf=" IsUserLogged && userId === loggedInUserId" (click)="isEditing = true"
+        class="border border-0 bg-transparent m-1">
+        <mat-icon class="color-primary">edit</mat-icon>
+      </button>
+      <p class="mb-1">Utilisateur : <strong class="color-primary">{{loggedInUser?.username }}</strong></p>
+      <p class="mb-1">Genre: {{ user?.gender }}</p>
+      <p class="mb-1">Date d'inscription : <em>{{ user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
+      <p>Connexion : <em>{{ user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
+    </ng-container>
+
+    <ng-template #editMode>
+      <form [formGroup]="usernameForm" (ngSubmit)="EditUserInfo()">
+        <div class="row">
+          <div class="col-md-4 mb-2">
+            <label class="form-label">Pseudo</label>
+            <input formControlName="username" class="form-control" placeholder="Nouveau pseudo">
           </div>
-          <button type="submit" class="btn btn-primary m-1">Enregistrer</button>
-          <button type="button" (click)="cancel()" class="btn btn-secondary m-1">Annuler</button>
-        </form>
-      </ng-template>
-    </div>
-    
-      
-    <div class="switch-container bg-color-white">
-        <ul class="nav nav-tabs justify-content-center align-items-center mb-0" id="myTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link" type="button" [ngClass]="{ active: tab === 'forumComment' }"
-                    (click)="switchTab('forumComment')">commentaire</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" type="button" [ngClass]="{ active: tab === 'userFolder' }"
-                    (click)="switchTab('userFolder')">Poste</a>
-            </li>
-
-        </ul>
-    </div>
-    <div class="content">
-        <div *ngIf="tab === 'forumComment'">
-            <div class="row">
-                <div class="col-12" *ngFor="let comment of paginatedComments">
-                    <div class="info" (click)="navigateToChat(comment?.folder?.id, comment?.id)">
-                        <p class="mb-0">{{ comment.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</p>
-                        <p class="mb-1 fw-bold">{{ comment.folder?.category }}</p>
-                        <p class="mb-1 fw-bold">{{ comment.folder?.title }}</p>
-                        <p>{{ comment.content | slice:0:50 }}</p>
-                    </div>
-                    <hr>
-                </div>
-            </div>
-            <mat-paginator #paginatorComments [length]="comments.length" [pageSize]="pageSize"
-                [pageSizeOptions]="[5, 10, 20]" (page)="handlePageEventComments($event)">
-            </mat-paginator>
+          <div class="col-md-4 mb-2">
+            <label class="form-label">Profil</label>
+            <input type="file" class="form-control" (change)="chooseImage($event)"
+              accept="image/png, image/jpeg, image/jpg" />
+          </div>
         </div>
+        <button type="submit" class="btn btn-primary m-1">Enregistrer</button>
+        <button type="button" (click)="cancel()" class="btn btn-secondary m-1">Annuler</button>
+      </form>
+    </ng-template>
+  </div>
 
-        <div *ngIf="tab === 'userFolder'">
-            <div class="row">
-                <div class="col-12" *ngFor="let folder of paginatedFolders">
-                    <div class="info" (click)="navigateToChat(folder?.id)">
-                        <p class="mb-0">{{ folder.createdAt | date: 'yyyy-MM-dd HH:mm' }}</p>
-                        <div class="d-flex">
-                            <p class="mb-0">nombre commentaire</p>
-                            <div class="circle-icon" style="width: 20px; height: 20px;">
-                                <strong class="color-primary">{{ folder.commentCount }}</strong>
-                            </div>
-                        </div>
-                        <p class="mb-1 fw-bold">{{ folder.category }}</p>
-                        <p class="color-primary">{{ folder.title }}</p>
-                    </div>
-                    <hr>
-                </div>
-            </div>
-            <mat-paginator #paginatorFolders [length]="folders.length" [pageSize]="pageSize"
-                [pageSizeOptions]="[5, 10, 20]" (page)="handlePageEventFolders($event)">
-            </mat-paginator>
-        </div>
+  <ng-container>
+    <div *ngIf="isAdmin">
+      <div class="circle-icon mb-3 d-flex justify-content-center align-items-center">
+        <img [src]="previewImageUrl || admin?.uploadedFileUrl || 'default-image-url'" alt="img"
+          class="img-fluid rounded-circle">
+      </div>
+      <div class="mb-4">
+      <p class="mb-1">Admin : <strong class="color-primary">{{admin?.username }}</strong></p>
+      <p class="mb-1">Email: {{ admin?.email }}</p>
     </div>
+    </div>
+  </ng-container>
+
+  <div class="switch-container bg-color-white">
+    <ul class="nav nav-tabs justify-content-center align-items-center mb-0" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link" type="button" [ngClass]="{ active: tab === 'forumComment' }"
+          (click)="switchTab('forumComment')">commentaire</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" type="button" [ngClass]="{ active: tab === 'userFolder' }"
+          (click)="switchTab('userFolder')">Poste</a>
+      </li>
+
+    </ul>
+  </div>
+  <div class="content">
+    <div *ngIf="tab === 'forumComment'">
+      <div class="row">
+        <div class="col-12" *ngFor="let comment of paginatedComments">
+          <div class="info" (click)="navigateToChat(comment?.folder?.id, comment?.id)">
+            <p class="mb-0">{{ comment.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</p>
+            <p class="mb-1 fw-bold">{{ comment.folder?.category }}</p>
+            <p class="mb-1 fw-bold">{{ comment.folder?.title }}</p>
+            <p>{{ comment.content | slice:0:50 }}</p>
+          </div>
+          <hr>
+        </div>
+      </div>
+      <mat-paginator #paginatorComments [length]="comments.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+        (page)="handlePageEventComments($event)">
+      </mat-paginator>
+    </div>
+
+    <div *ngIf="tab === 'userFolder'">
+      <div class="row">
+        <div class="col-12" *ngFor="let folder of paginatedFolders">
+          <div class="info" (click)="navigateToChat(folder?.id)">
+            <p class="mb-0">{{ folder.createdAt | date: 'yyyy-MM-dd HH:mm' }}</p>
+            <div class="d-flex">
+              <p class="mb-0">nombre commentaire</p>
+              <div class="circle-icon" style="width: 20px; height: 20px;">
+                <strong class="color-primary">{{ folder.commentCount }}</strong>
+              </div>
+            </div>
+            <p class="mb-1 fw-bold">{{ folder.category }}</p>
+            <p class="color-primary">{{ folder.title }}</p>
+          </div>
+          <hr>
+        </div>
+      </div>
+      <mat-paginator #paginatorFolders [length]="folders.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+        (page)="handlePageEventFolders($event)">
+      </mat-paginator>
+    </div>
+  </div>
 
 
 
