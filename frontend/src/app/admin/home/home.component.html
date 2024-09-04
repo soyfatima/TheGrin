@@ -26,14 +26,14 @@
                     style="margin-left:auto; margin-right:auto; display:block;">
                 </form>
                 <div class="d-flex align-items-end justify-content-end mt-3">
-                    <!-- <div class="avatar" (click)="openEnd(content)">
+                    <div class="avatar" (click)="openEnd(content)">
                         <button class="notification-count bg-transparent border border-0"
                             matBadge="{{notificationCount}}" [matBadgeHidden]="notificationCount === 0"
-                            matBadgeColor="accent">
+                            matBadgeColor="primary">
                             <mat-icon class="text-dark">notifications</mat-icon>
                         </button>
 
-                    </div> -->
+                    </div>
                     <div class="avatar">
                         <button class="bg-transparent border border-0">
                             <mat-icon class="text-dark">account_circle</mat-icon>
@@ -86,6 +86,7 @@
                             <div class="scrollab">
                                 <div class="col-12 mb-2" *ngFor="let notification of notifications; let i = index"
                                     (swipeleft)="DeleteNotification(notification.id)"
+                                    [ngClass]="{'bg-color-new': !notification.read, 'bg-color-read': notification.read}"
                                     class="notification-item bg-color shadow-sm border border-1">
                                     <div class="p-2" (click)="onNotificationClick(notification)">
                                         <time class="color-primary fw-bold">{{notification.createdAt | date: 'dd-MM-yyyy

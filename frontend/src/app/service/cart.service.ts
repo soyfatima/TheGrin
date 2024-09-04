@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -8,16 +8,16 @@ import { environment } from '../../environments/environment';
 })
 export class CartService {
   private apiUrl = environment.apiUrl;
+  private cartItemsSubject = new BehaviorSubject<any[]>([]);
+  cartItems$ = this.cartItemsSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
-  // getUserCart(userId: number): Observable<any> {
-  //   return this.http.get<any>(`${this.apiUrl}/cart/${userId}`);
-  // }
   getUserCart(): Observable<any> {
     const url = `${this.apiUrl}/cart/userCart`;
     return this.http.get<any>(url)
   }
+  
   addToCartWithQuantity(productId: number, quantity: number): Observable<any> {
     const url = `${this.apiUrl}/cart/addToCartWithQuantity`;
     return this.http.post<any>(url, { productId, quantity });
@@ -51,7 +51,9 @@ export class CartService {
   }
   removeFromCart(productId: number): Observable<any> {
     const url = `${this.apiUrl}/cart/remove/${productId}`;
-    return this.http.delete<any>(url);
+    return this.http.delete<any>(url).pipe(
+      tap(() => this.getUserCart()) // Refresh cart items after removal
+    );
   }
 
 }

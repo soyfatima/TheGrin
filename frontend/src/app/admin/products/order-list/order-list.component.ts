@@ -41,7 +41,7 @@ export class OrderListComponent {
                 ...item,
                 product: {
                   ...item.product,
-                  uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${item.product.uploadedFile}`,
+                  uploadedFileUrl: `${environment.apiUrl}/blog-backend/productFile/${item.product.uploadedFile}`,
                 }
               }))
             };

@@ -52,7 +52,7 @@ export class ListProductsComponent {
         this.products = products.map((product: { uploadedFile: any; }) => ({
           ...product,
 
-          uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${product.uploadedFile}`
+          uploadedFileUrl: `${environment.apiUrl}/blog-backend/productFile/${product.uploadedFile}`
 
         }));
         this.filteredProducts = this.products;

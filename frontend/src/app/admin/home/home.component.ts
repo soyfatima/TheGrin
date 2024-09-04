@@ -68,6 +68,7 @@ data:any;
       (notifications) => {
         this.notifications = notifications;
         this.notificationCount = notifications.length;
+        this.notificationCount = this.notifications.filter(n => !n.read).length;
       },
       (error) => {
        // console.error('Failed to fetch notifications:', error);
@@ -76,52 +77,44 @@ data:any;
     )
   }
 
-  // onNotificationClick(notification: any): void {
-  //   if (notification && notification.order && notification.order.id) {
-  //     this.orderService.getOrderById(notification.order.id).subscribe(
-  //       (order) => {
-  //         order.items = order.items.map((item: any) => ({
-  //           ...item,
-  //           product: { 
-  //             ...item.product,
-  //             uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${item.product.uploadedFile}`
-  //           }
-  //         }));
-  
-  //         this.dialog.open(UserOrderComponent, {
-  //           width: '700px',
-  //           data: order
-  //         });
-  
-  //         this.notificationCount = Math.max(0, this.notificationCount - 1);
-  //       },
-  //       (error) => {
-  //     //    console.error('Failed to fetch order:', error);
-  //       }
-  //     );
-  //   } else if (notification && notification.comment && notification.comment.id) {
-  //     this.commentService.getCommentById(notification.comment.id).subscribe(
-  //       (comment) => {
-  //         this.dialog.open(UserCommentsComponent, {
-  //           width: '700px',
-  //           data: { comments: [comment] } 
-  //         });
-  
-  //         this.notificationCount = Math.max(0, this.notificationCount - 1);
-  //       },
-  //       (error) => {
-  //      //   console.error('Failed to fetch comment:', error);
-  //       }
-  //     );
-  //   } else {
-  //    // console.error('Notification does not have an associated order or comment', notification);
-  //   }
-  // }
-  
-  onNotificationClick(notification:any): void {
-
+  markNotificationAsRead(notificationId: number): void {
+    this.notifService.markAsRead(notificationId).subscribe(
+      () => {
+        this.getNotification();
+      },
+      (error) => {
+       // console.error('Failed to mark notification as read:', error);
+      }
+    );
   }
-
+  
+  onNotificationClick(notification: any): void {
+    if (notification && notification.order && notification.order.id) {
+      this.orderService.getOrderById(notification.order.id).subscribe(
+        (order) => {
+          order.items = order.items.map((item: any) => ({
+            ...item,
+            product: { 
+              ...item.product,
+              uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${item.product.uploadedFile}`
+            }
+          }));
+  
+          this.dialog.open(UserOrderComponent, {
+            width: '700px',
+            data: order
+          });
+  
+          this.markNotificationAsRead(notification.id);   
+        },
+        (error) => {
+      //    console.error('Failed to fetch order:', error);
+        }
+      );
+    } 
+  }
+  
+  
   DeleteNotification(id: number): void {
     this.notifService.deleteNotification(id).subscribe(
       () => {
@@ -148,7 +141,6 @@ data:any;
       }
     );
   }
-  
   openEnd(content: TemplateRef<any>) {
     this.offcanvasService.open(content, { position: 'end' });
   }

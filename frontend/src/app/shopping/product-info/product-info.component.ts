@@ -42,7 +42,7 @@ export class ProductInfoComponent {
       (productDetails) => {
         this.productDetails = {
           ...productDetails,
-          uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${productDetails.uploadedFile}`
+          uploadedFileUrl: `${environment.apiUrl}/blog-backend/productFile/${productDetails.uploadedFile}`
         };
       },
       (error) => {

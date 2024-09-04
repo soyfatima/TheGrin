@@ -74,9 +74,9 @@ export class ChatComponent {
   folderTotalPage: number = 0;
   adminNotesTotalPage: number = 0;
   itemsPerPage: number = 10;
-/////////////////
-isAdmin: boolean = false;
-userId!:number
+  /////////////////
+  isAdmin: boolean = false;
+  userId!: number
 
   category: any[] = [
     { name: 'fertilité' },
@@ -144,8 +144,7 @@ userId!:number
     });
 
     this.route.params.subscribe(params => {
-      this.userId = +params['id'];
-
+      this.userId = +params['id']; // Ensure userId is properly set
     });
   }
 
@@ -156,9 +155,9 @@ userId!:number
 
   ngOnInit() {
     this.isAdmin = this.authService.isAdmin();
-   
+
     this.route.paramMap.subscribe(params => {
-      
+
       const folderId = +params.get('id')!;
       const commentId = +this.route.snapshot.queryParamMap.get('commentId')!;
       this.folderId = folderId;
@@ -181,10 +180,10 @@ userId!:number
     this.authService.loggedInUser$.subscribe(user => {
       if (user) {
         this.loggedInUserId = user.id;
-  
-        // If the logged-in user is an admin, ensure admin-specific actions are available
+
+        // Ensure admin-specific actions are available if user is an admin
         if (this.isAdmin) {
-          this.loggedInUserId = null; // To prevent the admin from being treated as the comment owner
+          this.loggedInUserId = user.id;
         }
       } else {
         this.loggedInUserId = null;
@@ -246,7 +245,7 @@ userId!:number
     this.folderService.getFolderDetails().subscribe(
       (folders) => {
         this.folders = folders
-        .filter((folder: { isAdmin: any; }) => !folder.isAdmin)
+          .filter((folder: { isAdmin: any; }) => !folder.isAdmin)
           .map((folder: { uploadedFile: any; user: any; createdAt: Date }) => ({
             ...folder,
             FolderUploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/userFile/${folder.uploadedFile}` : null,
@@ -254,12 +253,12 @@ userId!:number
           }))
           .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Trier par date décroissante
 
-          this.paginatedFolder = this.folders;
-          this.folders.forEach(folder => {
-            this.fetchComments(folder.id);
-            this.paginatedFolders();
-          });
-        
+        this.paginatedFolder = this.folders;
+        this.folders.forEach(folder => {
+          this.fetchComments(folder.id);
+          this.paginatedFolders();
+        });
+
       },
       (error) => {
         //console.error('Error fetching folders:', error);
@@ -271,14 +270,14 @@ userId!:number
     this.folderService.fetchAdminNote().subscribe(
       (folders) => {
         this.adminNotes = folders
-        .filter((note: { isAdmin: any; }) => note.isAdmin) 
-        .map((folder: { uploadedFile: any; }) => ({
-          ...folder,
-          uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
-        }));
-       this.adminNotes = folders;
-       this.paginatedAdminNote = this.adminNotes;
-       this.paginatedAdminNotes();
+          .filter((note: { isAdmin: any; }) => note.isAdmin)
+          .map((folder: { uploadedFile: any; }) => ({
+            ...folder,
+            uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
+          }));
+        this.adminNotes = folders;
+        this.paginatedAdminNote = this.adminNotes;
+        this.paginatedAdminNotes();
       },
       (error) => {
         // console.error('Error fetching admin notes:', error);
@@ -355,8 +354,9 @@ userId!:number
     if (this.commentContent.trim() === '') {
       return;
     }
-    
-    this.commentService.addComment(this.selectedCard.id, this.commentContent, this.isAdmin)
+
+
+    this.commentService.addComment(this.selectedCard.id, this.commentContent)
       .subscribe(
         response => {
           this.commentContent = '';
@@ -367,21 +367,26 @@ userId!:number
         }
       );
   }
+ 
 
   fetchComments(folderId: number): void {
     this.commentService.getComments(folderId).subscribe(
       (comments: any[]) => {
-
+        console.log('comments', comments)
         this.comments = comments.map(comment => {
-          comment.userProfileImageUrl = comment.user?.uploadedFile 
-            ? `${environment.apiUrl}/blog-backend/ProfilPic/${comment.user.uploadedFile}` 
+          const isAdmin = comment.user?.role === 'admin'; // Adjust based on your role structure
+
+          comment.userProfileImageUrl = comment.user?.uploadedFile
+            ? `${environment.apiUrl}/blog-backend/ProfilPic/${comment.user.uploadedFile}`
             : 'path/to/default-profile.png';
-  
+
+          comment.isAdmin = isAdmin;
+
           if (comment.replies) {
             comment.replies = comment.replies.map((reply: { userProfileImageUrl: string; user: { uploadedFile: any; }; }) => {
-              reply.userProfileImageUrl = reply.user?.uploadedFile 
-                ? `${environment.apiUrl}/blog-backend/ProfilPic/${reply.user.uploadedFile}` 
-                : 'path/to/default-profile.png'; 
+              reply.userProfileImageUrl = reply.user?.uploadedFile
+                ? `${environment.apiUrl}/blog-backend/ProfilPic/${reply.user.uploadedFile}`
+                : 'path/to/default-profile.png';
               return reply;
             });
           }
@@ -445,7 +450,7 @@ userId!:number
         });
       },
       (error) => {
-       // console.error('Error fetching comments for folder ID:', folderId, error);
+        // console.error('Error fetching comments for folder ID:', folderId, error);
       }
     );
   }
@@ -784,7 +789,7 @@ userId!:number
       this.paginatedAdminNotes()
     }
   }
-  
+
   //////////////////////////
   updateCommentPagination() {
     this.commentTotalPages = Math.ceil(this.comments.length / this.itemsPerPage);
@@ -822,13 +827,13 @@ userId!:number
 
   goToUserProfil(id: number,): void {
     this.router.navigate(['/user-profil', id]);
-  }    
+  }
 
   toggleBlockUser(userId: number, currentBlockedState: boolean): void {
     if (userId) {
       const newBlockedState = !currentBlockedState; // Toggle the state
       console.log(`Toggling block state for user ID ${userId}. Current state: ${currentBlockedState}. New state: ${newBlockedState}`);
-      
+
       this.authService.blockUser(userId, newBlockedState).subscribe(
         () => {
           const action = newBlockedState ? 'blocked' : 'unblocked';
@@ -844,7 +849,7 @@ userId!:number
       console.error('Invalid user ID');
     }
   }
-  
+
   updateCommentState(userId: number, newBlockedState: boolean): void {
     // Assuming `comments` is an array of comment objects in your component
     const comment = this.comments.find(c => c.user.id === userId);
@@ -852,6 +857,6 @@ userId!:number
       comment.user.blocked = newBlockedState;
     }
   }
-  
-  
+
+
 }

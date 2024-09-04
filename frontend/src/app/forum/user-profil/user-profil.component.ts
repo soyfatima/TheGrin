@@ -63,30 +63,53 @@ export class UserProfilComponent implements OnInit {
     });
   }
 
+  // ngOnInit(): void {
+  //   this.isAdmin = this.authService.isAdmin();
+  //   console.log('Is Admin:', this.isAdmin);
+
+  //   this.route.params.subscribe(params => {
+  //     this.userId = +params['id'];
+  //     this.loadFolders();
+  //     this.loadComments();
+  //     this.loadLoggedInUser();
+  //     //this.loadUserInfo();
+  //     //this.loadAdminInfo();
+  //     this.authService.loggedInUser$.subscribe(user => {
+  //       this.IsUserLogged = !!user;
+  //       if (this.IsUserLogged) {
+  //         this.loggedInUserId = user.id;
+  //       }
+  //     });
+  //   });
+
+  //   if(this.isAdmin) {
+  //     this.loadAdminInfo()
+
+  //   } else{
+  //     this.loadUserInfo()
+  //   }
+  // }
+
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     console.log('Is Admin:', this.isAdmin);
-
+  
+    // Chargez d'abord les paramètres de la route
     this.route.params.subscribe(params => {
-      this.userId = +params['id'];
+      this.userId = +params['id']; // ID de l'utilisateur dont le profil est consulté
+      this.loadUserInfo(); // Chargez les informations de l'utilisateur dont le profil est consulté
+  
+      // Chargez les informations du dossier et des commentaires
       this.loadFolders();
       this.loadComments();
+  
+      // Chargez les informations de l'utilisateur connecté, mais uniquement pour la comparaison
       this.loadLoggedInUser();
-      //this.loadUserInfo();
-      //this.loadAdminInfo();
-      this.authService.loggedInUser$.subscribe(user => {
-        this.IsUserLogged = !!user;
-        if (this.IsUserLogged) {
-          this.loggedInUserId = user.id;
-        }
-      });
     });
-
-    if(this.isAdmin) {
-      this.loadAdminInfo()
-
-    } else{
-      this.loadUserInfo()
+  
+    // Vérifiez si l'utilisateur est un admin pour charger les informations appropriées
+    if (this.isAdmin) {
+      this.loadAdminInfo();
     }
   }
 

@@ -10,6 +10,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NotificationService } from '../../service/notification.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { filter } from 'rxjs';
+import { ShoppingCartComponent } from '../../shopping/modal/shopping-cart/shopping-cart.component';
+import { environment } from '../../../environments/environment';
+import { CartService } from '../../service/cart.service';
+import { ToastrService } from 'ngx-toastr';
 
 declare var google: any;
 
@@ -26,7 +31,7 @@ export class NavbarComponent {
   showOtherNavbar = false;
   showStoreNavbar = false;
   currentRoute: string = '';
-  activeNavbarType: string = '';
+  activeNavbarType!: string ;
 
   isDropdownOpen: boolean = false;
   IsUserLogged: boolean = false;
@@ -51,6 +56,7 @@ export class NavbarComponent {
   ////////////////////
   loggedInUserId: number | null = null;
 
+  
   constructor(private router: Router,
     private dialog: MatDialog,
     private fb: FormBuilder,
@@ -61,23 +67,23 @@ export class NavbarComponent {
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     private notifService: NotificationService,
+    private cartService: CartService,
+    private toastrService: ToastrService,
 
   ) {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.determineNavbarVariant(event.url);
-      }
-    });
+   
   }
 
   ngOnInit() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.determineNavbarVariant(event.url);
+    });
+
     this.determineNavbarVariant(this.router.url);
     this.googleTranslateElementInit();
     this.getNotification();
-    // this.authService.loggedInUser$.subscribe(user => {
-    //   this.IsUserLogged = !!user;
-    // });
-
     this.authService.loggedInUser$.subscribe(user => {
       this.IsUserLogged = !!user;
 
@@ -102,38 +108,26 @@ export class NavbarComponent {
     if (url.includes('/homepage')) {
       this.showHomeNavbar = true;
       this.showOtherNavbar = false;
-      this.showStoreNavbar = false;
       this.activeNavbarType = 'home';
-    } else if (url.includes('/chat') || url.includes('user-folders/:id')) {
+    } else if (url.includes('/chat') || url.startsWith('/user-profil/')|| url.startsWith('/store') || url.startsWith('/product-info')) {
       this.showHomeNavbar = false;
       this.showOtherNavbar = true;
-      this.showStoreNavbar = false;
       this.activeNavbarType = 'other';
     }
   }
-
+  
   switchToOtherNavbar() {
     this.showHomeNavbar = false;
     this.showOtherNavbar = true;
-    this.showStoreNavbar = false;
     this.activeNavbarType = 'other';
   }
 
   switchToHomeNavbar() {
     this.showHomeNavbar = true;
     this.showOtherNavbar = false;
-    this.showStoreNavbar = false;
     this.activeNavbarType = 'home';
   }
-  // Method to switch to Store Navbar
-  switchToStoreNavbar() {
-    this.showHomeNavbar = false;
-    this.showOtherNavbar = false;
-    this.showStoreNavbar = true;
-    this.activeNavbarType = 'store';
-
-  }
-
+ 
   toggleMap() {
     this.isMapOpen = !this.isMapOpen;
   }
@@ -263,5 +257,33 @@ export class NavbarComponent {
     if (this.loggedInUserId !== null) {
       this.router.navigate(['/user-profil', this.loggedInUserId]);
     }
+  }
+
+  
+  fetchUserCart(): void {
+    this.cartService.getUserCart().subscribe(
+      (userCart) => {
+        userCart.items = userCart.items || [];
+        userCart.items = userCart.items.map((item: any) => ({
+          ...item,
+          product: {
+            ...item.product,
+            uploadedFileUrl: `${environment.apiUrl}/blog-backend/productFile/${item.product.uploadedFile}`
+          }
+        }));
+
+        const dialogRef = this.dialog.open(ShoppingCartComponent, {
+          width: 'auto',
+          data: { userCart },
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+        });
+      },
+      (error) => {
+        this.toastrService.error('Erreur lors de l\'affichage du panier');
+        //  console.error('Error fetching user cart:', error);
+      }
+    );
   }
 }

@@ -57,6 +57,11 @@ import { MyNoteComponent } from './admin/notes/my-note/my-note.component';
 import { ModifyComponent } from './admin/dialog/modify/modify.component';
 import { UserProfilComponent } from './forum/user-profil/user-profil.component';
 import { CommentsComponent } from './forum/comments/comments.component';
+import { StoreComponent } from './shopping/store/store.component';
+import { ProductComponent } from './shopping/product/product.component';
+import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
+import { ProductInfoComponent } from './shopping/product-info/product-info.component';
+import { OrderComponent } from './shopping/modal/order/order.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +74,7 @@ import { CommentsComponent } from './forum/comments/comments.component';
     AboutUsComponent,
     FeaturesComponent,
     FooterComponent,
+
     ChatComponent,
     BlogComponent,
     HomeComponent,
@@ -77,17 +83,25 @@ import { CommentsComponent } from './forum/comments/comments.component';
     UserLoginComponent,
     ConfirmDialogComponent,
     SidebarComponent,
+
     UserOrderComponent,
     AddProductsComponent,
     ListProductsComponent,
     OrderListComponent,
     OnConfirmComponent,
+
     ResetPasswordComponent,
     AddNoteComponent,
     MyNoteComponent,
     ModifyComponent,
     UserProfilComponent,
-    CommentsComponent
+    CommentsComponent,
+
+    ProductComponent,
+    ShoppingCartComponent,
+    ProductInfoComponent,
+    StoreComponent,
+    OrderComponent
 
   ],
 

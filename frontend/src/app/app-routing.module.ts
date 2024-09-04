@@ -27,18 +27,28 @@ import { MyNoteComponent } from './admin/notes/my-note/my-note.component';
 import { ModifyComponent } from './admin/dialog/modify/modify.component';
 import { UserProfilComponent } from './forum/user-profil/user-profil.component';
 import { CommentsComponent } from './forum/comments/comments.component';
+import { StoreComponent } from './shopping/store/store.component';
+import { ProductComponent } from './shopping/product/product.component';
+import { ProductInfoComponent } from './shopping/product-info/product-info.component';
+import { OrderComponent } from './shopping/modal/order/order.component';
+import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
 
 const routes: Routes = [
   // { path: '', component: },
 
-  { path: '', component: HomepageComponent, pathMatch: 'full' },
+  { path: '', component: LoginComponent, pathMatch: 'full' },
   { path: 'homepage', component: HomepageComponent },
   { path: 'top', component: TopComponent },
   { path: 'our-services', component: OurServicesComponent },
   { path: 'about-us', component: AboutUsComponent },
   { path: 'features', component: FeaturesComponent },
   { path: 'footer', component: FooterComponent },
-
+   { path: 'store', component: StoreComponent},
+   { path: 'product', component: ProductComponent },
+   { path: 'product-info/:id', component: ProductInfoComponent, canActivate: [LoginGuard] },
+   { path: 'order', component: OrderComponent, canActivate: [LoginGuard] },
+   { path: 'shopping-cart', component: ShoppingCartComponent, canActivate: [LoginGuard] },
+   
   // { path: 'home', component: HomeComponent},
   { path: 'chat', component: ChatComponent },
   { path: 'chat/:id', component: ChatComponent },

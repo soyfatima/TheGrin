@@ -16,7 +16,6 @@ export class OrderService {
   globalOrder(orderData: any): Observable<any> {
     const url = `${this.apiUrl}/orders/global`;
     return this.http.post<any>(url, orderData);
-
   }
 
   orderSingle(orderData: any, itemId: number): Observable<any> {
@@ -27,14 +26,18 @@ export class OrderService {
   fetchOrders(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/orders/fetchOrders`);
   }
+  
+  getOrderById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/orders/${id}`);
+  }
 
   deleteOrder(id: number): Observable<any> {
     const url = `${this.apiUrl}/orders/${id}`;
     return this.http.delete<any>(url);
 }
 
-
 deleteAllOrder(): Observable<any> {
   return this.http.delete<any>(`${this.apiUrl}/orders/`);
 }
+
 }
