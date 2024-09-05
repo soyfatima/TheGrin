@@ -6,20 +6,19 @@ import {
   HttpEvent,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, filter, switchMap, take } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { TokenService } from './tokenservice';
 import { Router } from '@angular/router';
 
 @Injectable()
 
 export class TokenInterceptor implements HttpInterceptor {
-  private refreshingToken: boolean = false; // Flag to check if a refresh is in progress
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  constructor(private tokenService: TokenService,
+    private router: Router,
+  ) { }
 
-  constructor(private tokenService: TokenService, private router: Router) { }
-
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler, payload?: any): Observable<HttpEvent<any>> {
     const authData = this.tokenService.getAuthData();
     const accessToken = authData?.accessToken;
     const refreshToken = authData?.refreshToken;
@@ -28,42 +27,36 @@ export class TokenInterceptor implements HttpInterceptor {
       request = this.addAuthorizationHeader(request, accessToken);
     }
 
+    if (refreshToken) {
+      request = this.addAuthorizationHeader(request, refreshToken);
+    }
+    
     return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && refreshToken) {
-          return this.handleUnauthorizedError(request, next, refreshToken);
+      catchError((error) => {
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          if (refreshToken && !request.url.endsWith('/auth/refresh-token')) {
+         //     console.log('Refreshing token...');
+            return this.tokenService.refreshAccessToken(refreshToken).pipe(
+              switchMap((refreshResponse) => {
+                // Créez une nouvelle demande avec le jeton rafraîchi
+                const newRequest = this.addAuthorizationHeader(request.clone(), refreshResponse.accessToken);
+             //     console.log('Token refreshed successfully.', newRequest);
+                return next.handle(newRequest);
+              }),
+
+              catchError((refreshError) => {
+                alert('Votre session a expiré, veuillez vous reconnecter.');
+          //      this.router.navigate(['/login']);
+                return throwError(refreshError);
+              })
+            );
+          } else {
+
+          }
         }
         return throwError(error);
       })
     );
-  }
-
-  private handleUnauthorizedError(request: HttpRequest<any>, next: HttpHandler, refreshToken: string): Observable<HttpEvent<any>> {
-    if (this.refreshingToken) {
-      return this.refreshTokenSubject.pipe(
-        filter(token => token != null),
-        take(1),
-        switchMap(() => next.handle(this.addAuthorizationHeader(request, this.tokenService.getAuthData()?.accessToken || '')))
-      );
-    } else {
-      this.refreshingToken = true;
-      this.refreshTokenSubject.next(null);
-
-      return this.tokenService.refreshAccessToken(refreshToken).pipe(
-        switchMap((refreshResponse) => {
-          this.refreshingToken = false;
-          this.refreshTokenSubject.next(refreshResponse.accessToken);
-          this.tokenService.setAccessTokenInCookie(refreshResponse.accessToken, refreshToken, JSON.stringify(this.tokenService.getAuthData()?.userInfo || ''));
-          return next.handle(this.addAuthorizationHeader(request, refreshResponse.accessToken));
-        }),
-        catchError((refreshError) => {
-          this.refreshingToken = false;
-          this.tokenService.removeAuthData();
-          this.router.navigate(['/login']);
-          return throwError(refreshError);
-        })
-      );
-    }
   }
 
   private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
@@ -73,4 +66,5 @@ export class TokenInterceptor implements HttpInterceptor {
       },
     });
   }
+
 }

@@ -63,51 +63,16 @@ export class UserProfilComponent implements OnInit {
     });
   }
 
-  // ngOnInit(): void {
-  //   this.isAdmin = this.authService.isAdmin();
-  //   console.log('Is Admin:', this.isAdmin);
-
-  //   this.route.params.subscribe(params => {
-  //     this.userId = +params['id'];
-  //     this.loadFolders();
-  //     this.loadComments();
-  //     this.loadLoggedInUser();
-  //     //this.loadUserInfo();
-  //     //this.loadAdminInfo();
-  //     this.authService.loggedInUser$.subscribe(user => {
-  //       this.IsUserLogged = !!user;
-  //       if (this.IsUserLogged) {
-  //         this.loggedInUserId = user.id;
-  //       }
-  //     });
-  //   });
-
-  //   if(this.isAdmin) {
-  //     this.loadAdminInfo()
-
-  //   } else{
-  //     this.loadUserInfo()
-  //   }
-  // }
-
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
-    console.log('Is Admin:', this.isAdmin);
-  
-    // Chargez d'abord les paramètres de la route
     this.route.params.subscribe(params => {
-      this.userId = +params['id']; // ID de l'utilisateur dont le profil est consulté
-      this.loadUserInfo(); // Chargez les informations de l'utilisateur dont le profil est consulté
-  
-      // Chargez les informations du dossier et des commentaires
+      this.userId = +params['id'];
+      this.loadUserInfo(); 
       this.loadFolders();
       this.loadComments();
-  
-      // Chargez les informations de l'utilisateur connecté, mais uniquement pour la comparaison
       this.loadLoggedInUser();
     });
   
-    // Vérifiez si l'utilisateur est un admin pour charger les informations appropriées
     if (this.isAdmin) {
       this.loadAdminInfo();
     }
@@ -141,7 +106,7 @@ export class UserProfilComponent implements OnInit {
         this.folders = folders || [];
         this.paginateFolders();
         this.folders = this.folders.map(folder => {
-          const uploadedFileUrl = folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${folder.user.uploadedFile}` : null;
+          const uploadedFileUrl = folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${folder.user.uploadedFile}` : 'https://api.dicebear.com/6.x/initials/svg?seed=User' ;
           return {
             ...folder,
             uploadedFileUrl
@@ -226,7 +191,7 @@ export class UserProfilComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error => {
-          console.error('Error updating user info:', error);
+        //  console.error('Error updating user info:', error);
         }
       );
     }
@@ -251,11 +216,10 @@ export class UserProfilComponent implements OnInit {
         if (user.uploadedFile) {
           this.user.uploadedFileUrl = `${environment.apiUrl}/blog-backend/ProfilPic/${user.uploadedFile}?t=${new Date().getTime()}`;
         } else {
-          console.log('No uploaded file found for this user.');
         }
       },
       error => {
-        console.error('Error fetching user info:', error);
+     //   console.error('Error fetching user info:', error);
       }
     );
   }
@@ -266,15 +230,13 @@ export class UserProfilComponent implements OnInit {
       admin => {
         this.admin = admin;
         this.isAdmin = true;
-        console.log('admin info', this.admin)
         if (admin.uploadedFile) {
           this.user.uploadedFileUrl = `${environment.apiUrl}/blog-backend/ProfilPic/${admin.uploadedFile}?t=${new Date().getTime()}`;
         } else {
-          console.log('No uploaded file found for this user.');
         }
       },
       error => {
-        console.error('Error fetching user info:', error);
+    //    console.error('Error fetching user info:', error);
       }
     );
   }

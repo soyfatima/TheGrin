@@ -8,7 +8,6 @@ import { AuthService } from '../../service/auth.service';
   styleUrl: './reset-password.component.css'
 })
 
-// your-component.component.ts
 export class ResetPasswordComponent {
   dialogRef:any;
   email: string = '';

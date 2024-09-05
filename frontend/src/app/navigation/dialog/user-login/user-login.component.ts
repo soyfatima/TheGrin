@@ -114,15 +114,10 @@ export class UserLoginComponent {
         this.toastrService.success('Vous êtes connecté avec succès');
         if (response.accessToken && response.refreshToken) {
           this.tokenService.setAccessTokenInCookie(response.accessToken, response.refreshToken, JSON.stringify(response.userInfo));
-          console.log('refreshtoken', response.refreshToken);
-          console.log('accesstoken', response.accessToken);
-          console.log('user-info',response.userInfo);
-
           this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
-          console.log(this.loggedInUser, 'response userinfo');
-          console.log(this.loggedInUser.role, ' response.role')
+        
         } else {
           // console.error('Login failed: Tokens missing in the response');
         }
@@ -135,44 +130,9 @@ export class UserLoginComponent {
     );
   }
 
-
-
-
   switchTab(tab: string): void {
     this.tab = tab;
   }
-
-  // fetchUserCart(): void {
-  //   this.cartService.getUserCart().subscribe(
-  //     (userCart) => {
-  //       // Ensure items array is always initialized
-  //       userCart.items = userCart.items || [];
-
-  //       // Optionally format cart items or data as needed
-  //       userCart.items = userCart.items.map((item: any) => ({
-  //         ...item,
-  //         product: {
-  //           ...item.product,
-  //           uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${item.product.uploadedFile}`
-  //         }
-  //       }));
-
-  //       const dialogRef = this.dialog.open(ShoppingCartComponent, {
-  //         width: 'auto',
-  //         data: { userCart },
-  //       });
-
-  //       // Subscribe to dialog close event
-  //       dialogRef.afterClosed().subscribe(result => {
-  //       });
-  //     },
-  //     (error) => {
-  //       this.toastrService.error('Erreur lors de l\'affichage du panier');
-  //       console.error('Error fetching user cart:', error);
-  //     }
-  //   );
-  // }
-
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ResetPasswordComponent, {

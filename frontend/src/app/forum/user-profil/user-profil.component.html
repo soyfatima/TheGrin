@@ -4,8 +4,8 @@
 
   <div class="user-info" *ngIf="isUser">
     <div class="circle-icon mb-3 d-flex justify-content-center align-items-center">
-      <img [src]="previewImageUrl || user?.uploadedFileUrl || 'default-image-url'" alt="img"
-        class="img-fluid rounded-circle">
+      <img [src]="previewImageUrl || user?.uploadedFileUrl || 'https://api.dicebear.com/6.x/initials/svg?seed=User'"
+        alt="img" class="img-fluid rounded-circle">
     </div>
 
     <ng-container *ngIf="!isEditing; else editMode">
@@ -14,11 +14,11 @@
         class="border border-0 bg-transparent m-1">
         <mat-icon class="color-primary">edit</mat-icon>
       </button>
-      <p class="mb-1">Utilisateur : 
+      <p class="mb-1">Utilisateur :
         <strong class="color-primary">
           {{ userId === loggedInUserId ? loggedInUser?.username : user?.username }}
         </strong>
-</p>    
+      </p>
       <p class="mb-1">Genre: {{ user?.gender }}</p>
       <p class="mb-1">Date d'inscription : <em>{{ user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
       <p>Connexion : <em>{{ user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
@@ -50,9 +50,9 @@
           class="img-fluid rounded-circle">
       </div>
       <div class="mb-4">
-      <p class="mb-1">Admin : <strong class="color-primary">{{admin?.username }}</strong></p>
-      <p class="mb-1">Email: {{ admin?.email }}</p>
-    </div>
+        <p class="mb-1">Admin : <strong class="color-primary">{{admin?.username }}</strong></p>
+        <p class="mb-1">Email: {{ admin?.email }}</p>
+      </div>
     </div>
   </ng-container>
 
@@ -109,12 +109,6 @@
       </mat-paginator>
     </div>
   </div>
-
-
-
-
-
-
 
 
 </div>

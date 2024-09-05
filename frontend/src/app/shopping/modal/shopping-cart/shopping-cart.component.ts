@@ -88,8 +88,6 @@ export class ShoppingCartComponent implements OnInit {
         this.dialog.open(OrderComponent, {
           width: 'auto',
            data: data
-         // data: { totalPrice: this.totalPrice, totalQuantity: this.totalQuantity, itemId: this.itemId },
-
         });
       },
       (error) => {
@@ -105,9 +103,6 @@ export class ShoppingCartComponent implements OnInit {
 
         this.totalPrice = data.totalPrice;
         this.totalQuantity = data.totalQuantity;
-        console.log('total quantity', this.totalQuantity),
-        console.log('total price', this.totalPrice)
-       
         this.dialog.open(OrderComponent, {
           width: 'auto',
           data: { ...data, itemId: itemId },
@@ -127,7 +122,7 @@ export class ShoppingCartComponent implements OnInit {
         this.cartUpdated.emit(true);
       },
       (error) => {
-        console.error('Error removing item:', error);
+     //   console.error('Error removing item:', error);
         this.toastrService.error('erreur lors de la suppression de l\'article du panier')
       }
     );

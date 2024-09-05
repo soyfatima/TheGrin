@@ -26,7 +26,6 @@ import { AddNoteComponent } from './admin/notes/add-note/add-note.component';
 import { MyNoteComponent } from './admin/notes/my-note/my-note.component';
 import { ModifyComponent } from './admin/dialog/modify/modify.component';
 import { UserProfilComponent } from './forum/user-profil/user-profil.component';
-import { CommentsComponent } from './forum/comments/comments.component';
 import { StoreComponent } from './shopping/store/store.component';
 import { ProductComponent } from './shopping/product/product.component';
 import { ProductInfoComponent } from './shopping/product-info/product-info.component';
@@ -36,24 +35,19 @@ import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-c
 const routes: Routes = [
   // { path: '', component: },
 
-  { path: '', component: LoginComponent, pathMatch: 'full' },
+  { path: '', component: HomepageComponent, pathMatch: 'full' },
   { path: 'homepage', component: HomepageComponent },
   { path: 'top', component: TopComponent },
   { path: 'our-services', component: OurServicesComponent },
   { path: 'about-us', component: AboutUsComponent },
   { path: 'features', component: FeaturesComponent },
   { path: 'footer', component: FooterComponent },
-   { path: 'store', component: StoreComponent},
-   { path: 'product', component: ProductComponent },
-   { path: 'product-info/:id', component: ProductInfoComponent, canActivate: [LoginGuard] },
-   { path: 'order', component: OrderComponent, canActivate: [LoginGuard] },
-   { path: 'shopping-cart', component: ShoppingCartComponent, canActivate: [LoginGuard] },
-   
-  // { path: 'home', component: HomeComponent},
+  { path: 'store', component: StoreComponent },
+  { path: 'product', component: ProductComponent },
+
   { path: 'chat', component: ChatComponent },
   { path: 'chat/:id', component: ChatComponent },
 
-  //{ path: 'chat/:id/:commentId', component: ChatComponent },
   { path: 'contact-us', component: ContactUsComponent },
   { path: 'confirm-dialog', component: ConfirmDialogComponent },
 
@@ -61,7 +55,9 @@ const routes: Routes = [
   { path: 'user-login', component: UserLoginComponent, canActivate: [LoginGuard] },
   { path: 'user-profil/:id', component: UserProfilComponent, canActivate: [LoginGuard] },
   { path: 'reset-password', component: ResetPasswordComponent, canActivate: [LoginGuard] },
-  { path: 'comments', component: CommentsComponent },
+  { path: 'product-info/:id', component: ProductInfoComponent, canActivate: [LoginGuard] },
+  { path: 'order', component: OrderComponent, canActivate: [LoginGuard] },
+  { path: 'shopping-cart', component: ShoppingCartComponent, canActivate: [LoginGuard] },
 
   // Admin routes
   { path: 'login', component: LoginComponent, canActivate: [AdminGuard] },

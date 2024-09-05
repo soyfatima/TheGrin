@@ -99,6 +99,7 @@ export class OrderListComponent {
       }
     );
   }
+  
   formatNumberWithSeparator(montant: number): string {
     return this.productService.formatNumberWithSeparator(montant);
   }

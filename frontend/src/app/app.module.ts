@@ -56,7 +56,6 @@ import { AddNoteComponent } from './admin/notes/add-note/add-note.component';
 import { MyNoteComponent } from './admin/notes/my-note/my-note.component';
 import { ModifyComponent } from './admin/dialog/modify/modify.component';
 import { UserProfilComponent } from './forum/user-profil/user-profil.component';
-import { CommentsComponent } from './forum/comments/comments.component';
 import { StoreComponent } from './shopping/store/store.component';
 import { ProductComponent } from './shopping/product/product.component';
 import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
@@ -95,7 +94,6 @@ import { OrderComponent } from './shopping/modal/order/order.component';
     MyNoteComponent,
     ModifyComponent,
     UserProfilComponent,
-    CommentsComponent,
 
     ProductComponent,
     ShoppingCartComponent,

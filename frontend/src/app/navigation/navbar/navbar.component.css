@@ -4,24 +4,6 @@
     overflow-x: hidden;
     max-height: 430px;
 }
-
-.notification-item {
-    position: relative;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 5px 0;
-    transition: transform 0.3s ease;
-}
-
-.bg-color-new {
-    background: linear-gradient(90deg, #095caf, #ff50c2) !important;
-
-    color: #fff;
-  }
-  
-  .bg-color-read {
-    background-color: #fcfcfc; 
-  }
   
   @media(max-width:768px) {
   .offcanvas-header button {

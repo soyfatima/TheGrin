@@ -64,7 +64,7 @@ data:any;
 
 
   getNotification() {
-    this.notifService.getAllNotifications().subscribe(
+    this.notifService.getOrderNotification().subscribe(
       (notifications) => {
         this.notifications = notifications;
         this.notificationCount = notifications.length;
@@ -96,7 +96,7 @@ data:any;
             ...item,
             product: { 
               ...item.product,
-              uploadedFileUrl: `${environment.apiUrl}/blog-backend/uploads/${item.product.uploadedFile}`
+              uploadedFileUrl: `${environment.apiUrl}/blog-backend/productFile/${item.product.uploadedFile}`
             }
           }));
   
@@ -116,7 +116,7 @@ data:any;
   
   
   DeleteNotification(id: number): void {
-    this.notifService.deleteNotification(id).subscribe(
+    this.notifService.deleteOrderNotification(id).subscribe(
       () => {
         this.getNotification();
         this.snackBar.open('Notification supprimée avec succès', 'Fermer', {
@@ -131,7 +131,7 @@ data:any;
   }
   
   deleteAllNotifications(): void {
-    this.notifService.deleteAllNotifications().subscribe(
+    this.orderService.deleteAllOrderNotifications().subscribe(
       (response) => {
         this.notifications = [];
         this.notificationCount = 0;

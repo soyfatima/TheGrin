@@ -11,12 +11,16 @@ export class NotificationService {
 
   constructor(private http: HttpClient) {}
 
-  getAllNotifications(): Observable<Notification[]> {
-    const url = `${this.apiUrl}/notifications/getNotification`
+  getAllUserNotifications(): Observable<Notification[]> {
+    const url = `${this.apiUrl}/notifications/getUserNotification`
     return this.http.get<Notification[]>(url);
   }
 
-  getNotificationById(id: number): Observable<Notification> {
+  getOrderNotification():Observable<Notification []> {
+    return this.http.get<Notification[]>(`${this.apiUrl}/notifications/OrderNotification`)
+  }
+
+  getUserNotificationById(id: number): Observable<Notification> {
     return this.http.get<Notification>(`${this.apiUrl}/notifications/${id}`);
   }
   
@@ -24,21 +28,22 @@ export class NotificationService {
     return this.http.put<void>(`${this.apiUrl}/notifications/${notificationId}/read`, {});
   } 
   
-  deleteNotification(id:number):Observable<any> {
-    const url = `${this.apiUrl}/notifications/${id}`
-  return this.http.delete<any>(url);
-  }
-
-  deleteAllNotifications(): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/notifications/`);
-  }
-  
   deleteUserNotification(id:number):Observable<any> {
     const url = `${this.apiUrl}/notifications/${id}`
   return this.http.delete<any>(url);
   }
 
   deleteAllUserNotifications(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/notifications/`);
+  }
+
+
+  deleteOrderNotification(id:number):Observable<any> {
+    const url = `${this.apiUrl}/notifications/${id}`
+  return this.http.delete<any>(url);
+  }
+
+  deleteAllOrderNotifications(): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/notifications/`);
   }
 

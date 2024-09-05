@@ -63,7 +63,6 @@ export class AddNoteComponent {
     this.folderService.createAdminNote(folderData).subscribe(
       (response) => {
         this.folderForm.reset();
-      //  console.log('my note')
         this.toastrService.success('Poste créé avec succès');
       },
       (error) => {

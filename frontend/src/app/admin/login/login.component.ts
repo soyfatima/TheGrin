@@ -46,7 +46,7 @@ this.preloader()
   preloader() {
     setTimeout(() => {
       this.preloaderVisible = false;
-    }, 2000); // Modify this delay as needed
+    }, 2000); 
   }
 
   onSubmit(): void {

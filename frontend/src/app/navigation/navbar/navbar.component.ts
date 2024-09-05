@@ -80,19 +80,19 @@ export class NavbarComponent {
     ).subscribe((event: NavigationEnd) => {
       this.determineNavbarVariant(event.url);
     });
-
-    this.determineNavbarVariant(this.router.url);
-    this.googleTranslateElementInit();
-    this.getNotification();
     this.authService.loggedInUser$.subscribe(user => {
       this.IsUserLogged = !!user;
 
       if (user) {
         this.loggedInUserId = user.id;
       } else {
-        //  this.loggedInUserId = null;
+          this.loggedInUserId = null;
       }
     });
+
+    this.determineNavbarVariant(this.router.url);
+    this.googleTranslateElementInit();
+    this.getNotification();
   }
 
 
@@ -147,12 +147,8 @@ export class NavbarComponent {
 
   }
 
-
-
-
-
   getNotification(): void {
-    this.notifService.getAllNotifications().subscribe(
+    this.notifService.getAllUserNotifications().subscribe(
       (notifications) => {
         this.notifications = notifications;
         this.notificationCount = notifications.length;
@@ -179,7 +175,7 @@ export class NavbarComponent {
 
 
   onNotificationClick(notificationId: number): void {
-    this.notifService.getNotificationById(notificationId).subscribe(
+    this.notifService.getUserNotificationById(notificationId).subscribe(
       (notifDetails: any) => {
         if (notifDetails && notifDetails.folder) {
           const folderId = notifDetails.folder.id;
@@ -228,7 +224,7 @@ export class NavbarComponent {
 
 
   deleteAllNotifications(): void {
-    this.notifService.deleteAllNotifications().subscribe(
+    this.notifService.deleteAllUserNotifications().subscribe(
       (response) => {
         this.notifications = [];
         this.notificationCount = 0;
@@ -258,7 +254,6 @@ export class NavbarComponent {
       this.router.navigate(['/user-profil', this.loggedInUserId]);
     }
   }
-
   
   fetchUserCart(): void {
     this.cartService.getUserCart().subscribe(

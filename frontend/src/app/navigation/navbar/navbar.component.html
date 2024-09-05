@@ -25,6 +25,10 @@
           <button class="bg-transparent border border-0 text-white" routerLink="/homepage"> <mat-icon>home</mat-icon>
           </button>
         </div>
+        <!-- <div class="avatar">
+          <button class="bg-transparent border border-0 text-white" routerLink="/store"> <mat-icon>shop</mat-icon>
+          </button>
+        </div> -->
         <button *ngIf="!IsUserLogged" class="border border-0 bg-color-white bg-transparent color-default" (click)="loginUser()">
           <li><a>
               Se connecter</a></li>
@@ -55,9 +59,6 @@
   </div>
 </nav>
 
-
-
-
 <div *ngIf="userCart">
   <h2>Votre panier</h2>
   <ul>
@@ -66,14 +67,6 @@
     </li>
   </ul>
 </div> 
-
-
-
-  
-
-
-
-
 
 <ng-container>
 <ng-template #content let-offcanvas>
@@ -88,7 +81,6 @@
         <button class="btn btn-danger fw-bold m-1" (click)="deleteAllNotifications()"><mat-icon>delete</mat-icon>
          </button>
       <button type="button" class="btn btn-primary m-1 d-lg-none" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"><mat-icon>close</mat-icon></button>
-
       </div>
 
       <div class="row">
@@ -117,5 +109,4 @@
     </div>
   </div>
 </ng-template>
-
 </ng-container>

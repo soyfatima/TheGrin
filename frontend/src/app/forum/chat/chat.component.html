@@ -184,7 +184,7 @@
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
                                     <h4 class="mb-4">({{ comments.length }}) Commentaires</h4>
-                                    <div class="p-2 mb-5 bg-color-chat rounded-2 bordr border-2 shadow-sm"
+                                    <div class="p-2 mb-3 bg-color-chat rounded-2 bordr border-2 shadow-sm"
                                         *ngFor="let comment of paginatedComments" [id]="'comment-' + comment.id"
                                         [ngClass]="{'highlight': comment.id === highlightCommentId}">
                                         <div class="card-body">
@@ -201,8 +201,7 @@
                                                         class="img-fluid rounded-circle">
                                                 </div>
                                                 <div class="user-comment-info ms-sm-4 p-1 " *ngIf="comment.user">
-                                                    <p class="name fw-bold color-primary mb-0">{{ comment.isAdmin ?
-                                                        'Admin' : comment.user.username}}
+                                                    <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
                                                     </p>
 
                                                     <p class="color-tertiary fw-bold"
@@ -273,7 +272,7 @@
                                                             <button
                                                                 *ngIf="comment?.user?.id === loggedInUserId && !isAdmin"
                                                                 (click)="deleteComment(comment.id)"
-                                                                class="bg-transparent border border-0 p-2 m-1 color-secondary"><mat-icon>delete</mat-icon></button>
+                                                                class="bg-transparent border border-0 p-2 m-1 color-primary"><mat-icon>delete</mat-icon></button>
                                                         </div>
                                                         <div class="right-side">
                                                             <button

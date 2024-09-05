@@ -1067,6 +1067,22 @@ h6 {
   }
 
 
+  .zoom-in {
+    animation: zoom 5s ease-in-out infinite !important;
+  
+  }
+  
+  @keyframes zoom {
+  
+    0%,
+    100% {
+      transform: scale(1);
+    }
+  
+    50% {
+      transform: scale(0.9);
+    }
+  }
   .reduction {
     position: absolute;
     top: 0px;
@@ -1140,3 +1156,21 @@ h6 {
     text-align: center;
   }
   
+  
+.notification-item {
+    position: relative;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px 0;
+    transition: transform 0.3s ease;
+}
+
+.bg-color-new {
+    background: linear-gradient(90deg, #095caf, #ff50c2) !important;
+
+    color: #fff;
+  }
+  
+  .bg-color-read {
+    background-color: #fcfcfc; 
+  }

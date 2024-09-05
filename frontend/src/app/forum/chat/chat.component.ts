@@ -144,7 +144,7 @@ export class ChatComponent {
     });
 
     this.route.params.subscribe(params => {
-      this.userId = +params['id']; // Ensure userId is properly set
+      this.userId = +params['id']; 
     });
   }
 
@@ -249,7 +249,7 @@ export class ChatComponent {
           .map((folder: { uploadedFile: any; user: any; createdAt: Date }) => ({
             ...folder,
             FolderUploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/userFile/${folder.uploadedFile}` : null,
-            userProfileImageUrl: folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${folder.user.uploadedFile}` : null,
+            userProfileImageUrl: folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${folder.user.uploadedFile}` : 'https://api.dicebear.com/6.x/initials/svg?seed=User',
           }))
           .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Trier par date décroissante
 
@@ -368,17 +368,15 @@ export class ChatComponent {
       );
   }
  
-
   fetchComments(folderId: number): void {
     this.commentService.getComments(folderId).subscribe(
       (comments: any[]) => {
-        console.log('comments', comments)
         this.comments = comments.map(comment => {
-          const isAdmin = comment.user?.role === 'admin'; // Adjust based on your role structure
+          const isAdmin = comment.user?.role === 'admin'; 
 
           comment.userProfileImageUrl = comment.user?.uploadedFile
             ? `${environment.apiUrl}/blog-backend/ProfilPic/${comment.user.uploadedFile}`
-            : 'path/to/default-profile.png';
+            : 'https://api.dicebear.com/6.x/initials/svg?seed=User';
 
           comment.isAdmin = isAdmin;
 
@@ -386,7 +384,7 @@ export class ChatComponent {
             comment.replies = comment.replies.map((reply: { userProfileImageUrl: string; user: { uploadedFile: any; }; }) => {
               reply.userProfileImageUrl = reply.user?.uploadedFile
                 ? `${environment.apiUrl}/blog-backend/ProfilPic/${reply.user.uploadedFile}`
-                : 'path/to/default-profile.png';
+                : 'https://api.dicebear.com/6.x/initials/svg?seed=User';
               return reply;
             });
           }
@@ -832,26 +830,21 @@ export class ChatComponent {
   toggleBlockUser(userId: number, currentBlockedState: boolean): void {
     if (userId) {
       const newBlockedState = !currentBlockedState; // Toggle the state
-      console.log(`Toggling block state for user ID ${userId}. Current state: ${currentBlockedState}. New state: ${newBlockedState}`);
-
       this.authService.blockUser(userId, newBlockedState).subscribe(
         () => {
           const action = newBlockedState ? 'blocked' : 'unblocked';
-          console.log(`User with ID ${userId} has been ${action}.`);
-          // Update the UI or notify the user about the action
           this.updateCommentState(userId, newBlockedState);
         },
         error => {
-          console.error(`Error ${newBlockedState ? 'blocking' : 'unblocking'} user:`, error);
+        //  console.error(`Error ${newBlockedState ? 'blocking' : 'unblocking'} user:`, error);
         }
       );
     } else {
-      console.error('Invalid user ID');
+   //   console.error('Invalid user ID');
     }
   }
 
   updateCommentState(userId: number, newBlockedState: boolean): void {
-    // Assuming `comments` is an array of comment objects in your component
     const comment = this.comments.find(c => c.user.id === userId);
     if (comment) {
       comment.user.blocked = newBlockedState;

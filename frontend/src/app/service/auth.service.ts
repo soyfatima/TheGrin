@@ -19,7 +19,6 @@ export class AuthService {
 
   ) {
     this.updateLoginStatus();
-
   }
 
   //admin login 
@@ -39,7 +38,7 @@ export class AuthService {
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
       const user = JSON.parse(currentUser);
-      console.log('Current user role:', user.role); // Ch
+      //console.log('Current user role:', user.role);
       return user.role === 'admin';
     }
     return false;
@@ -74,17 +73,17 @@ export class AuthService {
   }
 
 
-  // private updateLoginStatus(): void {
-  //   const currentUser = localStorage.getItem('currentUser');
-  //   const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
-  //   this.loggedInUserSubject.next(loggedInUser);
-  // }
-  
-  updateLoginStatus(): void {
+   updateLoginStatus(): void {
     const currentUser = localStorage.getItem('currentUser');
-    const user = currentUser ? JSON.parse(currentUser) : null;
-    this.loggedInUserSubject.next(user);
+    const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
+    this.loggedInUserSubject.next(loggedInUser);
   }
+  
+  // updateLoginStatus(): void {
+  //   const currentUser = localStorage.getItem('currentUser');
+  //   const user = currentUser ? JSON.parse(currentUser) : null;
+  //   this.loggedInUserSubject.next(user);
+  // }
   
   
   isLoggedIn(): boolean {
