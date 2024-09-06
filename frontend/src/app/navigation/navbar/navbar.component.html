@@ -1,9 +1,11 @@
 <!-- Navbar -->
-<nav class="navbar global-nav navbar-expand-lg fixed-top"
-  [ngClass]="{'bg-color-gradient': showOtherNavbar, 'color-default': showOtherNavbar}">
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm global-nav"
+  [ngClass]="{'bg-color-gradient': showOtherNavbar, 'bgcolor': showHomeNavbar}">
   <div class="container-fluid">
-    <a routerLink="/homepage" class="navbar-brand  me-1">
-      <h4 class="color-default fw-bold">LE-GRIN</h4>
+    <a routerLink="/homepage" class="navbar-brand me-1">
+       <img src="https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fvital-logo.png?alt=media&token=1f98cb59-699e-4654-a048-c4015475a70f"
+       alt="logo" class="img-fluid" style="border-radius: 50%;" > 
+      <h4 class="fw-bold">VITAL</h4>
     </a>
     <button class="navbar-toggler color-secondary ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">
       <i class="fa fa-bars text-center"></i>
@@ -35,15 +37,16 @@
         </button>
 
         <div class="d-flex" *ngIf="IsUserLogged">
-          <div class="avatar" (click)="goToUserProfil()">
-            <button class="bg-color-white border border-0"> <mat-icon>account_circle</mat-icon>
-            </button>
-          </div>
+         
           <div class="avatar" (click)="openEnd(content)">
             <button class="notification-count bg-color-white border border-0"
              matBadge="{{notificationCount}}"
               [matBadgeHidden]="notificationCount === 0" matBadgeColor="accent">
               <mat-icon class="text-primary">notifications</mat-icon>
+            </button>
+          </div>
+          <div class="avatar" (click)="goToUserProfil()">
+            <button class="bg-color-white border border-0"> <mat-icon>account_circle</mat-icon>
             </button>
           </div>
           <div class="avatar">

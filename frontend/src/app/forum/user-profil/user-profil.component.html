@@ -24,7 +24,7 @@
       <p>Connexion : <em>{{ user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
     </ng-container>
 
-    <ng-template #editMode>
+    <ng-template class="mb-5" #editMode>
       <form [formGroup]="usernameForm" (ngSubmit)="EditUserInfo()">
         <div class="row">
           <div class="col-md-4 mb-2">
@@ -37,8 +37,10 @@
               accept="image/png, image/jpeg, image/jpg" />
           </div>
         </div>
-        <button type="submit" class="btn btn-primary m-1">Enregistrer</button>
+        <button type="submit" class="btn btn-primary m-1">Valider</button>
         <button type="button" (click)="cancel()" class="btn btn-secondary m-1">Annuler</button>
+        <button type="button" (click)="deleteProfilePicture()" class="btn btn-danger m-1">Supprimer profil</button>
+
       </form>
     </ng-template>
   </div>

@@ -11,6 +11,7 @@ import { TokenService } from '../../service/tokenservice';
 import { debounceTime, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../navigation/dialog/confirm-dialog/confirm-dialog.component';
+import { userService } from '../../service/user.service';
 
 @Component({
   selector: 'app-chat',
@@ -87,6 +88,7 @@ export class ChatComponent {
     { name: 'problème de couple' },
     { name: 'problème familiale' },
     { name: 'relation sentimental' },
+    { name: 'administrateur' },
     { name: 'autre' }
   ]
 
@@ -99,6 +101,7 @@ export class ChatComponent {
     { label: 'problème de couple', value: 'problème de couple', },
     { label: 'problème familiale', value: 'problème familiale', },
     { label: 'relation sentimental', value: 'relation sentimental', },
+    { label: 'administrateur', value: 'administrateur' },
     { label: 'autre', value: 'autre', }
   ]
 
@@ -122,6 +125,7 @@ export class ChatComponent {
     private toastrService: ToastrService,
     private route: ActivatedRoute,
     private commentService: CommentService,
+    private userService: userService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
@@ -299,7 +303,7 @@ export class ChatComponent {
               this.toastrService.success('Votre poste a été supprimé ');
               this.folders = this.folders.filter(folder => folder.id !== folderId); // Remove the folder from the list
               this.deselectCard();
-              //   this.fetchFolders();
+                this.fetchFolders();
               this.cdr.detectChanges();
             },
             (error) => {
@@ -830,7 +834,7 @@ export class ChatComponent {
   toggleBlockUser(userId: number, currentBlockedState: boolean): void {
     if (userId) {
       const newBlockedState = !currentBlockedState; // Toggle the state
-      this.authService.blockUser(userId, newBlockedState).subscribe(
+      this.userService.blockUser(userId, newBlockedState).subscribe(
         () => {
           const action = newBlockedState ? 'blocked' : 'unblocked';
           this.updateCommentState(userId, newBlockedState);

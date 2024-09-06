@@ -142,20 +142,4 @@ clearAuthData() {
     return this.http.post<void>(`${this.apiUrl}/auth/reset-password`, { email, code, newPassword });
   }
 
-  updateUserInfo(id: number, formData: FormData): Observable<any> {
-    const url = `${this.apiUrl}/auth/${id}/update`;
-    return this.http.put(url, formData);
-  }
-
-  getUserInfo(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/auth/user/${id}`);
-  }
-  
-  getAdminInfo(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/auth/admin/${id}`);
-  }
-
-  blockUser(id: number, blocked: boolean): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/auth/blockUser/${id}`, { blocked });
-  }
 }

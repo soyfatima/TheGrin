@@ -7,6 +7,7 @@ import { AuthService } from '../../service/auth.service';
 import { environment } from '../../../environments/environment';
 import { TokenService } from '../../service/tokenservice';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { userService } from '../../service/user.service';
 
 @Component({
   selector: 'app-user-profil',
@@ -53,6 +54,7 @@ export class UserProfilComponent implements OnInit {
     private folderService: FolderService,
     private commentService: CommentService,
     private authService: AuthService,
+    private userService: userService,
     private tokenService: TokenService,
     private cdr: ChangeDetectorRef,
 
@@ -180,7 +182,7 @@ export class UserProfilComponent implements OnInit {
         formData.append('uploadedFile', this.uploadedFile, this.uploadedFile.name);
       }
 
-      this.authService.updateUserInfo(this.loggedInUserId, formData).subscribe(
+      this.userService.updateUserInfo(this.loggedInUserId, formData).subscribe(
         response => {
           this.loggedInUser.username = response.username;
           if (response.uploadedFile) {
@@ -196,7 +198,24 @@ export class UserProfilComponent implements OnInit {
       );
     }
   }
-
+  deleteProfilePicture(): void {
+    if (this.loggedInUserId !== null) {
+      this.userService.deleteUserPicture(this.loggedInUserId).subscribe(
+        response => {
+          this.loggedInUser.uploadedFileUrl = null; 
+          this.previewImageUrl = 'https://api.dicebear.com/6.x/initials/svg?seed=User';
+          this.loadLoggedInUser();
+        },
+        error => {
+          // Handle error
+        }
+      );
+    } else {
+      console.error('User ID is not available');
+    }
+  }
+  
+  
 
   loadLoggedInUser(): void {
     this.authService.loggedInUser$.subscribe(user => {
@@ -209,7 +228,7 @@ export class UserProfilComponent implements OnInit {
   }
 
   loadUserInfo(): void {
-    this.authService.getUserInfo(this.userId).subscribe(
+    this.userService.getUserInfo(this.userId).subscribe(
       user => {
         this.user = user;
         this.isUser = true;
@@ -226,7 +245,7 @@ export class UserProfilComponent implements OnInit {
 
 
   loadAdminInfo(): void {
-    this.authService.getAdminInfo(this.userId).subscribe(
+    this.userService.getAdminInfo(this.userId).subscribe(
       admin => {
         this.admin = admin;
         this.isAdmin = true;
