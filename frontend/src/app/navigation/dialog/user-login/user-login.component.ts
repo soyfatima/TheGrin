@@ -105,10 +105,10 @@ export class UserLoginComponent {
     if (this.loginForm.invalid) {
       return;
     }
-
+  
     const username = this.loginForm.get('username')?.value;
     const password = this.loginForm.get('password')?.value;
-
+  
     this.authService.userLogin(username, password).subscribe(
       (response) => {
         this.toastrService.success('Vous êtes connecté avec succès');
@@ -117,18 +117,25 @@ export class UserLoginComponent {
           this.dialog.closeAll();
           this.loggedInUser = response.userInfo;
           this.loggedInUser.role = response.role;
-        
         } else {
-          // console.error('Login failed: Tokens missing in the response');
+        //  console.error('Login failed: Tokens missing in the response');
         }
       },
-      (errorMessage) => {
-        this.toastrService.error('Erreur de connexion, veuillez réessayer');
-        // console.error('Login failed:', errorMessage);
-        this.userErrorMessage = errorMessage;
-      }
-    );
-  }
+        (error) => {
+        //  console.error('Login error:', error);
+    
+          const errorMessage = error || 'Erreur de connexion, veuillez réessayer';
+    
+          if (errorMessage === 'User is blocked') {
+            this.toastrService.error('Votre compte est bloqué. Veuillez contacter l\'administrateur.');
+          } else {
+            this.toastrService.error(errorMessage);
+          }
+    
+          this.userErrorMessage = errorMessage;
+        }
+      );
+    }
 
   switchTab(tab: string): void {
     this.tab = tab;

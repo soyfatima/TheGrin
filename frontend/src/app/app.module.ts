@@ -61,6 +61,7 @@ import { ProductComponent } from './shopping/product/product.component';
 import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
 import { ProductInfoComponent } from './shopping/product-info/product-info.component';
 import { OrderComponent } from './shopping/modal/order/order.component';
+import { ListUserComponent } from './admin/list-user/list-user.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +100,8 @@ import { OrderComponent } from './shopping/modal/order/order.component';
     ShoppingCartComponent,
     ProductInfoComponent,
     StoreComponent,
-    OrderComponent
+    OrderComponent,
+    ListUserComponent
 
   ],
 

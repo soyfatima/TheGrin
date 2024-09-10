@@ -31,11 +31,12 @@ import { ProductComponent } from './shopping/product/product.component';
 import { ProductInfoComponent } from './shopping/product-info/product-info.component';
 import { OrderComponent } from './shopping/modal/order/order.component';
 import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
+import { ListUserComponent } from './admin/list-user/list-user.component';
 
 const routes: Routes = [
   // { path: '', component: },
 
-  { path: '', component: HomepageComponent, pathMatch: 'full' },
+  { path: '', component: LoginComponent, pathMatch: 'full' },
   { path: 'homepage', component: HomepageComponent },
   { path: 'top', component: TopComponent },
   { path: 'our-services', component: OurServicesComponent },
@@ -70,7 +71,9 @@ const routes: Routes = [
   { path: 'order-list', component: OrderListComponent, canActivate: [AdminGuard] },
   { path: 'modify', component: ModifyComponent, canActivate: [AdminGuard] },
   { path: 'add-note', component: AddNoteComponent, canActivate: [AdminGuard] },
-  { path: 'my-note', component: MyNoteComponent, canActivate: [AdminGuard] }
+  { path: 'my-note', component: MyNoteComponent, canActivate: [AdminGuard] },
+   { path: 'list-user', component: ListUserComponent, canActivate:[AdminGuard] },
+
 
 ];
 

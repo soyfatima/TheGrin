@@ -54,11 +54,12 @@
 
         <div id="content">
             <main id="main" class="content offset-lg-3 p-">
-                <app-add-note *ngIf="menuIndex === 0"></app-add-note>
-                <app-my-note *ngIf="menuIndex === 1"></app-my-note>
-                <app-add-products *ngIf="menuIndex === 2"></app-add-products>
-                <app-list-products *ngIf="menuIndex === 3"></app-list-products>
-                <app-order-list *ngIf="menuIndex === 4"></app-order-list>
+                <app-list-user *ngIf="menuIndex === 0"></app-list-user>
+                <app-add-note *ngIf="menuIndex === 1"></app-add-note>
+                <app-my-note *ngIf="menuIndex === 2"></app-my-note>
+                <app-add-products *ngIf="menuIndex === 3"></app-add-products>
+                <app-list-products *ngIf="menuIndex === 4"></app-list-products>
+                <app-order-list *ngIf="menuIndex === 5"></app-order-list>
             </main>
         </div>
 

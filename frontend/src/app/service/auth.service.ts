@@ -91,23 +91,24 @@ export class AuthService {
   }
 
   //user login 
-  userLogin(username: string, password: string): Observable<any> {
-    const url = `${this.apiUrl}/auth/userLogin`;
-    return this.http.post<any>(url, { username, password }).pipe(
-      tap(response => {
+  // In your Angular service
+userLogin(username: string, password: string): Observable<any> {
+  const url = `${this.apiUrl}/auth/userLogin`;
+  return this.http.post<any>(url, { username, password }).pipe(
+    tap(response => {
+      if (response && response.accessToken) {
+        localStorage.setItem('currentUser', JSON.stringify(response.userInfo));
+        this.updateLoginStatus();
+      }
+    }),
+    catchError((error: HttpErrorResponse) => {
+      // Extract and propagate the error message
+      const errorMessage = error.error?.message || 'Login failed: ' + error.message;
+      return throwError(errorMessage);
+    })
+  );
+}
 
-        if (response && response.accessToken) {
-          localStorage.setItem('currentUser', JSON.stringify(response.userInfo));
-          
-          this.updateLoginStatus();
-        }
-      }),
-      catchError((error: HttpErrorResponse) => {
-        //   console.error('Login failed:', error);
-        return throwError('Login failed: ' + error.message);
-      })
-    );
-  }
 
   logout(accessToken: string): Observable<void> {
    this.clearAuthData();

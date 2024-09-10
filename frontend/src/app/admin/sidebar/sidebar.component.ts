@@ -32,14 +32,14 @@ getMenuItems() {
 
   {
     return [
-     // { index: 0, icon: 'dashboard', label: 'Tableau de bord' },
+      { index: 0, icon: 'people', label: 'Liste utilisateurs' },
       {
         // index: 1,
         icon: 'newspaper',
         label: 'Notes',
         subitems: [
-          { index: 0, label: 'ajout note' },
-          { index: 1, label: 'Mes notes' },
+          { index: 1, label: 'ajout note' },
+          { index: 2, label: 'Mes notes' },
         ],
       },
       {
@@ -47,9 +47,9 @@ getMenuItems() {
         icon: 'storefront',
         label: 'Boutique',
         subitems: [
-          { index: 2, label: 'ajout produits' },
-          { index: 3, label: 'Liste produits' },
-          { index: 4, label: 'Commandes' },
+          { index: 3, label: 'ajout produits' },
+          { index: 4, label: 'Liste produits' },
+          { index: 5, label: 'Commandes' },
 
         ],
       },

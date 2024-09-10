@@ -16,14 +16,14 @@ export class userService {
     return this.http.put(url, formData);
   }
 
-  deleteUserPicture(id:number):Observable<any> {
+  deleteUserPicture(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/users/${id}/deletePicture`)
   }
 
   getUserInfo(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users/user/${id}`);
   }
-  
+
   getAdminInfo(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users/admin/${id}`);
   }
@@ -32,4 +32,7 @@ export class userService {
     return this.http.patch<any>(`${this.apiUrl}/users/blockUser/${id}`, { blocked });
   }
 
+  GetAllUser(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users/GetAllUser`)
+  }
 }
