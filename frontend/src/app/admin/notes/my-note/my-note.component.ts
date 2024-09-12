@@ -51,10 +51,12 @@ export class MyNoteComponent {
   fetchAdminNote(): void {
     this.folderService.fetchAdminNote().subscribe(
       (folders) => {
-        this.folders = folders.map((folder: { uploadedFile: any; }) => ({
+        this.folders = folders.map((folder: { uploadedFile: any; createdAt: Date }) => ({
           ...folder,
           uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
-      }));
+      }))
+      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
            this.filteredFolders = this.folders;
       },
       (error) => {

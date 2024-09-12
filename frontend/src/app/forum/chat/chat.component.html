@@ -70,7 +70,12 @@
                 <li class="nav-item">
                     <a class="nav-link" type="button" [ngClass]="{ active: tab === 'note' }"
                         (click)="switchTab('note')">Notes</a>
+                        <span
+                        matBadge="{{adminNotesCount}}"
+                         [matBadgeHidden]="adminNotesCount === 0" matBadgeColor="accent">
+                       </span>
                 </li>
+
             </ul>
         </div>
         <div class="content">
@@ -418,8 +423,10 @@
                     <div class="mb-4" *ngIf="adminNotes.length === 0">Pas de note disponible.</div>
                     <!-- Display the list of notes if no note is selected -->
                     <div class="row" *ngIf="!selectedNote">
-                        <div class="col-md-6 mb-3" *ngFor="let note of paginatedAdminNote">
-                            <div class="card bg-color-chat border border-0" (click)="selectNote(note)">
+                        <div class="col-md-6 mb-3" *ngFor="let note of paginatedAdminNote; let i = index"
+                        [ngClass]="{'bg-color-status': !note.read, 'bg-color-read': note.read}" 
+                        (click)="selectNote(note)">
+                        <div class="card bg-color-chat border border-0">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-end">
                                         <p><em class="color-primary fw-bold">{{note.createdAt | date: 'MM-dd-yyyy

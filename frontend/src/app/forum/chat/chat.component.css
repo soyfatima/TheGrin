@@ -233,3 +233,12 @@ app-navbar {
   }
   
   
+.bg-color-status {
+    background: var(--color-primary);
+    padding: 8px;
+    color: #fff;
+}
+
+.bg-color-read {
+    background-color: transparent;
+}

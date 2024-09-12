@@ -33,6 +33,8 @@ export class ChatComponent {
 
   forum: any[] = [];
   adminNotes: any[] = [];
+  adminNotesCount: number = 0;
+
   currentDate: Date = new Date();
   selectedCategory: string = '';
   uploadedFile: File | null = null;
@@ -148,7 +150,7 @@ export class ChatComponent {
     });
 
     this.route.params.subscribe(params => {
-      this.userId = +params['id']; 
+      this.userId = +params['id'];
     });
   }
 
@@ -161,7 +163,6 @@ export class ChatComponent {
     this.isAdmin = this.authService.isAdmin();
 
     this.route.paramMap.subscribe(params => {
-
       const folderId = +params.get('id')!;
       const commentId = +this.route.snapshot.queryParamMap.get('commentId')!;
       this.folderId = folderId;
@@ -185,14 +186,15 @@ export class ChatComponent {
       if (user) {
         this.loggedInUserId = user.id;
 
-        // Ensure admin-specific actions are available if user is an admin
         if (this.isAdmin) {
           this.loggedInUserId = user.id;
         }
+
       } else {
         this.loggedInUserId = null;
       }
     });
+
     // Other initialization
     this.onResize();
     this.fetchFolders();
@@ -236,7 +238,10 @@ export class ChatComponent {
   selectNote(note: any): void {
     this.selectedNote = note;
     localStorage.setItem('selectedNote', JSON.stringify(note));
+    this.viewNoteAndMarkAsRead(note)
   }
+
+
 
   deselectNote(): void {
     this.selectedNote = null;
@@ -255,7 +260,7 @@ export class ChatComponent {
             FolderUploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/userFile/${folder.uploadedFile}` : null,
             userProfileImageUrl: folder.user?.uploadedFile ? `${environment.apiUrl}/blog-backend/ProfilPic/${folder.user.uploadedFile}` : 'https://api.dicebear.com/6.x/initials/svg?seed=User',
           }))
-          .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Trier par date décroissante
+          .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         this.paginatedFolder = this.folders;
         this.folders.forEach(folder => {
@@ -265,29 +270,52 @@ export class ChatComponent {
 
       },
       (error) => {
-        //console.error('Error fetching folders:', error);
+        console.error('Error fetching folders:', error);
       }
     );
   }
 
+
   fetchAdminNote(): void {
     this.folderService.fetchAdminNote().subscribe(
-      (folders) => {
-        this.adminNotes = folders
-          .filter((note: { isAdmin: any; }) => note.isAdmin)
-          .map((folder: { uploadedFile: any; }) => ({
+      (folders: any[]) => {
+
+        // Check read status per user
+        this.adminNotes = folders.map((folder) => {
+          const userStatus = folder.noteReadStatus.find((status: { user: { id: number }; read: boolean }) => status.user.id === this.loggedInUserId);
+          return {
             ...folder,
             uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
-          }));
-        this.adminNotes = folders;
+            read: userStatus ? userStatus.read : false
+          };
+        }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
         this.paginatedAdminNote = this.adminNotes;
         this.paginatedAdminNotes();
+        this.adminNotesCount = this.adminNotes.filter(n => !n.read).length;
+
       },
       (error) => {
-        // console.error('Error fetching admin notes:', error);
+        //  console.error('Error fetching admin notes:', error);
       }
     );
   }
+
+  viewNoteAndMarkAsRead(note: any): void {
+    if (this.loggedInUserId) {
+
+      this.folderService.markNoteAsRead(note.id, this.loggedInUserId).subscribe(
+        (response) => {
+          this.fetchAdminNote();
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          // console.error('Error marking note as read:', error);
+        }
+      );
+    }
+  }
+
 
   deleteFolder(): void {
     if (this.selectedCard) {
@@ -303,7 +331,7 @@ export class ChatComponent {
               this.toastrService.success('Votre poste a été supprimé ');
               this.folders = this.folders.filter(folder => folder.id !== folderId); // Remove the folder from the list
               this.deselectCard();
-                this.fetchFolders();
+              this.fetchFolders();
               this.cdr.detectChanges();
             },
             (error) => {
@@ -371,12 +399,12 @@ export class ChatComponent {
         }
       );
   }
- 
+
   fetchComments(folderId: number): void {
     this.commentService.getComments(folderId).subscribe(
       (comments: any[]) => {
         this.comments = comments.map(comment => {
-          const isAdmin = comment.user?.role === 'admin'; 
+          const isAdmin = comment.user?.role === 'admin';
 
           comment.userProfileImageUrl = comment.user?.uploadedFile
             ? `${environment.apiUrl}/blog-backend/ProfilPic/${comment.user.uploadedFile}`
@@ -840,11 +868,11 @@ export class ChatComponent {
           this.updateCommentState(userId, newBlockedState);
         },
         error => {
-        //  console.error(`Error ${newBlockedState ? 'blocking' : 'unblocking'} user:`, error);
+          //  console.error(`Error ${newBlockedState ? 'blocking' : 'unblocking'} user:`, error);
         }
       );
     } else {
-   //   console.error('Invalid user ID');
+      //   console.error('Invalid user ID');
     }
   }
 
