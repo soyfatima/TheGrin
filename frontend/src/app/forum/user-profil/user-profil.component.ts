@@ -211,7 +211,7 @@ export class UserProfilComponent implements OnInit {
         }
       );
     } else {
-      console.error('User ID is not available');
+    //  console.error('User ID is not available');
     }
   }
   

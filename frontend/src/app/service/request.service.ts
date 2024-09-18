@@ -46,13 +46,13 @@ export class requestService {
                             observer.complete();
                         },
                         (error) => {
-                            console.error('Error in request:', error);
+                            //console.error('Error in request:', error);
                             observer.error(error);
                         }
                     );
                 },
                 (error) => {
-                    console.error('Refresh token error:', error);
+                   // console.error('Refresh token error:', error);
                     observer.error(error);
                 }
             );

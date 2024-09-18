@@ -5,8 +5,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../environments/environment.prod';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-
 import { TokenInterceptor } from './service/token-interceptor.service';
+
 import { TokenService } from './service/tokenservice';
 import { requestService } from './service/request.service';
 import { AnimationService } from './service/animate-service';
@@ -62,6 +62,7 @@ import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-c
 import { ProductInfoComponent } from './shopping/product-info/product-info.component';
 import { OrderComponent } from './shopping/modal/order/order.component';
 import { ListUserComponent } from './admin/list-user/list-user.component';
+import { LinkifyPipe } from './linkify.pipe';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { ListUserComponent } from './admin/list-user/list-user.component';
     ProductInfoComponent,
     StoreComponent,
     OrderComponent,
-    ListUserComponent
+    ListUserComponent,
+    LinkifyPipe
 
   ],
 
@@ -143,7 +145,9 @@ import { ListUserComponent } from './admin/list-user/list-user.component';
     //{ provide: LocationStrategy, useClass: HashLocationStrategy },
     AnimationService,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true, direction: 'ltr' } },
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+
   ],
   bootstrap: [AppComponent]
 })

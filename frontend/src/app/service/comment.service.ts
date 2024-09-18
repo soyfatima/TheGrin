@@ -11,16 +11,10 @@ export class CommentService {
 
   constructor(private http: HttpClient) { }
 
-  //Frontend service method to add a comment
   addComment(folderId: number, content: string): Observable<Comment> {
     const url = `${this.apiUrl}/comments/${folderId}`;
     return this.http.post<Comment>(url, { content });
   }
-
-  // addComment(folderId: number, id: number, content: string): Observable<Comment> {
-  //   const url = `${this.apiUrl}/comments/${folderId}`;
-  //   return this.http.post<Comment>(url, { id, content });
-  // }
     
   //fetch comments
   getComments(folderId: number): Observable<any[]> {
@@ -33,7 +27,7 @@ export class CommentService {
     return this.http.post<Comment>(`${this.apiUrl}/comments/${commentId}/reply`, { content });
   }
   
-  updateComment(id: number, content: string, folderId: number): Observable<Comment> {
+  updateComment(id: number, folderId: number, content: string): Observable<Comment> {
     const url = `${this.apiUrl}/comments/${id}`;
     return this.http.put<Comment>(url,{content, folderId})
   }
@@ -53,11 +47,6 @@ export class CommentService {
         params: { prefix }
     });
 }
-// deleteComment(id: number, folderId: number): Observable<any> {
-//   const url = `${this.apiUrl}/comments/delete-comment/${id}/folder/${folderId}`;
-//   return this.http.delete<any>(url);
-// }
-
 
 deleteComment(id: number): Observable<any> {
   return this.http.delete<any>(`${this.apiUrl}/comments/delete/${id}`);

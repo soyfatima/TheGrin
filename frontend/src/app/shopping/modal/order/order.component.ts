@@ -13,7 +13,7 @@ export class OrderComponent {
   TotalAmount: any;
   orderData: any = {};
   fields: any[] = [
-    { label: 'Nom & Prénom', type: 'text', modalName: 'username' ,},
+    { label: 'Nom & Prénom', type: 'text', modalName: 'username', },
     { label: 'Votre adresse', type: 'text', modalName: 'address' },
     { label: 'Numéro tel', type: 'text', modalName: 'phoneNumber' }
   ];
@@ -27,16 +27,13 @@ export class OrderComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
     this.TotalAmount = this.data;
-    
   }
 
   ngOnInit() {
-    // Check if itemId is provided to determine if it's a cart order or product details order
     this.isCartOrder = !!this.data.itemId;
   }
 
   submitOrder() {
-    
     if (this.isSingleOrder()) {
       this.orderService.orderSingle(this.orderData, this.data.itemId).subscribe(
         (data) => {
@@ -60,30 +57,28 @@ export class OrderComponent {
   }
 
   private isSingleOrder(): boolean {
-    return !!this.data.itemId; 
+    return !!this.data.itemId;
   }
 
   private handleOrderSuccess(data: any) {
     this.toastrService.success('Commande effectuée avec succès');
-    this.dialogRef.close(data); 
+    this.dialogRef.close(data);
   }
 
   private handleOrderError(error: any) {
     this.toastrService.error('Erreur lors de la commande');
-  //  console.error('Erreur lors de la commande :', error);
+    //  console.error('Erreur lors de la commande :', error);
   }
 
+  // Format number with separator
+  formatNumberWithSeparator(number: number): string {
+    return number.toLocaleString('en-US');
+  }
 
-  
-// Format number with separator
-formatNumberWithSeparator(number: number): string {
-  return number.toLocaleString('en-US'); // Use locale to format numbers correctly
-}
-
-// Parse formatted string to number
-parseNumberFromString(value: string): number {
-  return parseFloat(value.replace(/,/g, '')); // Replace the separator with an empty string
-}
+  // Parse formatted string to number
+  parseNumberFromString(value: string): number {
+    return parseFloat(value.replace(/,/g, ''));
+  }
 
   onPriceInput(event: Event): void {
     const input = event.target as HTMLInputElement;

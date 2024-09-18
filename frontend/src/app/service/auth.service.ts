@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, catchError, map, of, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { TokenService } from './tokenservice';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +15,12 @@ export class AuthService {
   private loggedInUserSubject = new BehaviorSubject<any>(null);
   public loggedInUser$ = this.loggedInUserSubject.asObservable();
 
+  private notificationsSubject = new BehaviorSubject<any[]>([]);
+  public notifications$ = this.notificationsSubject.asObservable();
+
   constructor(private http: HttpClient,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private notifService: NotificationService
 
   ) {
     this.updateLoginStatus();
@@ -71,12 +76,29 @@ export class AuthService {
       })
     );
   }
-
-
-   updateLoginStatus(): void {
+  
+  updateLoginStatus(): void {
     const currentUser = localStorage.getItem('currentUser');
     const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
     this.loggedInUserSubject.next(loggedInUser);
+  
+    if (loggedInUser) {
+      // Ensure the token is available before making the request
+      const authData = this.tokenService.getAuthData();
+      const accessToken = authData?.accessToken;
+  
+      if (accessToken) {
+        this.notifService.getAllUserNotifications(loggedInUser.id).subscribe(
+          (notifications) => {
+          },
+          (error) => {
+           // console.error('Failed to fetch notifications:', error);
+          }
+        );
+      } else {
+       // console.warn('Access token is not available.');
+      }
+    }
   }
   
   // updateLoginStatus(): void {
@@ -91,7 +113,6 @@ export class AuthService {
   }
 
   //user login 
-  // In your Angular service
 userLogin(username: string, password: string): Observable<any> {
   const url = `${this.apiUrl}/auth/userLogin`;
   return this.http.post<any>(url, { username, password }).pipe(
@@ -102,13 +123,11 @@ userLogin(username: string, password: string): Observable<any> {
       }
     }),
     catchError((error: HttpErrorResponse) => {
-      // Extract and propagate the error message
       const errorMessage = error.error?.message || 'Login failed: ' + error.message;
       return throwError(errorMessage);
     })
   );
 }
-
 
   logout(accessToken: string): Observable<void> {
    this.clearAuthData();

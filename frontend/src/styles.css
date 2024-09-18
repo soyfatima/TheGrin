@@ -22,9 +22,9 @@
 /* Colors */
 :root {
     --color-default: #fafafa;
-    --color-primary: #c72e73;
+    --color-primary: #e91e63;
     --color-secondary: #161718;
-    --color-tertiary: #095caf;
+    --color-tertiary:#00bcd4;
     --color-info: #97D9E1;
 }
 
@@ -62,23 +62,30 @@
 }
 
 .store-bg-color-gradient {
-    background: linear-gradient(70deg, #095caf, #fafafa 60%);
+    background: linear-gradient(70deg, #028597, #fafafa 60%);
 }
 
 .navbar-bg-color-gradient {
-    background: linear-gradient(70deg, #095caf , #ff50c286 90%);
+    background: linear-gradient(70deg, #095caf, #ff50c286 90%);
 }
 
 .bg-color-gradient {
-    background: linear-gradient(90deg, #095caf, #ff50c2);
+    /* background: linear-gradient(90deg, #095caf, #ff50c2); */
+    background: linear-gradient(90deg, #e91e63, #00bcd4);
+
 }
 
 .bg-color-chat {
-    background: linear-gradient(90deg, #095caf7c, #ff50c286);
-}
+    /* background: linear-gradient(90deg, #095caf7c, #ff50c286); */
+    background: linear-gradient(90deg, #04788966,  #e15f8aa7);
 
+}
+.bg-unique{
+    background: linear-gradient(90deg, #ffffffa7, #03626e9f);
+
+}
 .bg-color-back {
-    background: linear-gradient(90deg, #a3a3a3ec, #095caf94);
+    background: linear-gradient(90deg, #c4c4c4ec, #00bcd4);
 }
 
 .neutral {
@@ -99,6 +106,7 @@
 
 .bg-color-white {
     background: #fff;
+    
 }
 
 .btn-action button {
@@ -759,7 +767,8 @@ h6 {
 
 .nav .avatar {
     border-radius: 50%;
-    background-color: #eaeaea;
+    /* background-color: #eaeaea; */
+    background: #fff;
     margin-right: 15px;
 }
 
@@ -1013,7 +1022,7 @@ h6 {
     height: 300px;
     border: 5px;
     box-shadow: 0 0 0 3px inset transparent,
-        0 0 0 20px inset  #ff50c2;
+        0 0 0 20px inset #ff50c2;
     border-radius: 50%;
 }
 
@@ -1108,7 +1117,9 @@ h6 {
 }
 
 .bg-color-new {
-    background: linear-gradient(90deg, #095caf, #ff50c2) !important;
+    background: linear-gradient(90deg, #e91e625d, #00bcd4) !important;
+    color: #fff !important;
+
 }
 
 .bg-color-read {

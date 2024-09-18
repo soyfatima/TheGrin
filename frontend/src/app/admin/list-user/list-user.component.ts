@@ -24,7 +24,7 @@ fetchAllUser() {
       this.filteredUsers = users;
     },
     (error) =>{
-      console.error('Error fetching user data:', error)
+      //console.error('Error fetching user data:', error)
     }
   )
 }
@@ -48,14 +48,13 @@ toggleBlockUser(userId: number, currentBlockedState: boolean): void {
           user.blocked = newBlockedState;
         }
         const action = newBlockedState ? 'bloqué' : 'débloqué';
-        console.log(`Utilisateur ${action} avec succès`);
       },
       error => {
-        console.error(`Erreur lors du ${newBlockedState ? 'blocage' : 'déblocage'} de l'utilisateur:`, error);
+       // console.error(`Erreur lors du ${newBlockedState ? 'blocage' : 'déblocage'} de l'utilisateur:`, error);
       }
     );
   } else {
-    console.error('ID utilisateur invalide');
+    //console.error('ID utilisateur invalide');
   }
 }
 

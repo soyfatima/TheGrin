@@ -60,7 +60,7 @@ export class ChatComponent {
   private searchSubject = new Subject<string>();
   formattedReplyContent: string = '';
   highlightCommentId: number | null = null;
-  highlightReplyId: number | null = null; // To store the ID of the reply to highlight
+  highlightReplyId: number | null = null;
 
   @ViewChild('commentList') commentList!: ElementRef;
   sanitizedContent!: SafeHtml;
@@ -111,7 +111,6 @@ export class ChatComponent {
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth <= 768;
-    // Adjust sidebar visibility based on viewport width
     if (this.isMobile && !this.isCategoryHidden) {
       this.isCategoryHidden = true;
     }
@@ -189,6 +188,7 @@ export class ChatComponent {
         if (this.isAdmin) {
           this.loggedInUserId = user.id;
         }
+        this.fetchAdminNote();
 
       } else {
         this.loggedInUserId = null;
@@ -199,13 +199,16 @@ export class ChatComponent {
     this.onResize();
     this.fetchFolders();
     this.updateTime();
-    this.fetchAdminNote();
     this.updateCommentPagination();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      if (this.lastCommentId) {
+      this.highlightCommentOrReply();
+    }, 100);
+    // Scroll to last comment if no specific highlight
+    setTimeout(() => {
+      if (!this.highlightCommentId && !this.highlightReplyId && this.lastCommentId) {
         this.scrollToLastComment();
       }
     }, 300);
@@ -270,7 +273,7 @@ export class ChatComponent {
 
       },
       (error) => {
-        console.error('Error fetching folders:', error);
+        // console.error('Error fetching folders:', error);
       }
     );
   }
@@ -452,37 +455,31 @@ export class ChatComponent {
         }
 
         this.updateCommentPagination();
-
-        if (this.highlightCommentId) {
-          setTimeout(() => {
-            const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
-            if (commentElement) {
-              commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              commentElement.classList.add('highlight');
-            }
-          }, 100);
-        }
-
-        comments.forEach(comment => {
-          if (comment.replies) {
-            comment.replies.forEach((reply: { id: number | null; }) => {
-              if (reply.id === this.highlightReplyId) {
-                setTimeout(() => {
-                  const replyElement = document.getElementById(`reply-${reply.id}`);
-                  if (replyElement) {
-                    replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    replyElement.classList.add('highlight');
-                  }
-                }, 100);
-              }
-            });
-          }
-        });
+        this.paginatedComments = this.comments;
+        this.highlightCommentOrReply()
       },
       (error) => {
-        // console.error('Error fetching comments for folder ID:', folderId, error);
+        //  console.error('Error fetching comments for folder ID:', folderId, error);
       }
     );
+  }
+
+  private highlightCommentOrReply(): void {
+    if (this.highlightCommentId) {
+      const commentElement = document.getElementById(`comment-${this.highlightCommentId}`);
+      if (commentElement) {
+        commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        commentElement.classList.add('highlight');
+      }
+    }
+
+    if (this.highlightReplyId) {
+      const replyElement = document.getElementById(`reply-${this.highlightReplyId}`);
+      if (replyElement) {
+        replyElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        replyElement.classList.add('highlight');
+      }
+    }
   }
 
   handleLastCommentClick(folderId: number): void {
@@ -540,15 +537,15 @@ export class ChatComponent {
     const content = comment.editContent;
     const id = comment.id;
     const folderId = comment.folderId;
-
     this.commentService.updateComment(id, folderId, content).subscribe(
       (response) => {
         comment.content = content;
         comment.isEditing = false;
         this.cdr.detectChanges();
+
       },
       (error) => {
-        // console.error('Error updating comment', error);
+        //  console.error('Error updating comment', error);
       }
     );
   }

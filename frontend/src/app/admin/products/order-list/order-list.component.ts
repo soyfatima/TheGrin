@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { OrderService } from '../../../service/order.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserOrderComponent } from '../../dialog/user-order/user-order.component';
@@ -10,7 +10,8 @@ import { DialogService } from '../../../dialog-service';
 @Component({
   selector: 'app-order-list',
   templateUrl: './order-list.component.html',
-  styleUrl: './order-list.component.css'
+  styleUrl: './order-list.component.css',
+  encapsulation:ViewEncapsulation.None
 })
 export class OrderListComponent {
   orders: any[] = []

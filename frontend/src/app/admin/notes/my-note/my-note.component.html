@@ -1,4 +1,4 @@
-<div class="py-4 mt-3"></div>
+<div class="py-4 mt-4"></div>
 
 <div class="admin blog">
     <div class="container-fluid">
@@ -11,12 +11,11 @@
         <div class="py-4 mb-5"></div>
         <div class="row">
             <div [ngClass]="iscategoryActive ? 'col-lg-12' : 'col-lg-8'" class="transition">
-                <div class="">
                     <div class="card-body">
-                        <div class="row posts-list">
+                        <div class="row posts-list" *ngIf="paginatedFolders.length > 0 ; else noFolders">
                             <div [ngClass]="iscategoryActive ? 'col-md-6 col-6 col-lg-4 mb-4' : 'col-md-6 col-6 mb-4'"
                             class="transition" *ngFor="let folder of paginatedFolders">
-                            <article class="bg-color">
+                            <article class="bg-color border border-1 shadow-none">
                                 <!-- Conditional image display -->
                                 <div class="post-img mb-3" *ngIf="folder?.uploadedFileUrl">
                                     <img [src]="folder.uploadedFileUrl" alt="Folder Image" class="img-fluid">
@@ -48,12 +47,19 @@
                                 </article>
                             </div>
                         </div>
+
+                        <ng-template #noFolders>
+                            <div class="p-2 bg-color">
+                                <p>Pas de note pour le moment</p>
+                              </div>
+                        </ng-template>
                     </div>
-                </div>
+
+
             </div>
 
             <div class="col-lg-4" *ngIf="!iscategoryActive">
-                <div class="sidebar bg-color shadow-sm p-2">
+                <div class="sidebar bg-color-white shadow-none shadow-sm p-2">
                     <div class="sidebar-item recent-posts">
                         <div class="d-flex justify-content-end">
                             <h6 class="fw-bold color-primary">filtrer</h6>

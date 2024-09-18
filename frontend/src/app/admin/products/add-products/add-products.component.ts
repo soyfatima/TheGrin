@@ -19,17 +19,21 @@ productForm!:FormGroup;
 montant:any;
 
 Categories:any[] = [
-  {label:'invecters', value:'invecters'},
-  {label:'panneau solaire', value:'panneau solaire'},
-  {label:'batteries', value:'batteries'},
-  {label:'E-solaire hydride', value:'E-solaire hydride'},
-  {label:'accessoires', value:'accessoires'},
-]
+  {label: 'Équipements de diagnostic', value: 'diagnostic'},
+  {label: 'Équipements de soins', value: 'soins'},
+  {label: 'Matériel de réanimation', value: 'reanimation'},
+  {label: 'Mobilier médical', value: 'mobilier'},
+  {label: 'Équipements de stérilisation', value: 'sterilisation'},
+  {label: 'Prothèses et orthèses', value: 'protheses'},
+  {label: 'Instruments chirurgicaux', value: 'chirurgie'},
+  {label: 'Matériel de perfusion et d’injection', value: 'perfusion'},
+  {label: 'Équipements de radiologie et imagerie', value: 'radiologie'},
+  {label: 'Accessoires de laboratoire', value: 'laboratoire'}
+];
 
 constructor(private fb:FormBuilder,
    private productService:ProductService,
    private toastrService: ToastrService,
-  
   ){}
 
   ngOnInit(): void {

@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
+
 export class FolderService {
   private apiUrl: string = environment.apiUrl;
 
@@ -43,19 +44,15 @@ export class FolderService {
     return this.http.post<any>(url, folderData);
   }
 
-  // markAsRead(folderId: number): Observable<void> {
-  //   return this.http.put<void>(`${this.apiUrl}/folders/${folderId}/read`, {});
-  // } 
-
   markNoteAsRead(noteId: number, userId: number): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/folders/mark-note-as-read`, { noteId, userId });
   }
   
-
   updateAdminNote(id: string, updatedFolderData: any): Observable<any> {
     const url = `${this.apiUrl}/folders/update/note/${id}`;
     return this.http.patch<any>(url, updatedFolderData);
   }
+
   deleteAdminNote(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/folders/delete/note/${id}`);
   }

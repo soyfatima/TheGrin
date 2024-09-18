@@ -36,7 +36,7 @@ import { ListUserComponent } from './admin/list-user/list-user.component';
 const routes: Routes = [
   // { path: '', component: },
 
-  { path: '', component: LoginComponent, pathMatch: 'full' },
+  { path: '', component: HomepageComponent, pathMatch: 'full' },
   { path: 'homepage', component: HomepageComponent },
   { path: 'top', component: TopComponent },
   { path: 'our-services', component: OurServicesComponent },

@@ -9,13 +9,12 @@
 <div class="main-content" [hidden]="loaderVisible">
     <app-sidebar (menuIndex)="switchMemu($event)"></app-sidebar>
     <div class="admin-nav">
-        <nav class=" nav navbar-expand-lg bg-color fixed-top" id="navbar">
+        <nav class=" nav navbar-expand-lg bg-unique shadow-none fixed-top" id="navbar">
             <button type="button" id="sidebarCollapse" class="btn custom-btn" id="menu-toggle">
                 <i class="fa fa-bars"></i>
             </button>
             <div class="m-2 mt-2">
-                <a class="color-secondary text-decoration-none">
-                    <span>Bjr.Docteur</span></a>
+                <h4 class="fw-bold">VITAL</h4>
             </div>
             <button class="navbar-toggler ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">
                 <i class="fa fa-bars text-center"></i>
@@ -25,7 +24,7 @@
                 <form class="search d-flex input-group w-auto align-items-center"
                     style="margin-left:auto; margin-right:auto; display:block;">
                 </form>
-                <div class="d-flex align-items-end justify-content-end mt-3">
+                <div class="d-flex align-items-end justify-content-end ">
                     <div class="avatar" (click)="openEnd(content)">
                         <button class="notification-count bg-transparent border border-0"
                             matBadge="{{notificationCount}}" [matBadgeHidden]="notificationCount === 0"
@@ -39,9 +38,9 @@
                             <mat-icon class="text-dark">account_circle</mat-icon>
                         </button>
                     </div>
-                    <div class="logout me-3" (click)="logout()">
+                    <div class="avatar bg-transparent" (click)="logout()">
                         <button class="bg-transparent border border-0">
-                            <mat-icon matBadgeColor="primary" class="material-icons text-danger"
+                            <mat-icon matBadgeColor="primary" class="material-icons color-primary fw-bold"
                                 type="button">logout</mat-icon>
                         </button>
                     </div>
@@ -69,10 +68,10 @@
 
 
         <ng-template #content let-offcanvas>
-            <div class="bg-color-light">
+            <div class="bg-color-light h-100">
                 <div class="offcanvas-header">
                     <h4 class="offcanvas-title fw-bold">Notifications</h4>
-                    <button type="button" class="btn-close" aria-label="Close"
+                    <button type="button" class="btn-close color-secondary" aria-label="Close"
                         (click)="offcanvas.dismiss('Cross click')"></button>
                 </div>
                 <div class="container-fluid">
@@ -99,7 +98,7 @@
                         </ng-container>
                         <!-- Display message when there are no notifications -->
                         <ng-template #noNotifications>
-                            <div class="col-12 text-center">
+                            <div class="col-12 text-center color-secondary">
                                 <p>pas de notifications pour le moment</p>
                             </div>
                         </ng-template>

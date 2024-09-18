@@ -74,7 +74,7 @@ export class ShoppingCartComponent implements OnInit {
       (response) => {
       },
       (error) => {
-        console.error('Error updating item:', error);
+     //   console.error('Error updating item:', error);
       }
     );
   }
@@ -91,7 +91,7 @@ export class ShoppingCartComponent implements OnInit {
         });
       },
       (error) => {
-        console.error('Error when proceeding order', error);
+       // console.error('Error when proceeding order', error);
       }
     );
   }

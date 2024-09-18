@@ -39,7 +39,7 @@ export class MyNoteComponent {
     private dialog: MatDialog,
     private toastrService: ToastrService,
     private dialogService: DialogService,
-    private cdr : ChangeDetectorRef
+    private cdr: ChangeDetectorRef
 
 
   ) { }
@@ -54,18 +54,16 @@ export class MyNoteComponent {
         this.folders = folders.map((folder: { uploadedFile: any; createdAt: Date }) => ({
           ...folder,
           uploadedFileUrl: folder.uploadedFile ? `${environment.apiUrl}/blog-backend/adminFile/${folder.uploadedFile}` : null,
-      }))
-      .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }))
+          .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-           this.filteredFolders = this.folders;
+        this.filteredFolders = this.folders;
       },
       (error) => {
         // console.error('Error fetching folders:', error);
       }
     );
   }
-
-
 
   //edit folders
   openDialog(folder: any): void {
@@ -106,7 +104,7 @@ export class MyNoteComponent {
           () => {
             this.folders = this.folders.filter(folder => folder.id !== id);
             this.cdr.detectChanges();
-this.fetchAdminNote()
+            this.fetchAdminNote()
             this.toastrService.success('article supprimé avec succès')
 
           },
@@ -118,27 +116,6 @@ this.fetchAdminNote()
       }
     });
 
-  }
-
-  //fetch comments
-  openCommentDialog(folderId: number): void {
-    // this.commentService.getCommentsByFolderId(folderId).subscribe(
-    //   (comments: any[]) => {
-    //     this.comments = comments;
-    //     this.commentCount = comments.length
-    //     const dialogConfig = new MatDialogConfig();
-    //     dialogConfig.data = { comments };
-    //     dialogConfig.width = '500px';
-    //     const dialogRef = this.dialog.open(UserCommentsComponent, dialogConfig);
-    // //    this.commentCount = 0;
-
-    //     dialogRef.afterClosed().subscribe(result => {
-    //     });
-    //   },
-    //   (error) => {
-    //     console.error('Erreur lors de la récupération des commentaires', error);
-    //   }
-    // );
   }
 
   get paginatedFolders(): any[] {

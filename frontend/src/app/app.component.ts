@@ -37,7 +37,6 @@ export class AppComponent {
   checkScroll() {
     const navbar = document.querySelector('.navbar');
     const globalNav = document.querySelector('.global-nav');
-
     if (navbar) {
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
       const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -88,6 +87,7 @@ export class AppComponent {
       }
     });
   }
+
 
 
   ngAfterViewInit() {

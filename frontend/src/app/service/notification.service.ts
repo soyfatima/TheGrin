@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { TokenService } from './tokenservice';
+import { TokenInterceptor } from './token-interceptor.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,15 +11,19 @@ import { environment } from '../../environments/environment';
 export class NotificationService {
   private apiUrl: string = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+    private tokenService: TokenService,
+    private HttpInterceptor:TokenInterceptor
 
-  getAllUserNotifications(): Observable<Notification[]> {
-    const url = `${this.apiUrl}/notifications/getUserNotification`
+  ) {}
+
+  getAllUserNotifications(id:number): Observable<Notification[]> {
+    const url = `${this.apiUrl}/notifications/getUserNotification/${id}`;
     return this.http.get<Notification[]>(url);
   }
-
+  
   getOrderNotification():Observable<Notification []> {
-    return this.http.get<Notification[]>(`${this.apiUrl}/notifications/OrderNotification`)
+    return this.http.get<Notification[]>(`${this.apiUrl}/notifications/admin/OrderNotification`)
   }
 
   getUserNotificationById(id: number): Observable<Notification> {
@@ -37,14 +43,5 @@ export class NotificationService {
     return this.http.delete<any>(`${this.apiUrl}/notifications/`);
   }
 
-
-  deleteOrderNotification(id:number):Observable<any> {
-    const url = `${this.apiUrl}/notifications/${id}`
-  return this.http.delete<any>(url);
-  }
-
-  deleteAllOrderNotifications(): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/notifications/`);
-  }
 
 }

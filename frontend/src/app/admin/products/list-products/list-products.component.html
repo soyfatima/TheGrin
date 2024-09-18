@@ -1,4 +1,4 @@
-<div class="py-4 mt-3"></div>
+<div class="py-4 mt-4"></div>
 <div class="admin container-fluid">
     <div class="bg-color text-center mb-2 p-2">
       <h6 class="fw-bold">LISTE DES PRODUITS</h6>
@@ -7,7 +7,7 @@
      <div class="row">
                 <div class="col-lg-3 mb-3" data-aos="fade-right">
                     <div class="filter">
-                        <div class="sidebar bg-color shadow-sm p-2">
+                        <div class="sidebar bg-color shadow-none p-2">
                             <div class="sidebar-item recent-posts">
                                 <div class="d-flex justify-content-end mt-2">
                                     <h6 class="fw-bold color-primary">Filtrer</h6>
@@ -30,7 +30,7 @@
                 <div class="col-lg-9 mb-3" data-aos="fade-up">
                     <div class="row" *ngIf="paginatedProducts.length > 0; else noProducts">
                         <div class="col-sm-4 col-6 col-md-4 mb-4" *ngFor="let product of paginatedProducts">
-                            <div class="article card bg-color-light border border-0 shadow-sm rounded-3 h-100">
+                            <div class="article card bg-unique border border-0 shadow-sm rounded-3 h-100">
                                 <div class="d-lg-flex justify-content-between">
                                     <div class="bg-image" data-mdb-ripple-color="light">
                                         <img [src]="product.uploadedFileUrl" class="img-fluid d-md-block"

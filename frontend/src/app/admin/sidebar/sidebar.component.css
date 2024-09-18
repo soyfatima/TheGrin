@@ -17,7 +17,9 @@
   z-index: 999;
   overflow-y: auto;
   position: fixed;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  /* background: linear-gradient(90deg, #ffffffa7, #03626e9f); 
+
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
 }
 
 #page-content-wrapper {
@@ -55,11 +57,13 @@
 
 .sidebar .mat-nav a {
   text-align: center !important;
+
 }
+
 
 .sidebar .list-group-item,
 .sidebar mat-expansion-panel {
-  background-color: transparent;
+  background-color: #fff;
   margin-bottom: 15px;
   border-radius: 30px;
   box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;

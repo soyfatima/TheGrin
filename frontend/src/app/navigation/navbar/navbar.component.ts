@@ -31,7 +31,7 @@ export class NavbarComponent {
   showOtherNavbar = false;
   showStoreNavbar = false;
   currentRoute: string = '';
-  activeNavbarType!: string ;
+  activeNavbarType!: string;
 
   isDropdownOpen: boolean = false;
   IsUserLogged: boolean = false;
@@ -56,7 +56,7 @@ export class NavbarComponent {
   ////////////////////
   loggedInUserId: number | null = null;
 
-  
+
   constructor(private router: Router,
     private dialog: MatDialog,
     private fb: FormBuilder,
@@ -71,7 +71,7 @@ export class NavbarComponent {
     private toastrService: ToastrService,
 
   ) {
-   
+
   }
 
   ngOnInit() {
@@ -80,21 +80,10 @@ export class NavbarComponent {
     ).subscribe((event: NavigationEnd) => {
       this.determineNavbarVariant(event.url);
     });
-    this.authService.loggedInUser$.subscribe(user => {
-      this.IsUserLogged = !!user;
-
-      if (user) {
-        this.loggedInUserId = user.id;
-      } else {
-          this.loggedInUserId = null;
-      }
-    });
-
+    this.loadLoggedInUser()
     this.determineNavbarVariant(this.router.url);
     this.googleTranslateElementInit();
-    this.getNotification();
   }
-
 
   googleTranslateElementInit() {
     new google.translate.TranslateElement({ pageLanguage: 'fr' }, 'google_translate_element');
@@ -109,13 +98,13 @@ export class NavbarComponent {
       this.showHomeNavbar = true;
       this.showOtherNavbar = false;
       this.activeNavbarType = 'home';
-    } else if (url.includes('/chat') || url.startsWith('/user-profil/')|| url.startsWith('/store') || url.startsWith('/product-info')) {
+    } else if (url.includes('/chat') || url.startsWith('/user-profil/') || url.startsWith('/store') || url.startsWith('/product-info')) {
       this.showHomeNavbar = false;
       this.showOtherNavbar = true;
       this.activeNavbarType = 'other';
     }
   }
-  
+
   switchToOtherNavbar() {
     this.showHomeNavbar = false;
     this.showOtherNavbar = true;
@@ -127,7 +116,7 @@ export class NavbarComponent {
     this.showOtherNavbar = false;
     this.activeNavbarType = 'home';
   }
- 
+
   toggleMap() {
     this.isMapOpen = !this.isMapOpen;
   }
@@ -137,8 +126,8 @@ export class NavbarComponent {
 
   loginUser(): void {
     const dialogRef = this.dialog.open(UserLoginComponent, {
-       width: 'auto',
-       height:'auto',
+      width: 'auto',
+      height: 'auto',
       data: {}
     });
 
@@ -146,26 +135,54 @@ export class NavbarComponent {
     });
 
   }
-
-  getNotification(): void {
-    this.notifService.getAllUserNotifications().subscribe(
-      (notifications) => {
-        this.notifications = notifications;
-        this.notificationCount = notifications.length;
-        this.notificationCount = this.notifications.filter(n => !n.read).length;
-      },
-      (error) => {
-        // console.error('Failed to fetch notifications:', error);
+  loadLoggedInUser(): void {
+    this.authService.loggedInUser$.pipe(
+      filter(user => !!user)
+    ).subscribe(user => {
+      this.IsUserLogged = !!user;
+      if (this.IsUserLogged) {
+        this.loggedInUser = user;
+        this.loggedInUserId = user.id;
+        // Ensure the token is available before fetching notifications
+        const authData = this.tokenService.getAuthData();
+        if (authData?.accessToken) {
+          this.getUserNotification();
+        } else {
+          //   console.warn('Access token is not available, delaying notification fetch.');
+          setTimeout(() => this.getUserNotification(), 1000);
+        }
       }
+    });
+  }
 
-    )
+  getUserNotification(): void {
+    if (this.loggedInUserId) {
+      const authData = this.tokenService.getAuthData();
+      if (authData?.accessToken) {
+        this.notifService.getAllUserNotifications(this.loggedInUserId).subscribe(
+          (notifications) => {
+            this.notifications = notifications;
+            this.notificationCount = notifications.length;
+            this.notificationCount = this.notifications.filter(n => !n.read).length;
+          },
+          (error) => {
+            //  console.error('Failed to fetch notifications:', error);
+          }
+        );
+      } else {
+        //console.warn('Access token is not available. Retrying...');
+        setTimeout(() => this.getUserNotification(), 1000);
+      }
+    } else {
+      //  console.warn('User ID is not available, cannot fetch notifications.');
+    }
   }
 
 
   markNotificationAsRead(notificationId: number): void {
     this.notifService.markAsRead(notificationId).subscribe(
       () => {
-        this.getNotification();
+        this.getUserNotification();
       },
       (error) => {
         // console.error('Failed to mark notification as read:', error);
@@ -182,8 +199,6 @@ export class NavbarComponent {
           const commentId = notifDetails.comment?.id;
 
           this.markNotificationAsRead(notificationId);
-
-
           if (folderId) {
             const selectedCard = {
               ...notifDetails.folder,
@@ -254,7 +269,7 @@ export class NavbarComponent {
       this.router.navigate(['/user-profil', this.loggedInUserId]);
     }
   }
-  
+
   fetchUserCart(): void {
     this.cartService.getUserCart().subscribe(
       (userCart) => {

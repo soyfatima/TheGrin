@@ -70,10 +70,9 @@
                 <li class="nav-item">
                     <a class="nav-link" type="button" [ngClass]="{ active: tab === 'note' }"
                         (click)="switchTab('note')">Notes</a>
-                        <span
-                        matBadge="{{adminNotesCount}}"
-                         [matBadgeHidden]="adminNotesCount === 0" matBadgeColor="accent">
-                       </span>
+                    <span matBadge="{{adminNotesCount}}" [matBadgeHidden]="adminNotesCount === 0"
+                        matBadgeColor="accent">
+                    </span>
                 </li>
 
             </ul>
@@ -98,7 +97,7 @@
                                                 <img [src]="folder.userProfileImageUrl" alt="img"
                                                     class="img-fluid rounded-circle">
                                             </div>
-                                            <div class="info ms-sm-4 p-1">
+                                            <div class="info ms-sm-4 " style="padding: 5px;">
                                                 <div class="name fw-bold color-primary"
                                                     (click)="goToUserProfil(folder.user?.id)">
                                                     {{ folder.user?.username }}
@@ -152,7 +151,7 @@
                                     <img [src]="selectedCard.userProfileImageUrl" alt="img"
                                         class="img-fluid rounded-circle">
                                 </div>
-                                <div class="info ms-sm-4 p-1">
+                                <div class="info ms-sm-4" style="padding: 5px;">
                                     <h4 class="color-primary fw-bold mb-0">{{selectedCard.user?.username}}</h4>
                                     <time class="time mb-1">{{selectedCard.createdAt | date: 'MM-dd-yyyy
                                         HH:mm'}}</time>
@@ -162,7 +161,7 @@
                                 <p><strong class="color-primary mb-0">Titre:</strong> {{selectedCard.title}}</p>
                                 <div class="content edit-content mb-3">
                                     <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
-                                        <p [innerHTML]="selectedCard?.content"></p>
+                                        <p [innerHTML]="selectedCard?.content| linkify"></p>
                                         <button *ngIf="selectedCard?.user?.id === loggedInUserId && !isAdmin"
                                             (click)="EditContent()" class="bg-transparent border border-0 m-1"><mat-icon
                                                 class="color-primary">edit</mat-icon></button>
@@ -192,12 +191,12 @@
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
                                     <h4 class="mb-4">({{ comments.length }}) Commentaires</h4>
-                                    <div class="p-2 mb-3 bg-color-chat rounded-2 bordr border-2 shadow-sm"
+                                    <div class="p-2 mb-3 bg-unique border border-1 rounded-2 shadow-sm"
                                         *ngFor="let comment of paginatedComments" [id]="'comment-' + comment.id"
                                         [ngClass]="{'highlight': comment.id === highlightCommentId}">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-end">
-                                                <p class="time color-default fw-bold mb-0"> <em> {{comment.createdAt |
+                                                <p class="time color-default mb-0"> <em> {{comment.createdAt |
                                                         date:
                                                         'MM-dd-yyyy
                                                         HH:mm'}} </em> </p>
@@ -208,7 +207,8 @@
                                                     <img [src]="comment.userProfileImageUrl" alt="img"
                                                         class="img-fluid rounded-circle">
                                                 </div>
-                                                <div class="user-comment-info ms-sm-4 p-1 " *ngIf="comment.user">
+                                                <div class="user-comment-info ms-sm-4" style="padding: 5px;"
+                                                    *ngIf="comment.user">
                                                     <p class="name fw-bold color-primary mb-0">{{comment.user.username}}
                                                     </p>
 
@@ -232,9 +232,10 @@
                                                                 <img [src]="reply.userProfileImageUrl" alt="img"
                                                                     class="img-fluid rounded-circle">
                                                             </div>
-
-                                                            <div class="reply-user-info ms-sm-4 mb-3 p-1 color-default">
-                                                                <p class="mb-0"><strong>{{ reply.user.username
+                                                            <div class="reply-user-info ms-sm-4 color-default"
+                                                                style="padding: 5px;">
+                                                                <p class="mb-0 color-primary"><strong>{{
+                                                                        reply.user.username
                                                                         }}</strong></p>
                                                                 <p class="time color-default">{{ reply.createdAt
                                                                     | date: 'MM-dd-yyyy
@@ -244,7 +245,7 @@
                                                         <div class="content edit-content">
                                                             <ng-container *ngIf="!reply.isEditing; else editModeReply">
                                                                 <p class="mb-3 color-default"
-                                                                    [innerHTML]="getHighlightedContent(reply.content)">
+                                                                    [innerHTML]="getHighlightedContent(reply.content)| linkify">
                                                                 </p>
                                                                 <button
                                                                     *ngIf="reply.user?.id === loggedInUserId && !isAdmin"
@@ -253,7 +254,7 @@
                                                                 <button
                                                                     *ngIf="reply.user?.id === loggedInUserId && !isAdmin"
                                                                     (click)="deleteReply(reply.id)"
-                                                                    class="bg-transparent border border-0 color-info m-1 "><mat-icon>delete</mat-icon></button>
+                                                                    class="bg-transparent border border-0 color-tertiary m-1 "><mat-icon>delete</mat-icon></button>
 
                                                             </ng-container>
                                                             <ng-template #editModeReply>
@@ -272,7 +273,8 @@
                                             <hr>
                                             <div class="content edit-content">
                                                 <ng-container *ngIf="!comment.isEditing; else editMode">
-                                                    <p class=" color-default" [innerHTML]="comment.content"></p>
+                                                    <p class=" color-secondary" [innerHTML]="comment.content | linkify">
+                                                    </p>
                                                     <hr>
 
                                                     <div class="d-flex justify-content-between">
@@ -351,7 +353,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="d-flex justify-content-around mt-3">
+                                    <div class="d-flex justify-content-around mt-5">
                                         <button class="bg-color-back p-2 border border-0 m-1 rounded-2 text-white"
                                             (click)="prevCommentPage()"
                                             [disabled]="commentCurrentPage === 1">Préc</button>
@@ -424,9 +426,9 @@
                     <!-- Display the list of notes if no note is selected -->
                     <div class="row" *ngIf="!selectedNote">
                         <div class="col-md-6 mb-3" *ngFor="let note of paginatedAdminNote; let i = index"
-                        [ngClass]="{'bg-color-status': !note.read, 'bg-color-read': note.read}" 
-                        (click)="selectNote(note)">
-                        <div class="card bg-color-chat border border-0">
+                            [ngClass]="{'bg-color-status': !note.read, 'bg-color-read': note.read}"
+                            (click)="selectNote(note)">
+                            <div class="card bg-color-chat border border-0">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-end">
                                         <p><em class="color-primary fw-bold">{{note.createdAt | date: 'MM-dd-yyyy

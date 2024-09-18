@@ -52,7 +52,7 @@ export class CartService {
   removeFromCart(productId: number): Observable<any> {
     const url = `${this.apiUrl}/cart/remove/${productId}`;
     return this.http.delete<any>(url).pipe(
-      tap(() => this.getUserCart()) // Refresh cart items after removal
+      tap(() => this.getUserCart()) 
     );
   }
 

@@ -4,7 +4,7 @@
   <div class="container-fluid">
     <a routerLink="/homepage" class="navbar-brand me-1">
        <img src="https://firebasestorage.googleapis.com/v0/b/store-img-e8d36.appspot.com/o/TheGrin%2Fvital-logo.png?alt=media&token=1f98cb59-699e-4654-a048-c4015475a70f"
-       alt="logo" class="img-fluid" style="border-radius: 50%;" > 
+       alt="logo" class="img-fluid" style="border-radius: 50%;"> 
       <h4 class="fw-bold">VITAL</h4>
     </a>
     <button class="navbar-toggler color-secondary ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">
@@ -27,10 +27,7 @@
           <button class="bg-transparent border border-0 text-white" routerLink="/homepage"> <mat-icon>home</mat-icon>
           </button>
         </div>
-        <!-- <div class="avatar">
-          <button class="bg-transparent border border-0 text-white" routerLink="/store"> <mat-icon>shop</mat-icon>
-          </button>
-        </div> -->
+     
         <button *ngIf="!IsUserLogged" class="border border-0 bg-color-white bg-transparent color-default" (click)="loginUser()">
           <li><a>
               Se connecter</a></li>
@@ -73,7 +70,7 @@
 
 <ng-container>
 <ng-template #content let-offcanvas>
-  <div class="bg-color-light">
+  <div class="bg-color-light h-100">
     <div class="offcanvas-header justify-content-between">
       <h4 class="offcanvas-title fw-bold">Notifications</h4>
     <button type="button" class="btn btn-outline-primary d-lg-flex d-md-none" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"><mat-icon>close</mat-icon></button>

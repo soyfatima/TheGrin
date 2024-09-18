@@ -26,19 +26,19 @@ export class ProductService {
         const url = `${this.apiUrl}/products/${id}`;
         return this.http.delete<any>(url);
     }
-    
+
     fetchProduct(): Observable<any> {
         const url = `${this.apiUrl}/products/fetchproduct`;
         return this.http.get<any[]>(url);
     }
 
     getProductDetailsById(id: number): Observable<any> {
-        const url = `${environment.apiUrl}/products/getproductdetails/${id}`; // Correction de l'URL
+        const url = `${environment.apiUrl}/products/getproductdetails/${id}`;
         return this.http.get<any>(url);
     }
 
     //format number with separator
-  formatNumberWithSeparator(number: { toString: () => string; }) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
+    formatNumberWithSeparator(number: { toString: () => string; }) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
 }

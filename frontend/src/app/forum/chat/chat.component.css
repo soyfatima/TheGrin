@@ -222,17 +222,17 @@ app-navbar {
   }
 
   .highlight {
-    background-color: #f0f8ff;
-    border: 2px solid #007bff; 
+     background: linear-gradient(90deg, #e91e6237, #d46a0099) !important;
+    border: 2px solid #ff9100 !important; 
     transition: background-color 0.3s ease, border 0.3s ease;
   }
   
-  .highlight {
+  /* .highlight {
     color: 2px solid yellow;
     transition: background-color 0.5s ease;
   }
   
-  
+   */
 .bg-color-status {
     background: var(--color-primary);
     padding: 8px;

@@ -54,7 +54,7 @@ data:any;
       $("#wrapper").toggleClass("toggled");
       $("#content").toggleClass("toggled");
     });
-    this.getNotification();
+    this.getOrderNotification();
   }
 
 
@@ -63,7 +63,7 @@ data:any;
   }
 
 
-  getNotification() {
+  getOrderNotification() {
     this.notifService.getOrderNotification().subscribe(
       (notifications) => {
         this.notifications = notifications;
@@ -80,7 +80,7 @@ data:any;
   markNotificationAsRead(notificationId: number): void {
     this.notifService.markAsRead(notificationId).subscribe(
       () => {
-        this.getNotification();
+        this.getOrderNotification()
       },
       (error) => {
        // console.error('Failed to mark notification as read:', error);
@@ -116,9 +116,9 @@ data:any;
   
   
   DeleteNotification(id: number): void {
-    this.notifService.deleteOrderNotification(id).subscribe(
+    this.orderService.deleteOrderNotification(id).subscribe(
       () => {
-        this.getNotification();
+        this.getOrderNotification()
         this.snackBar.open('Notification supprimée avec succès', 'Fermer', {
           duration: 2000,
         });

@@ -13,7 +13,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './product.component.css'
 })
 export class ProductComponent {
-  userId:any;
+  userId: any;
   cart: any;
   products: any[] = [];
   filteredProducts: any[] = [];
@@ -23,11 +23,16 @@ export class ProductComponent {
   visiblePageRange: number[] = [];
 
   category: any[] = [
-    { name: 'invecters' },
-    { name: 'panneau solaire' },
-    { name: 'batteries' },
-    { name: 'E-solaire hydride' },
-    { name: 'accessoires' },
+    { name: 'Équipements de diagnostic' },
+    { name: 'Équipements de soins' },
+    { name: 'Matériel de réanimation' },
+    { name: 'Mobilier médical' },
+    { name: 'Équipements de stérilisation' },
+    { name: 'Prothèses et orthèses' },
+    { name: 'Instruments chirurgicaux' },
+    { name: 'Matériel de perfusion et d’injection' },
+    { name: 'Équipements de radiologie et imagerie' },
+    { name: 'Accessoires de laboratoire' }
   ]
 
   product = [
@@ -45,7 +50,6 @@ export class ProductComponent {
     },
 
   ]
-
 
   constructor(private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
@@ -74,21 +78,11 @@ export class ProductComponent {
         this.filteredProducts = this.products;
       },
       (error) => {
-        console.error('Error fectching products', error)
+        //    console.error('Error fectching products', error)
       }
     )
   }
-  // openDialog(product: any): void {
-  //   const dialogRef = this.dialog.open(PurchaseProductComponent, {
-  //      width: '800px',
-  //     data: { product, type:'product' }
-  //   });
-
-  //   dialogRef.afterClosed().subscribe(result => {
-  //   });
-  // }
-  
-
+ 
   filterProductsByCategory(category: string) {
     this.selectedCategory = category;
     if (this.selectedCategory) {
@@ -177,14 +171,14 @@ export class ProductComponent {
       (error) => {
         if (error.status === 409) {
           this.toastrService.warning('Cet article est déjà dans votre panier');
-        } else if (error.status === 404) { 
+        } else if (error.status === 404) {
           this.toastrService.error('Produit non trouvé');
         } else {
-         // this.toastrService.error('Veuillez vous connecter pour ajouter cet article à votre panier');
+          // this.toastrService.error('Veuillez vous connecter pour ajouter cet article à votre panier');
         }
-        console.error('Error adding product to cart:', error);
+        //  console.error('Error adding product to cart:', error);
       }
     );
   }
-  
+
 }

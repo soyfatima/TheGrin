@@ -12,7 +12,6 @@ export class OrderService {
 
   constructor(private http: HttpClient) { }
 
-
   globalOrder(orderData: any): Observable<any> {
     const url = `${this.apiUrl}/orders/global`;
     return this.http.post<any>(url, orderData);
@@ -38,6 +37,11 @@ export class OrderService {
 
   deleteAllOrder(): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/orders/`);
+  }
+
+  deleteOrderNotification(id:number):Observable<any> {
+    const url = `${this.apiUrl}/notifications/${id}`
+  return this.http.delete<any>(url);
   }
 
   deleteAllOrderNotifications(): Observable<any> {

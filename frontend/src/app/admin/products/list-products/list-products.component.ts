@@ -25,12 +25,18 @@ export class ListProductsComponent {
   visiblePageRange: number[] = [];
 
   category: any[] = [
-    { name: 'invecters' },
-    { name: 'panneau solaire' },
-    { name: 'batteries' },
-    { name: 'E-solaire hydride' },
-    { name: 'accessoires' },
-  ]
+    { name: 'Équipements de diagnostic' },
+    { name: 'Équipements de soins' },
+    { name: 'Matériel de réanimation' },
+    { name: 'Mobilier médical' },
+    { name: 'Équipements de stérilisation' },
+    { name: 'Prothèses et orthèses' },
+    { name: 'Instruments chirurgicaux' },
+    { name: 'Matériel de perfusion et d’injection' },
+    { name: 'Équipements de radiologie et imagerie' },
+    { name: 'Accessoires de laboratoire' }
+];
+
 
   constructor(private route: ActivatedRoute,
     private dialogService: DialogService,
