@@ -13,20 +13,19 @@ export class TokenService {
 
   refreshAccessToken(refreshToken: string): Observable<{ accessToken: string }> {
     const refreshTokenPayload = { refreshToken };
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${refreshToken}`,
-    });
-    return this.http.post<{ accessToken: string }>(`${environment.apiUrl}/auth/refresh-token`, refreshTokenPayload, { headers })
+
+    return this.http.post<{ accessToken: string }>(`${environment.apiUrl}/auth/refresh-token`, refreshTokenPayload)
       .pipe(
         tap(response => {
           this.setAccessToken(response.accessToken);
         }),
         catchError(error => {
-       //   console.error('Refresh Token API Error:', error);
+          console.error('Refresh Token API Error:', error);
           throw error;
         })
       );
   }
+
 
   setAccessTokenInCookie(accessToken: string, refreshToken: string, userInfo: string): void {
     const expires = new Date();

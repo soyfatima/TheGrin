@@ -149,8 +149,14 @@ export class ChatComponent {
     });
 
     this.route.params.subscribe(params => {
-      this.userId = +params['id'];
+      const idParam = params['id'];
+      this.userId = Number(idParam); // Convert to number explicitly
+      console.log('User ID from params:', this.userId);
     });
+    // this.route.params.subscribe(params => {
+    //   this.userId = +params['id'];
+    //   console.log('User ID from params:', this.userId); 
+    // });
   }
 
 
@@ -880,5 +886,15 @@ export class ChatComponent {
     }
   }
 
+
+  goToChat(id: number): void {
+    if (id) {
+      this.router.navigate(['/messages', id]);
+    } else {
+      console.error('User ID is not defined');
+    }
+  }
+  
+  
 
 }

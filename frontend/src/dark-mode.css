@@ -96,4 +96,15 @@
     background: #262626 !important;
   }
 
+
+
+  
+.bg-sender{
+  background: #01353c9f !important;
+}
+
+.bg-recipient {
+  background: #4e011b !important;
+}
+
 }

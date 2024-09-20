@@ -32,6 +32,8 @@ import { ProductInfoComponent } from './shopping/product-info/product-info.compo
 import { OrderComponent } from './shopping/modal/order/order.component';
 import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
 import { ListUserComponent } from './admin/list-user/list-user.component';
+import { MessagingComponent } from './forum/messaging/messaging.component';
+import { SenderListComponent } from './forum/sender-list/sender-list.component';
 
 const routes: Routes = [
   // { path: '', component: },
@@ -59,6 +61,8 @@ const routes: Routes = [
   { path: 'product-info/:id', component: ProductInfoComponent, canActivate: [LoginGuard] },
   { path: 'order', component: OrderComponent, canActivate: [LoginGuard] },
   { path: 'shopping-cart', component: ShoppingCartComponent, canActivate: [LoginGuard] },
+  { path: 'messages/:id',component: MessagingComponent, canActivate: [LoginGuard] },
+  { path: 'sender-list/:id',component: SenderListComponent, canActivate: [LoginGuard] },
 
   // Admin routes
   { path: 'login', component: LoginComponent, canActivate: [AdminGuard] },

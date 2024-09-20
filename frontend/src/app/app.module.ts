@@ -6,6 +6,7 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../environments/environment.prod';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { TokenInterceptor } from './service/token-interceptor.service';
+import { MessagingService } from './sockService';
 
 import { TokenService } from './service/tokenservice';
 import { requestService } from './service/request.service';
@@ -63,6 +64,8 @@ import { ProductInfoComponent } from './shopping/product-info/product-info.compo
 import { OrderComponent } from './shopping/modal/order/order.component';
 import { ListUserComponent } from './admin/list-user/list-user.component';
 import { LinkifyPipe } from './linkify.pipe';
+import { MessagingComponent } from './forum/messaging/messaging.component';
+import { SenderListComponent } from './forum/sender-list/sender-list.component';
 
 @NgModule({
   declarations: [
@@ -103,7 +106,9 @@ import { LinkifyPipe } from './linkify.pipe';
     StoreComponent,
     OrderComponent,
     ListUserComponent,
-    LinkifyPipe
+    LinkifyPipe,
+    MessagingComponent,
+    SenderListComponent
 
   ],
 
@@ -136,6 +141,8 @@ import { LinkifyPipe } from './linkify.pipe';
     TokenService, CookieService,
     requestService,
     TokenInterceptor,
+    //MessagingService,
+
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

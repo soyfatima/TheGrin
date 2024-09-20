@@ -98,7 +98,7 @@ export class NavbarComponent {
       this.showHomeNavbar = true;
       this.showOtherNavbar = false;
       this.activeNavbarType = 'home';
-    } else if (url.includes('/chat') || url.startsWith('/user-profil/') || url.startsWith('/store') || url.startsWith('/product-info')) {
+    } else if (url.includes('/chat') || url.startsWith('/user-profil/') || url.startsWith('/store') || url.startsWith('/product-info')|| url.startsWith('/messages')|| url.startsWith('/sender-list')) {
       this.showHomeNavbar = false;
       this.showOtherNavbar = true;
       this.activeNavbarType = 'other';
@@ -267,6 +267,12 @@ export class NavbarComponent {
   goToUserProfil(): void {
     if (this.loggedInUserId !== null) {
       this.router.navigate(['/user-profil', this.loggedInUserId]);
+    }
+  }
+
+  goToMessage(): void {
+    if (this.loggedInUserId !== null) {
+      this.router.navigate(['/sender-list', this.loggedInUserId]);
     }
   }
 

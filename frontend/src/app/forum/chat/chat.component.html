@@ -55,6 +55,8 @@
                 <p class="participant">not_me</p>
             </div>
         </div> -->
+
+
     </div>
     <div class="main-content" [ngClass]="{'expanded': isCategoryHidden}">
         <div class="switch-container bg-color-white">
@@ -98,10 +100,18 @@
                                                     class="img-fluid rounded-circle">
                                             </div>
                                             <div class="info ms-sm-4 " style="padding: 5px;">
-                                                <div class="name fw-bold color-primary"
-                                                    (click)="goToUserProfil(folder.user?.id)">
-                                                    {{ folder.user?.username }}
+                                                <div class="d-flex">
+                                                    <div class="name fw-bold color-primary"
+                                                        (click)="goToUserProfil(folder.user?.id)">
+                                                        {{ folder.user?.username }}
+                                                    </div>
+                                                    <div class="go-to-chat">
+                                                        <button
+                                                            class="btn btn-transparent border border-0 color-secondary"
+                                                            (click)="goToChat(folder.user?.id)"><mat-icon>chat</mat-icon></button>
+                                                    </div>
                                                 </div>
+
                                                 <div class="time">{{folder.createdAt | date: 'MM-dd-yyyy HH:mm'}}
                                                 </div>
                                             </div>

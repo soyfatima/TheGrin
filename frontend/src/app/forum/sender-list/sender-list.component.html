@@ -1,0 +1,22 @@
+<app-navbar></app-navbar>
+<div class="py-4 mb-5"></div>
+<div *ngIf="sender.length === 0">
+  <p>No senders available.</p>
+</div>
+<div *ngIf="sender.length > 0">
+  <div *ngFor="let sender of sender">
+    <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start" (click)="viewMessagesFromSender(sender.id)"
+      style="cursor: pointer;">
+      <div class="circle-icon mb-3 mb-sm-0 d-flex bg-white justify-content-center align-items-center">
+        <img [src]="sender.profileImageUrl" alt="img" class="img-fluid rounded-circle">
+      </div>
+      <div class="info ms-sm-4" style="padding: 5px;">
+        <p class="mb-0">{{ sender.user.username }}</p>
+        <span *ngIf="sender.unreadCount > 0" class="badge color-danger">{{ sender.unreadCount }}</span>
+        <p class="mb-0">status : <strong class="color-primary"> {{sender.user.status}}</strong></p>
+        <time datetime="">{{sender.user.createdAt | date: 'MM-dd-yyyy HH:mm' }}</time>
+      </div>
+    </div>
+    <hr>
+  </div>
+</div>
