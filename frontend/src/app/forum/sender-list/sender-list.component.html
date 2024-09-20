@@ -4,17 +4,23 @@
   <p>No senders available.</p>
 </div>
 <div *ngIf="sender.length > 0">
-  <div *ngFor="let sender of sender">
-    <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start" (click)="viewMessagesFromSender(sender.id)"
-      style="cursor: pointer;">
+  <div *ngFor="let sender of sender" [ngClass]="{ 'highlight': sender.unreadCount > 0 }">
+    <div class="d-flex mb-3 flex0-column flex-sm-row align-items-start" (click)="viewMessagesFromSender(sender.user.id)" style="cursor: pointer;">
+  
       <div class="circle-icon mb-3 mb-sm-0 d-flex bg-white justify-content-center align-items-center">
         <img [src]="sender.profileImageUrl" alt="img" class="img-fluid rounded-circle">
       </div>
       <div class="info ms-sm-4" style="padding: 5px;">
+        <div class="d-flex">
         <p class="mb-0">{{ sender.user.username }}</p>
-        <span *ngIf="sender.unreadCount > 0" class="badge color-danger">{{ sender.unreadCount }}</span>
-        <p class="mb-0">status : <strong class="color-primary"> {{sender.user.status}}</strong></p>
-        <time datetime="">{{sender.user.createdAt | date: 'MM-dd-yyyy HH:mm' }}</time>
+        <div class="circle-icon bg-color-tertiary" style="width: 20px; height: 20px;">
+        <span *ngIf="sender.unreadCount > 0" class="color-primary">{{ sender.unreadCount }}</span>
+      </div>
+      </div>
+      <time datetime="">{{sender.user.createdAt | date: 'MM-dd-yyyy HH:mm' }}</time>
+      <p class="mb-0">{{ truncateMessage(sender.lastMessageContent, 50) }}</p>
+      <p class="mb-0">status : <strong class="color-primary"> {{sender.user.status}}</strong></p>
+       
       </div>
     </div>
     <hr>

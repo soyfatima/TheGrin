@@ -15,8 +15,8 @@ export class SenderListComponent {
 
 
   /////////////////////////////
-  userId!:number
-  sender:any [] = []
+  userId!: number
+  sender: any[] = []
   loggedInUser: any;
   IsUserLogged: boolean = false;
   loggedInUserId: number | null = null;
@@ -28,7 +28,7 @@ export class SenderListComponent {
 
 
 
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -61,27 +61,33 @@ export class SenderListComponent {
       console.error('Logged-in user ID is not available');
       return;
     }
-  
+
     this.messagingService.getSenders(this.loggedInUserId).subscribe(
       (senders) => {
         this.sender = senders.map((sender) => {
-          // Map through each sender and attach their profile image URL
           return {
-           // ...sender,
-            user: sender.user, // Ensure you're passing the user object correctly
+            ...sender,
+            //user: sender.user, 
             unreadCount: sender.unreadCount,
             profileImageUrl: sender.uploadedFile
-              ? `${environment.apiUrl}/blog-backend/ProfilPic/${sender.uploadedFile}` // Assuming the `uploadedFile` holds the image file
-              : 'https://api.dicebear.com/6.x/initials/svg?seed=' + sender.username // Default image if no profile picture
+              ? `${environment.apiUrl}/blog-backend/ProfilPic/${sender.uploadedFile}`
+              : 'https://api.dicebear.com/6.x/initials/svg?seed=' + sender.username
           };
         });
-  
+
         console.log('Loaded and mapped senders:', this.sender);
       },
       (error) => console.error('Error loading senders:', error)
     );
   }
-  
+
+  truncateMessage(content: string, maxLength: number): string {
+    if (content.length > maxLength) {
+        return content.substring(0, maxLength) + '...';
+    }
+    return content;
+}
+
 
   // Navigate to the message view for a specific sender
   viewMessagesFromSender(senderId: number): void {
@@ -89,9 +95,33 @@ export class SenderListComponent {
       alert('You need to be logged in to view messages.');
       return;
     }
-
+    
+    // Mark messages as read
+    this.messagingService.markMessagesAsRead(this.loggedInUserId, senderId).subscribe(() => {
+      const sender = this.sender.find(s => s.id === senderId);
+      if (sender) {
+        sender.unreadCount = 0; 
+      }
+    });
+  
     this.router.navigate(['/messages', senderId]);
+  
   }
 
 
+
+  // viewMessagesSender(senderId: number): void {
+  //   if (!this.loggedInUserId) {
+  //     console.error('Logged-in user ID is not available');
+  //     return;
+  //   }
+
+  //   // Mark messages as read
+  //   this.messagingService.markMessagesAsRead(this.loggedInUserId, senderId).subscribe(() => {
+  //     const sender = this.sender.find(s => s.id === senderId);
+  //     if (sender) {
+  //       sender.unreadCount = 0; 
+  //     }
+  //   });
+  // }
 }

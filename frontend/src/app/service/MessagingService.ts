@@ -23,4 +23,8 @@ export class MessageService {
   getSenders(id: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/messaging/senders?id=${id}`);
   }
+
+  markMessagesAsRead(id: number, senderId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/messaging/markAsRead`, { id, senderId });
+  }
 }
