@@ -7,25 +7,27 @@
     <div class="row">
       <div class="col-md-6 mb-2" *ngFor="let item of order.items">
         <div class="card bg-color-light ">
-            <div class="d-lg-flex justify-content-between">
-              <div class="bg-image" data-mdb-ripple-color="light">
-            <img [src]="item.product.uploadedFileUrl" class="img-fluid d-md-block"
-            style="object-fit: cover; overflow: hidden; ;width:100%; height: 150px;" />
-           </div>
-          <div class="card-body">
-            <div class="info">
-              <p class="mb-0 text-uppercase fw-bold">
-                 {{ item.product.name }}<br>
-              </p>
-              <p class="mb-0">
-              Quantité: <strong class="text-danger">{{ item.quantity }}</strong><br>
-              </p>
-              <p class="mb-0">
-                Taille: {{ item.selectedSize }}
-              </p>
-
+          <div class="">
+            <div class="bg-image" data-mdb-ripple-color="light">
+              <img [src]="item.product.uploadedFileUrl" class="img-fluid d-md-block"
+                style="object-fit: cover; overflow: hidden; ;width:100%; height: 150px;" />
             </div>
-          </div>
+            <div class="card-body">
+              <div class="info">
+                <p class="mb-0 text-uppercase fw-bold">
+                  {{ item.product.name }}<br>
+                </p>
+                <p class="mb-1">
+                  Quantité: <strong class="text-danger">{{ item.quantity }}</strong><br>
+                </p>
+                <p class="mb-0">
+                 <strong class="text-danger"> Taille: {{ item.selectedSize }} </strong>
+                </p>
+                <hr>
+                <p class="mb-1">Taille dispo : {{item.product.sizes}}</p>
+                <p>Prix unitaire : <strong class="color-tertiary"> {{item.product.price}} fcfa </strong></p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

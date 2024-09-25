@@ -66,6 +66,7 @@ import { ListUserComponent } from './admin/list-user/list-user.component';
 import { LinkifyPipe } from './linkify.pipe';
 import { MessagingComponent } from './forum/messaging/messaging.component';
 import { SenderListComponent } from './forum/sender-list/sender-list.component';
+import { ReportUserComponent } from './forum/report-user/report-user.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,8 @@ import { SenderListComponent } from './forum/sender-list/sender-list.component';
     ListUserComponent,
     LinkifyPipe,
     MessagingComponent,
-    SenderListComponent
+    SenderListComponent,
+    ReportUserComponent
 
   ],
 

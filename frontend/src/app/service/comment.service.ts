@@ -56,4 +56,5 @@ deleteReply(id: number): Observable<any> {
   return this.http.delete<any>(`${this.apiUrl}/comments/delete-reply/${id}`);
 }
 
-}    
+
+}

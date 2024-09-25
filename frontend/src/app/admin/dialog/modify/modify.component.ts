@@ -80,7 +80,6 @@ export class ModifyComponent {
     this.product.sizes.splice(index, 1);
   }
 
-
   formatNumberWithSeparator(number: number): string {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }

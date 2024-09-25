@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
   loaderVisible = true;
   notifications: any[] = []
   notificationCount: number = 0;
-data:any;
+  data: any;
   private offcanvasService = inject(NgbOffcanvas)
 
   constructor(
@@ -71,7 +71,7 @@ data:any;
         this.notificationCount = this.notifications.filter(n => !n.read).length;
       },
       (error) => {
-       // console.error('Failed to fetch notifications:', error);
+        // console.error('Failed to fetch notifications:', error);
       }
 
     )
@@ -83,38 +83,38 @@ data:any;
         this.getOrderNotification()
       },
       (error) => {
-       // console.error('Failed to mark notification as read:', error);
+        // console.error('Failed to mark notification as read:', error);
       }
     );
   }
-  
+
   onNotificationClick(notification: any): void {
     if (notification && notification.order && notification.order.id) {
       this.orderService.getOrderById(notification.order.id).subscribe(
         (order) => {
           order.items = order.items.map((item: any) => ({
             ...item,
-            product: { 
+            product: {
               ...item.product,
               uploadedFileUrl: `${environment.apiUrl}/blog-backend/productFile/${item.product.uploadedFile}`
             }
           }));
-  
+
           this.dialog.open(UserOrderComponent, {
             width: '700px',
             data: order
           });
-  
-          this.markNotificationAsRead(notification.id);   
+
+          this.markNotificationAsRead(notification.id);
         },
         (error) => {
-      //    console.error('Failed to fetch order:', error);
+          //    console.error('Failed to fetch order:', error);
         }
       );
-    } 
+    }
   }
-  
-  
+
+
   DeleteNotification(id: number): void {
     this.orderService.deleteOrderNotification(id).subscribe(
       () => {
@@ -125,11 +125,11 @@ data:any;
       },
 
       (error) => {
-      //  console.error('Failed to delete notification:', error);
+        //  console.error('Failed to delete notification:', error);
       }
     );
   }
-  
+
   deleteAllNotifications(): void {
     this.orderService.deleteAllOrderNotifications().subscribe(
       (response) => {
@@ -137,7 +137,7 @@ data:any;
         this.notificationCount = 0;
       },
       (error) => {
-     //   console.error('Failed to delete all notifications:', error);
+        //   console.error('Failed to delete all notifications:', error);
       }
     );
   }
@@ -145,11 +145,31 @@ data:any;
     this.offcanvasService.open(content, { position: 'end' });
   }
 
-  logout(): void {
-    this.tokenService.removeAuthData();
-    this.router.navigate(['login']);
-  }
+  // logout(): void {
+  //   this.tokenService.removeAuthData();
+  //   this.router.navigate(['login']);
+  // }
 
+
+  logout(): void {
+    const currentUser = localStorage.getItem('currentUser');
+    const accessToken = currentUser ? JSON.parse(currentUser).accessToken : '';
+
+    if (!accessToken) {
+    } else {
+      this.authService.logout(accessToken).subscribe(
+        () => {
+          this.tokenService.removeAuthData();
+          this.authService.clearAuthData();
+          this.router.navigate(['login']);
+
+        },
+        (error) => {
+          console.error('Logout failed:', error);
+        }
+      );
+    }
+  }
   ngAfterViewInit() {
     this.loader();
   }
@@ -157,6 +177,6 @@ data:any;
   loader() {
     setTimeout(() => {
       this.loaderVisible = false;
-    }, 1000); 
+    }, 1000);
   }
 }

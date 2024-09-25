@@ -100,17 +100,17 @@
                                                     class="img-fluid rounded-circle">
                                             </div>
                                             <div class="info ms-sm-4 " style="padding: 5px;">
-                                                <div class="d-flex">
-                                                    <div class="name fw-bold color-primary"
-                                                        (click)="goToUserProfil(folder.user?.id)">
-                                                        {{ folder.user?.username }}
-                                                    </div>
-                                                    <div class="go-to-chat">
+                                                <!-- <div class="d-flex"> -->
+                                                <div class="name fw-bold color-primary"
+                                                    (click)="goToUserProfil(folder.user?.id)">
+                                                    {{ folder.user?.username }}
+                                                </div>
+                                                <!-- <div class="go-to-chat">
                                                         <button
                                                             class="btn btn-transparent border border-0 color-secondary"
                                                             (click)="goToChat(folder.user?.id)"><mat-icon>chat</mat-icon></button>
-                                                    </div>
-                                                </div>
+                                                    </div> 
+                                                </div-->
 
                                                 <div class="time">{{folder.createdAt | date: 'MM-dd-yyyy HH:mm'}}
                                                 </div>
@@ -180,7 +180,10 @@
                                             class="bg-transparent border border-0 m-1"><mat-icon
                                                 class="color-tertiary">delete</mat-icon></button>
                                     </ng-container>
-
+                                    <div class="d-flex justify-content-end">
+                                        <button class="bg-secondary border border-0 rounded-3 p-2 m-1 color-default"
+                                        (click)="signalUserFolder(selectedCard.id)">Signal</button>
+                                    </div>
 
 
                                     <ng-template #editMode>
@@ -201,12 +204,12 @@
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
                                     <h4 class="mb-4">({{ comments.length }}) Commentaires</h4>
-                                    <div class="p-2 mb-3 bg-unique border border-1 rounded-2 shadow-sm"
-                                        *ngFor="let comment of paginatedComments" [id]="'comment-' + comment.id"
+                                    <div class="p-2 mb-3 bg-color rounded-2" *ngFor="let comment of paginatedComments"
+                                        [id]="'comment-' + comment.id"
                                         [ngClass]="{'highlight': comment.id === highlightCommentId}">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-end">
-                                                <p class="time color-default mb-0"> <em> {{comment.createdAt |
+                                                <p class="time color-secondary mb-0"> <em> {{comment.createdAt |
                                                         date:
                                                         'MM-dd-yyyy
                                                         HH:mm'}} </em> </p>
@@ -232,7 +235,7 @@
                                             <div class="user-replies"
                                                 *ngIf="comment.replies?.length && isUserReplyVisible[comment.id]">
                                                 <div class="reply" data-aos="fade-in">
-                                                    <div class="bg-color-chat border border-1 rounded-2 mb-3 p-2 shadow-sm"
+                                                    <div class="bg-color-white rounded-2 mb-3 p-2"
                                                         *ngFor="let reply of comment.replies" [id]="'reply-' + reply.id"
                                                         [ngClass]="{'highlight': reply.id === highlightReplyId}">
                                                         <div
@@ -242,19 +245,18 @@
                                                                 <img [src]="reply.userProfileImageUrl" alt="img"
                                                                     class="img-fluid rounded-circle">
                                                             </div>
-                                                            <div class="reply-user-info ms-sm-4 color-default"
-                                                                style="padding: 5px;">
-                                                                <p class="mb-0 color-primary"><strong>{{
+                                                            <div class="reply-user-info ms-sm-4" style="padding: 5px;">
+                                                                <p class="mb-0 color-tertiary"><strong>{{
                                                                         reply.user.username
                                                                         }}</strong></p>
-                                                                <p class="time color-default">{{ reply.createdAt
+                                                                <p class="time color-secondary">{{ reply.createdAt
                                                                     | date: 'MM-dd-yyyy
                                                                     HH:mm' }}</p>
                                                             </div>
                                                         </div>
                                                         <div class="content edit-content">
                                                             <ng-container *ngIf="!reply.isEditing; else editModeReply">
-                                                                <p class="mb-3 color-default"
+                                                                <p class="mb-3 color-secondary"
                                                                     [innerHTML]="getHighlightedContent(reply.content)| linkify">
                                                                 </p>
                                                                 <button
@@ -309,6 +311,9 @@
                                                                 class="bg-color-primary border border-0 rounded-3 p-2 m-1 color-default">
                                                                 Répondre
                                                             </button>
+                                                            <button
+                                                                class="bg-secondary border border-0 rounded-3 p-2 m-1 color-default"
+                                                                (click)="signalUserComment(comment.id)">Signaler</button>
                                                         </div>
                                                     </div>
 
@@ -327,19 +332,19 @@
                                         </div>
                                         <!-- Reply box -->
                                         <div class="reply-box col-lg-12" *ngIf="replyingTo === comment.id"
-                                            data-aos="fade-in">
+                                            data-aos="zoom-in">
                                             <form (ngSubmit)="submitReply()" #replyForm="ngForm">
                                                 <div class=" form-group">
                                                     <label class="form-label" for="replyContent"></label>
                                                     <div class="position-relative">
                                                         <textarea id="replyContent" class="form-control mb-2" rows="2"
-                                                            placeholder=" pour mentionner un pseudo utiliser @userpseudo votre message..."
+                                                            placeholder=" pour mentionner un pseudo utiliser @username votre message..."
                                                             [(ngModel)]="replyContent" name="replyContent"
                                                             (ngModelChange)="onReplyContentChange()"
                                                             required></textarea>
                                                         <!-- Suggestions list positioned absolutely within the relative container -->
                                                         <div *ngIf="userSuggestions.length > 0"
-                                                            class="suggestions-list">
+                                                            class="suggestions-list bg-color-white">
                                                             <ul>
                                                                 <li class="color-primary"
                                                                     *ngFor="let user of userSuggestions"

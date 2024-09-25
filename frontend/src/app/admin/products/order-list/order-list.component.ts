@@ -35,6 +35,7 @@ export class OrderListComponent {
     this.orderService.fetchOrders()
       .subscribe(
         (orders: any[]) => {
+          console.log('order', orders)
           this.orders = orders.map(order => {
             const mappedOrder = {
               ...order,

@@ -56,5 +56,21 @@ export class TokenService {
       this.setAccessTokenInCookie(accessToken, authData.refreshToken, authData.userInfo);
     }
   }
+
+
+  isTokenExpired(token: string): boolean {
+    const decodedToken = this.decodeToken(token);
+    const expiryTime = decodedToken ? decodedToken.exp * 1000 : null;
+    return expiryTime ? (Date.now() > expiryTime) : true;
+  }
+  
+  decodeToken(token: string): any {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (error) {
+      return null;
+    }
+  }
+  
   
 }

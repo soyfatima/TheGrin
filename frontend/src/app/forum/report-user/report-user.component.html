@@ -1,0 +1,25 @@
+<mat-dialog-content class="bg-color-white">
+    <div class="mat-dialog-centered">
+<div class="modal-content">
+    <h2>Signaler</h2>
+    <div class="mb-2">
+    <label for="reason" class="form-label">Selectionner:</label>
+    <select id="reason" class="form-select" [(ngModel)]="selectedReason">
+        <option *ngFor="let reason of reasons" [value]="reason">{{ reason }}</option>
+        <option value="Other">Autre (spécifier svp)</option>
+    </select>
+</div>
+    <div class="mb-3" *ngIf="selectedReason === 'Other'">
+        <label for="customReason" class="form-label">Raison:</label>
+        <input id="customReason" class="form-control" [(ngModel)]="customReason" placeholder="Veuillez donner plus de détails . . . " />
+    </div>
+    
+    <div class="d-flex">
+    <button class="p-2 bg-secondary text-white border border-0 rounded-2 w-25 m-1" (click)="closeSignalModal()">Annuler</button>
+    <button class="p-2 bg-color-primary text-white border border-0 rounded-2 w-25 m-1"
+     (click)="submitSignal()">Valider</button>
+</div>
+</div>
+
+</div>
+</mat-dialog-content>

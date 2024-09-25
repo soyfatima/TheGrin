@@ -30,6 +30,7 @@ export class NavbarComponent {
   showHomeNavbar = true;
   showOtherNavbar = false;
   showStoreNavbar = false;
+  showSecondNavbar = false;
   currentRoute: string = '';
   activeNavbarType!: string;
 
@@ -97,9 +98,11 @@ export class NavbarComponent {
     if (url.includes('/homepage')) {
       this.showHomeNavbar = true;
       this.showOtherNavbar = false;
+      this.showSecondNavbar = false;
       this.activeNavbarType = 'home';
-    } else if (url.includes('/chat') || url.startsWith('/user-profil/') || url.startsWith('/store') || url.startsWith('/product-info')|| url.startsWith('/messages')|| url.startsWith('/sender-list')) {
+    } else if (url.includes('/chat') || url.startsWith('/user-profil/') || url.startsWith('/store') || url.startsWith('/product-info') || url.startsWith('/messages') || url.startsWith('/sender-list')) {
       this.showHomeNavbar = false;
+      this.showSecondNavbar = true;
       this.showOtherNavbar = true;
       this.activeNavbarType = 'other';
     }
@@ -108,12 +111,14 @@ export class NavbarComponent {
   switchToOtherNavbar() {
     this.showHomeNavbar = false;
     this.showOtherNavbar = true;
+    this.showSecondNavbar = true;
     this.activeNavbarType = 'other';
   }
 
   switchToHomeNavbar() {
     this.showHomeNavbar = true;
     this.showOtherNavbar = false;
+    this.showSecondNavbar = false;
     this.activeNavbarType = 'home';
   }
 
@@ -257,11 +262,23 @@ export class NavbarComponent {
 
 
   logout(): void {
-    this.tokenService.removeAuthData();
-    this.IsUserLogged = false;
-    this.authService.clearAuthData()
     const currentUser = localStorage.getItem('currentUser');
     const accessToken = currentUser ? JSON.parse(currentUser).accessToken : '';
+
+    if (!accessToken) {
+      //      console.warn('Access token is missing. User might be already logged out.');
+    } else {
+      this.authService.logout(accessToken).subscribe(
+        () => {
+          this.tokenService.removeAuthData();
+          this.IsUserLogged = false;
+          this.authService.clearAuthData();
+        },
+        (error) => {
+          //              console.error('Logout failed:', error); // Log any errors that occur during logout
+        }
+      );
+    }
   }
 
   goToUserProfil(): void {
@@ -270,11 +287,11 @@ export class NavbarComponent {
     }
   }
 
-  goToMessage(): void {
-    if (this.loggedInUserId !== null) {
-      this.router.navigate(['/sender-list', this.loggedInUserId]);
-    }
-  }
+  // goToMessage(): void {
+  //   if (this.loggedInUserId !== null) {
+  //     this.router.navigate(['/sender-list', this.loggedInUserId]);
+  //   }
+  // }
 
   fetchUserCart(): void {
     this.cartService.getUserCart().subscribe(

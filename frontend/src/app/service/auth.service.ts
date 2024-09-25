@@ -76,80 +76,79 @@ export class AuthService {
       })
     );
   }
-  
+
   updateLoginStatus(): void {
     const currentUser = localStorage.getItem('currentUser');
     const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
     this.loggedInUserSubject.next(loggedInUser);
-  
+
     if (loggedInUser) {
       // Ensure the token is available before making the request
       const authData = this.tokenService.getAuthData();
       const accessToken = authData?.accessToken;
-  
+
       if (accessToken) {
         this.notifService.getAllUserNotifications(loggedInUser.id).subscribe(
           (notifications) => {
           },
           (error) => {
-           // console.error('Failed to fetch notifications:', error);
+            // console.error('Failed to fetch notifications:', error);
           }
         );
       } else {
-       // console.warn('Access token is not available.');
+        // console.warn('Access token is not available.');
       }
     }
   }
-  
-  // updateLoginStatus(): void {
-  //   const currentUser = localStorage.getItem('currentUser');
-  //   const user = currentUser ? JSON.parse(currentUser) : null;
-  //   this.loggedInUserSubject.next(user);
-  // }
-  
-  
+
   isLoggedIn(): boolean {
     return !!localStorage.getItem('currentUser');
   }
 
-  //user login 
-userLogin(username: string, password: string): Observable<any> {
-  const url = `${this.apiUrl}/auth/userLogin`;
-  return this.http.post<any>(url, { username, password }).pipe(
-    tap(response => {
-      if (response && response.accessToken) {
-        localStorage.setItem('currentUser', JSON.stringify(response.userInfo));
-        this.updateLoginStatus();
-      }
-    }),
-    catchError((error: HttpErrorResponse) => {
-      const errorMessage = error.error?.message || 'Login failed: ' + error.message;
-      return throwError(errorMessage);
-    })
-  );
-}
+  userLogin(username: string, password: string): Observable<any> {
+    const url = `${this.apiUrl}/auth/userLogin`;
+    return this.http.post<any>(url, { username, password }).pipe(
+      tap(response => {
+        if (response && response.accessToken) {
+          const userWithToken = {
+            ...response.userInfo,
+            accessToken: response.accessToken
+          };
+          localStorage.setItem('currentUser', JSON.stringify(userWithToken));
+          this.updateLoginStatus();
+        } else {
+          //              console.error('No accessToken found in the response.');
+        }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        const errorMessage = error.error?.message || 'Login failed: ' + error.message;
+        //   console.error('Login error:', errorMessage); // Log the error message
+        return throwError(errorMessage);
+      })
+    );
+  }
 
   logout(accessToken: string): Observable<void> {
-   this.clearAuthData();
-
+    this.clearAuthData();
     const url = `${this.apiUrl}/auth/logout`;
     return this.http.post<void>(url, { accessToken }).pipe(
       tap(() => {
         localStorage.removeItem('currentUser');
         this.updateLoginStatus();
       }),
-      catchError((error: HttpErrorResponse) => {
-        //console.error('Logout failed:', error);
-        return throwError('Logout failed: ' + error.message);
-      })
+      // catchError((error: HttpErrorResponse) => {
+      //    // console.error('Logout request failed:', error); 
+      //     return throwError('Logout failed: ' + error.message);
+      //   })
     );
   }
 
-clearAuthData() {
-  localStorage.removeItem('currentUser');
-  this.loggedInUserSubject.next(null); 
-}
-    
+  clearAuthData() {
+    localStorage.removeItem('currentUser');
+    this.loggedInUserSubject.next(null);
+  }
+
+
   requestResetCode(email: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/auth/reset-code`, { email });
   }

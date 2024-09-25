@@ -12,6 +12,7 @@ import { debounceTime, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../navigation/dialog/confirm-dialog/confirm-dialog.component';
 import { userService } from '../../service/user.service';
+import { ReportUserComponent } from '../report-user/report-user.component';
 
 @Component({
   selector: 'app-chat',
@@ -151,11 +152,9 @@ export class ChatComponent {
     this.route.params.subscribe(params => {
       const idParam = params['id'];
       this.userId = Number(idParam); // Convert to number explicitly
-      console.log('User ID from params:', this.userId);
     });
     // this.route.params.subscribe(params => {
     //   this.userId = +params['id'];
-    //   console.log('User ID from params:', this.userId); 
     // });
   }
 
@@ -404,6 +403,7 @@ export class ChatComponent {
           this.fetchComments(this.selectedCard.id);
         },
         error => {
+          this.toastrService.error('veuillez vous connecter pour continuer')
           //   console.error('Error adding comment:', error);
         }
       );
@@ -592,6 +592,7 @@ export class ChatComponent {
           this.fetchComments(this.selectedCard.id);
         },
         error => {
+          this.toastrService.error('Veuillez vous connecter pour continuer')
           //  console.error('Error adding reply:', error);
         }
       );
@@ -727,7 +728,8 @@ export class ChatComponent {
       },
       (error) => {
         // console.error('Error during folder creation:', error);
-        this.toastrService.error('Erreur lors de la création');
+       this.toastrService.error('Erreur lors de la publication, veuillez vous connecter pour continuer')
+      
       }
     );
   }
@@ -887,14 +889,54 @@ export class ChatComponent {
   }
 
 
-  goToChat(id: number): void {
-    if (id) {
-      this.router.navigate(['/messages', id]);
-    } else {
-      console.error('User ID is not defined');
+  // goToChat(id: number): void {
+  //   if (id) {
+  //     this.router.navigate(['/messages', id]);
+  //   } else {
+  //     console.error('User ID is not defined');
+  //   }
+  // }
+  
+
+//  signalUser():void {
+//   const dialogRef = this.dialog.open(SignalUserComponent, {
+//     width : 'auto',
+//     height: 'auto',
+//     data: {}
+//   })
+
+//   dialogRef.afterClosed().subscribe(result =>{
+
+//   });
+//  } 
+  
+signalUserComment(commentId: number): void {
+  const dialogRef = this.dialog.open(ReportUserComponent, {
+      width: 'auto',
+      height: 'auto',
+      data: { commentId: commentId }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        //  this.reportUser(result); // Pass the selected reason to report
+      }
+  });
+}
+
+signalUserFolder(folderId: number): void {
+  const dialogRef = this.dialog.open(ReportUserComponent, {
+    width: 'auto',
+    height: 'auto',
+    data: { folderId: folderId } // Passing folderId
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      console.log('Folder report result:', result);
     }
-  }
-  
-  
+  });
+}
+ 
 
 }

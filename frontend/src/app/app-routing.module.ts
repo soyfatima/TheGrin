@@ -34,6 +34,7 @@ import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-c
 import { ListUserComponent } from './admin/list-user/list-user.component';
 import { MessagingComponent } from './forum/messaging/messaging.component';
 import { SenderListComponent } from './forum/sender-list/sender-list.component';
+import { ReportUserComponent } from './forum/report-user/report-user.component';
 
 const routes: Routes = [
   // { path: '', component: },
@@ -63,6 +64,7 @@ const routes: Routes = [
   { path: 'shopping-cart', component: ShoppingCartComponent, canActivate: [LoginGuard] },
   { path: 'messages/:id',component: MessagingComponent, canActivate: [LoginGuard] },
   { path: 'sender-list/:id',component: SenderListComponent, canActivate: [LoginGuard] },
+  { path: 'report-user',component: ReportUserComponent, canActivate: [LoginGuard] },
 
   // Admin routes
   { path: 'login', component: LoginComponent, canActivate: [AdminGuard] },

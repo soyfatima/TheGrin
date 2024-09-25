@@ -44,7 +44,8 @@
   .section-title h2,
   .section-title p,
   .forum .nav-item .nav-link, ::placeholder,
-  .form-select, ::selection
+  .form-select, ::selection, .form-label,
+  :-ms-input-placeholder,
   .info p, .sidebar .mat-nav a,
   mat-expansion-indicator {
     color: #fff !important;

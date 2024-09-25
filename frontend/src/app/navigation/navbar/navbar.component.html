@@ -10,9 +10,10 @@
     <button class="navbar-toggler color-secondary ms-auto" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed">
       <i class="fa fa-bars text-center"></i>
     </button>
-    <div class="collapse navbar-collapse justify-content-end" [ngbCollapse]="isNavbarCollapsed"
+    <div class="collapse navbar-collapse" [ngbCollapse]="isNavbarCollapsed"
       id="navbarSupportedContent">
       <!-- Home Navbar -->
+       <div class="collapse navbar-collapse d-flex justify-content-end align-items-end">
       <ul class="navbar-nav menu align-items-end" *ngIf="showHomeNavbar">
         <li><a href="#hero" class="active">Accueil</a></li>
         <li><a href="#about">A propos</a></li>
@@ -21,20 +22,23 @@
         <li><a routerLink="/chat" routerLinkActive="active" (click)="switchToOtherNavbar()">Forum</a></li>
         <li><a routerLink="/store" routerLinkActive="active" (click)="switchToOtherNavbar()">Boutique</a></li>
       </ul>
+      </div>
       <!-- Other Navbar -->
-      <ul class="navbar-nav menu align-items-end" *ngIf="showOtherNavbar">
-        <div class="avatar">
-          <button class="bg-transparent border border-0 text-white" routerLink="/homepage"> <mat-icon>home</mat-icon>
-          </button>
-        </div>
-     
+      <div class="collapse navbar-collapse d-flex justify-content-between" *ngIf="showSecondNavbar">
+      <ul class="navbar-nav menu align-items-end second-navbar">
+        <li><a routerLink="/homepage" routerLinkActive="active" (click)="switchToHomeNavbar()">Accueil</a></li>
+        <li><a routerLink="/chat" routerLinkActive="active" (click)="switchToOtherNavbar()">Forum</a></li>
+        <li><a routerLink="/store" routerLinkActive="active" (click)="switchToOtherNavbar()">store</a></li>
+      
+</ul>
+</div>
+
+<ul class="navbar-nav menu align-items-end" *ngIf="showOtherNavbar">
         <button *ngIf="!IsUserLogged" class="border border-0 bg-color-white bg-transparent color-default" (click)="loginUser()">
           <li><a>
               Se connecter</a></li>
         </button>
-
-        <div class="d-flex" *ngIf="IsUserLogged">
-         
+        <div class="d-flex" *ngIf="IsUserLogged">    
           <div class="avatar" (click)="openEnd(content)">
             <button class="notification-count bg-color-white border border-0"
              matBadge="{{notificationCount}}"
@@ -46,10 +50,10 @@
             <button class="bg-color-white border border-0"> <mat-icon>account_circle</mat-icon>
             </button>
           </div>
-          <div class="avatar" (click)="goToMessage()">
+          <!-- <div class="avatar" (click)="goToMessage()">
             <button class="bg-color-white border border-0"> <mat-icon>chat</mat-icon>
             </button>
-          </div>
+          </div> -->
           <div class="avatar">
             <button class="bg-color-white border border-0 text-success" (click)="fetchUserCart()"> <mat-icon>shopping_cart</mat-icon>
             </button>
@@ -58,6 +62,7 @@
             <button class="bg-color-white border border-0 text-danger" (click)="logout()"> <mat-icon>logout</mat-icon> </button>
           </div>
         </div>
+
       </ul>
     </div>
   </div>
