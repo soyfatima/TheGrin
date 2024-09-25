@@ -10,7 +10,6 @@ import { FooterComponent } from './navigation/footer/footer.component';
 import { ChatComponent } from './forum/chat/chat.component';
 import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 import { UserLoginComponent } from './navigation/dialog/user-login/user-login.component';
-import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
 import { AddProductsComponent } from './admin/products/add-products/add-products.component';
 import { ListProductsComponent } from './admin/products/list-products/list-products.component';
 import { UserOrderComponent } from './admin/dialog/user-order/user-order.component';
@@ -35,6 +34,8 @@ import { ListUserComponent } from './admin/list-user/list-user.component';
 import { MessagingComponent } from './forum/messaging/messaging.component';
 import { SenderListComponent } from './forum/sender-list/sender-list.component';
 import { ReportUserComponent } from './forum/report-user/report-user.component';
+import { ConfirmComponent } from './forum/dialog/confirm/confirm.component';
+import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
 
 const routes: Routes = [
   // { path: '', component: },
@@ -62,9 +63,10 @@ const routes: Routes = [
   { path: 'product-info/:id', component: ProductInfoComponent, canActivate: [LoginGuard] },
   { path: 'order', component: OrderComponent, canActivate: [LoginGuard] },
   { path: 'shopping-cart', component: ShoppingCartComponent, canActivate: [LoginGuard] },
-  { path: 'messages/:id',component: MessagingComponent, canActivate: [LoginGuard] },
-  { path: 'sender-list/:id',component: SenderListComponent, canActivate: [LoginGuard] },
-  { path: 'report-user',component: ReportUserComponent, canActivate: [LoginGuard] },
+  { path: 'messages/:id', component: MessagingComponent, canActivate: [LoginGuard] },
+  { path: 'sender-list/:id', component: SenderListComponent, canActivate: [LoginGuard] },
+  { path: 'report-user', component: ReportUserComponent, canActivate: [LoginGuard] },
+  { path: 'confirm-dialog', component: ConfirmComponent, canActivate: [LoginGuard] },
 
   // Admin routes
   { path: 'login', component: LoginComponent, canActivate: [AdminGuard] },
@@ -78,7 +80,7 @@ const routes: Routes = [
   { path: 'modify', component: ModifyComponent, canActivate: [AdminGuard] },
   { path: 'add-note', component: AddNoteComponent, canActivate: [AdminGuard] },
   { path: 'my-note', component: MyNoteComponent, canActivate: [AdminGuard] },
-   { path: 'list-user', component: ListUserComponent, canActivate:[AdminGuard] },
+  { path: 'list-user', component: ListUserComponent, canActivate: [AdminGuard] },
 
 
 ];

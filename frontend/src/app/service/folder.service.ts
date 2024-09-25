@@ -60,6 +60,10 @@ export class FolderService {
   fetchAdminNote(): Observable<any> {
     return this.http.get<any[]>(`${this.apiUrl}/folders/admin-notes`)
   }
+  deleteUserFolder(folderId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/folders/${folderId}`);
+  }
+  
 
   // getAdminNoteDetailById(id: number): Observable<any> {
   //   return this.http.get<any>(`${this.apiUrl}/folderdetails/${id}`);

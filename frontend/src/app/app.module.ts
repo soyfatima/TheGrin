@@ -67,6 +67,7 @@ import { LinkifyPipe } from './linkify.pipe';
 import { MessagingComponent } from './forum/messaging/messaging.component';
 import { SenderListComponent } from './forum/sender-list/sender-list.component';
 import { ReportUserComponent } from './forum/report-user/report-user.component';
+import { ConfirmComponent } from './forum/dialog/confirm/confirm.component';
 
 @NgModule({
   declarations: [
@@ -110,7 +111,8 @@ import { ReportUserComponent } from './forum/report-user/report-user.component';
     LinkifyPipe,
     MessagingComponent,
     SenderListComponent,
-    ReportUserComponent
+    ReportUserComponent,
+    ConfirmComponent
 
   ],
 

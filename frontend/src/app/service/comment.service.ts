@@ -56,5 +56,11 @@ deleteReply(id: number): Observable<any> {
   return this.http.delete<any>(`${this.apiUrl}/comments/delete-reply/${id}`);
 }
 
+////////////////////////
+//admin role
+
+deleteUserComment(commentId: number): Observable<any> {
+  return this.http.delete<any>(`${this.apiUrl}/comments/${commentId}`);
+}
 
 }

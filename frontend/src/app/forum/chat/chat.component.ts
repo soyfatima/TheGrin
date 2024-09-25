@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../navigation/dialog/confirm-dialog/confirm-dialog.component';
 import { userService } from '../../service/user.service';
 import { ReportUserComponent } from '../report-user/report-user.component';
+import { ConfirmComponent } from '../dialog/confirm/confirm.component';
 
 @Component({
   selector: 'app-chat',
@@ -898,18 +899,6 @@ export class ChatComponent {
   // }
   
 
-//  signalUser():void {
-//   const dialogRef = this.dialog.open(SignalUserComponent, {
-//     width : 'auto',
-//     height: 'auto',
-//     data: {}
-//   })
-
-//   dialogRef.afterClosed().subscribe(result =>{
-
-//   });
-//  } 
-  
 signalUserComment(commentId: number): void {
   const dialogRef = this.dialog.open(ReportUserComponent, {
       width: 'auto',
@@ -938,5 +927,56 @@ signalUserFolder(folderId: number): void {
   });
 }
  
+////////////////////
+//admin action
+
+deleteUserFolder(folderId: number): void {
+  const dialogRef = this.dialog.open(ConfirmComponent, {
+    width: 'auto',
+    height: 'auto',
+    data: { folderId: folderId }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.folderService.deleteUserFolder(folderId).subscribe(
+        response => {
+          this.toastrService.success('Folder deleted successfully.');
+          // Optionally, refresh the folder list or update the UI here
+        },
+        error => {
+          console.error('Error deleting folder:', error);
+          this.toastrService.error('Failed to delete folder. Please try again.');
+        }
+      );
+    }
+  });
+}
+
+
+deleteUserComment(commentId: number): void {
+  console.log('Deleting comment with ID:', commentId); // Check if commentId is correct
+
+  const dialogRef = this.dialog.open(ConfirmComponent, {
+    width: 'auto',
+    height: 'auto',
+    data: { commentId: commentId }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.commentService.deleteUserComment(commentId).subscribe(
+        response => {
+          this.toastrService.success('Comment deleted successfully.');
+        },
+        error => {
+          console.error('Error deleting comment:', error);
+          this.toastrService.error('Failed to delete comment. Please try again.');
+        }
+      );
+    }
+  });
+}
+
 
 }

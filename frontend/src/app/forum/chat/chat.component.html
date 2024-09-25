@@ -180,9 +180,16 @@
                                             class="bg-transparent border border-0 m-1"><mat-icon
                                                 class="color-tertiary">delete</mat-icon></button>
                                     </ng-container>
+                                    
                                     <div class="d-flex justify-content-end">
                                         <button class="bg-secondary border border-0 rounded-3 p-2 m-1 color-default"
                                         (click)="signalUserFolder(selectedCard.id)">Signal</button>
+                                        <button
+                                        class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 text-dark"
+                                        *ngIf="isAdmin"
+                                        (click)="deleteUserFolder(selectedCard.id)">
+                                        <mat-icon>delete</mat-icon>
+                                        </button>
                                     </div>
 
 
@@ -314,6 +321,9 @@
                                                             <button
                                                                 class="bg-secondary border border-0 rounded-3 p-2 m-1 color-default"
                                                                 (click)="signalUserComment(comment.id)">Signaler</button>
+                                                                <button *ngIf="isAdmin"
+                                                                class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 color-default"
+                                                                (click)="deleteUserComment(comment.id)"><mat-icon>Delete</mat-icon></button>
                                                         </div>
                                                     </div>
 
