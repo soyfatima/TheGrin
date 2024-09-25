@@ -274,7 +274,9 @@
                                                                     *ngIf="reply.user?.id === loggedInUserId && !isAdmin"
                                                                     (click)="deleteReply(reply.id)"
                                                                     class="bg-transparent border border-0 color-tertiary m-1 "><mat-icon>delete</mat-icon></button>
-
+                                                                    <button *ngIf="isAdmin"
+                                                                    class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 color-default"
+                                                                    (click)="deleteUserReply(reply.id)"><mat-icon>Delete</mat-icon></button>
                                                             </ng-container>
                                                             <ng-template #editModeReply>
                                                                 <textarea [(ngModel)]="reply.editContent"
@@ -453,14 +455,14 @@
                         <div class="col-md-6 mb-3" *ngFor="let note of paginatedAdminNote; let i = index"
                             [ngClass]="{'bg-color-status': !note.read, 'bg-color-read': note.read}"
                             (click)="selectNote(note)">
-                            <div class="card bg-color-chat border border-0">
-                                <div class="card-body">
+                            <div class="p-2 bg-color rounded-3 shadow-sm">
+                                <div class="">
                                     <div class="d-flex justify-content-end">
                                         <p><em class="color-primary fw-bold">{{note.createdAt | date: 'MM-dd-yyyy
                                                 HH:mm' }}</em></p>
                                     </div>
                                     <h5 class="fw-bold color-tertiary">Admin</h5>
-                                    <p class="color-default">{{ note.title }}</p>
+                                    <p class="color-secondary">{{ note.title }}</p>
                                 </div>
                             </div>
                         </div>
@@ -485,7 +487,7 @@
                             </div>
                             <div class="info">
                                 <div class="mb-4">
-                                    <h3>{{ selectedNote.title }}</h3>
+                                    <h3 class="fw-bold color-primary text-uppercase">{{ selectedNote.title }}</h3>
                                     <p>{{ selectedNote.content }}</p>
                                 </div>
                                 <div class="user-uploaded-file" *ngIf="selectedNote?.uploadedFileUrl">

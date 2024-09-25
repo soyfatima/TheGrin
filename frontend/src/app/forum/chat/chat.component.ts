@@ -922,7 +922,6 @@ signalUserFolder(folderId: number): void {
 
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
-      console.log('Folder report result:', result);
     }
   });
 }
@@ -955,8 +954,6 @@ deleteUserFolder(folderId: number): void {
 
 
 deleteUserComment(commentId: number): void {
-  console.log('Deleting comment with ID:', commentId); // Check if commentId is correct
-
   const dialogRef = this.dialog.open(ConfirmComponent, {
     width: 'auto',
     height: 'auto',
@@ -966,6 +963,30 @@ deleteUserComment(commentId: number): void {
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
       this.commentService.deleteUserComment(commentId).subscribe(
+        response => {
+          this.toastrService.success('Comment deleted successfully.');
+        },
+        error => {
+          console.error('Error deleting comment:', error);
+          this.toastrService.error('Failed to delete comment. Please try again.');
+        }
+      );
+    }
+  });
+}
+
+
+
+deleteUserReply(replyId: number): void {
+  const dialogRef = this.dialog.open(ConfirmComponent, {
+    width: 'auto',
+    height: 'auto',
+    data: { replyId: replyId }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.commentService.deleteUserReply(replyId).subscribe(
         response => {
           this.toastrService.success('Comment deleted successfully.');
         },

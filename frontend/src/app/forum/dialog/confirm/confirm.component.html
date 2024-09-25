@@ -1,10 +1,13 @@
 <h2 mat-dialog-title>Confirm Deletion</h2>
 <mat-dialog-content>
   <!-- Show different messages based on the data type (folder or comment) -->
-  <p *ngIf="data.folderId">Are you sure you want to delete this folder?</p>
-  <p *ngIf="data.commentId">Are you sure you want to delete this comment?</p>
+  <p *ngIf="data.folderId">Etes-vous sure de vouloir supprimer ce poste ?</p>
+  <p *ngIf="data.commentId">Etes-vous sure de vouloir supprimer ce commentaire ?</p>
+<p *ngIf="data.replyId">Etes-vous sure de vouloir supprimer cette réponse ?</p>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="cancel()">Cancel</button>
-  <button mat-button color="warn" (click)="confirm()">Delete</button>
+    <div class="d-flex">
+  <button class="bg-secondary m-1 text-white border border-0 rounded-2 p-2" (click)="cancel()">Annuler</button>
+  <button class="bg-color-primary text-white m-1 border border-0 rounded-2 p-2" color="warn" (click)="confirm()">Supprimer</button>
+</div>
 </mat-dialog-actions>

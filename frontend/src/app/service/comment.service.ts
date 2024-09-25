@@ -63,4 +63,8 @@ deleteUserComment(commentId: number): Observable<any> {
   return this.http.delete<any>(`${this.apiUrl}/comments/${commentId}`);
 }
 
+deleteUserReply(replyId: number): Observable<any> {
+  return this.http.delete<any>(`${this.apiUrl}/comments/${replyId}`);
+}
+
 }

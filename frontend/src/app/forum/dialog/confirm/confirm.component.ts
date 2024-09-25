@@ -10,7 +10,7 @@ export class ConfirmComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { folderId?: number; commentId?: number } // Accept both folderId and commentId
+    @Inject(MAT_DIALOG_DATA) public data: { folderId?: number; commentId?: number; replyId?:number } // Accept both folderId and commentId
   ) {}
 
 confirm():void {
