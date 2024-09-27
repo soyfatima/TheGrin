@@ -977,6 +977,12 @@ export class ChatComponent {
     if (comment) {
       comment.user.blocked = newBlockedState;
     }
+
+
+    const affectedFolders = this.folders.filter(folder => folder.user.id === userId);
+    affectedFolders.forEach(folder => {
+      folder.user.blocked = newBlockedState; // Assuming the folder also has a user reference
+    });
   }
 
 
