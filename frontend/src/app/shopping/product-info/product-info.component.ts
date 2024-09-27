@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { ProductService } from '../../service/product.service';
 import { ToastrService } from 'ngx-toastr';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 import { ActivatedRoute } from '@angular/router';
 import { CartService } from '../../service/cart.service';
 import { OrderComponent } from '../../navigation/dialog/order/order.component';

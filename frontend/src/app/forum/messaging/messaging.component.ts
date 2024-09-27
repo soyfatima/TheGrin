@@ -4,7 +4,7 @@ import { AuthService } from '../../service/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { TokenService } from '../../service/tokenservice';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 
 @Component({
   selector: 'app-messaging',

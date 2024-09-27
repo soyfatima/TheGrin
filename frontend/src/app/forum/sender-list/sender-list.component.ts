@@ -4,7 +4,7 @@ import { AuthService } from '../../service/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TokenService } from '../../service/tokenservice';
 import { MessageService } from '../../service/MessagingService';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 
 @Component({
   selector: 'app-sender-list',

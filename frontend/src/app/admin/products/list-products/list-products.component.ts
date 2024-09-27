@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AnimationService } from '../../../service/animate-service';
 import { ProductService } from '../../../service/product.service';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment.prod';
 import { ToastrService } from 'ngx-toastr';
 import { DialogService } from '../../../dialog-service';
 import { ModifyComponent } from '../../dialog/modify/modify.component';

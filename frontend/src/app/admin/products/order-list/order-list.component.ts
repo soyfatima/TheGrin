@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { OrderService } from '../../../service/order.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserOrderComponent } from '../../dialog/user-order/user-order.component';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment.prod';
 import { ProductService } from '../../../service/product.service';
 import { ToastrService } from 'ngx-toastr';
 import { DialogService } from '../../../dialog-service';

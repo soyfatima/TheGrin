@@ -12,7 +12,7 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { filter } from 'rxjs';
 import { ShoppingCartComponent } from '../dialog/shopping-cart/shopping-cart.component';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 import { CartService } from '../../service/cart.service';
 import { ToastrService } from 'ngx-toastr';
 

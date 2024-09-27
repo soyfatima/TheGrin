@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FolderService } from '../../service/folder.service';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommentService } from '../../service/comment.service';
 import { AuthService } from '../../service/auth.service';

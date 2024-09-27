@@ -4,7 +4,7 @@ import { FolderService } from '../../service/folder.service';
 import { CommentService } from '../../service/comment.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../../service/auth.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 import { TokenService } from '../../service/tokenservice';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { userService } from '../../service/user.service';
