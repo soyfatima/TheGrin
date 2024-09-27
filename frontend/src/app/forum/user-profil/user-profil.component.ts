@@ -8,6 +8,8 @@ import { environment } from '../../../environments/environment';
 import { TokenService } from '../../service/tokenservice';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { userService } from '../../service/user.service';
+import { ReportUserComponent } from '../../navigation/dialog/report-user/report-user.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user-profil',
@@ -57,6 +59,8 @@ export class UserProfilComponent implements OnInit {
     private userService: userService,
     private tokenService: TokenService,
     private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
+
 
   ) {
     this.usernameForm = this.fb.group({
@@ -263,6 +267,20 @@ export class UserProfilComponent implements OnInit {
 
   cancel(): void {
     this.isEditing = false;
+  }
+
+
+  signalUser(userId:number): void {
+    const dialogRef = this.dialog.open(ReportUserComponent, {
+      width:'auto',
+      height:'auto',
+      data:{userId:userId}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+  
+      }
+    })
   }
 
 }

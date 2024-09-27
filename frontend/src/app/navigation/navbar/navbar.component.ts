@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, TemplateRef } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, inject, Output, TemplateRef } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserLoginComponent } from '../dialog/user-login/user-login.component';
@@ -11,7 +11,7 @@ import { NotificationService } from '../../service/notification.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { filter } from 'rxjs';
-import { ShoppingCartComponent } from '../../shopping/modal/shopping-cart/shopping-cart.component';
+import { ShoppingCartComponent } from '../dialog/shopping-cart/shopping-cart.component';
 import { environment } from '../../../environments/environment';
 import { CartService } from '../../service/cart.service';
 import { ToastrService } from 'ngx-toastr';
@@ -56,7 +56,13 @@ export class NavbarComponent {
   comments: any[] = [];
   ////////////////////
   loggedInUserId: number | null = null;
+  searchTerm: string = '';
 
+  @Output() userSearched = new EventEmitter<string>();  
+
+  onSearch() {
+    this.userSearched.emit(this.searchTerm); 
+  }
 
   constructor(private router: Router,
     private dialog: MatDialog,

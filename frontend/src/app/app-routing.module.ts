@@ -28,14 +28,13 @@ import { UserProfilComponent } from './forum/user-profil/user-profil.component';
 import { StoreComponent } from './shopping/store/store.component';
 import { ProductComponent } from './shopping/product/product.component';
 import { ProductInfoComponent } from './shopping/product-info/product-info.component';
-import { OrderComponent } from './shopping/modal/order/order.component';
-import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
+import { OrderComponent } from './navigation/dialog/order/order.component';
+import { ShoppingCartComponent } from './navigation/dialog/shopping-cart/shopping-cart.component';
 import { ListUserComponent } from './admin/list-user/list-user.component';
 import { MessagingComponent } from './forum/messaging/messaging.component';
 import { SenderListComponent } from './forum/sender-list/sender-list.component';
-import { ReportUserComponent } from './forum/report-user/report-user.component';
-import { ConfirmComponent } from './forum/dialog/confirm/confirm.component';
-import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
+import { ReportUserComponent } from './navigation/dialog/report-user/report-user.component';
+import { ConfirmComponent } from './navigation/dialog/confirm/confirm.component';
 
 const routes: Routes = [
   // { path: '', component: },
@@ -54,7 +53,6 @@ const routes: Routes = [
   { path: 'chat/:id', component: ChatComponent },
 
   { path: 'contact-us', component: ContactUsComponent },
-  { path: 'confirm-dialog', component: ConfirmDialogComponent },
 
   { path: 'navbar', component: NavbarComponent, canActivate: [LoginGuard] },
   { path: 'user-login', component: UserLoginComponent, canActivate: [LoginGuard] },

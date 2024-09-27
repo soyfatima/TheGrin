@@ -8,10 +8,10 @@
         alt="img" class="img-fluid rounded-circle">
     </div>
 
-    <ng-container *ngIf="!isEditing; else editMode">
+    <ng-container class="mb-4" *ngIf="!isEditing; else editMode">
       <!-- Show edit button only if user is logged in and it's their own profile -->
       <button *ngIf=" IsUserLogged && userId === loggedInUserId" (click)="isEditing = true"
-        class="border border-0 bg-transparent m-1">
+        class="border border-0 bg-transparent mb-1 color-secondary"> Editer profil
         <mat-icon class="color-primary">edit</mat-icon>
       </button>
       <p class="mb-1">Utilisateur :
@@ -20,8 +20,12 @@
         </strong>
       </p>
       <p class="mb-1">Genre: {{ user?.gender }}</p>
-      <p class="mb-1">Date d'inscription : <em>{{ user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
-      <p>Connexion : <em>{{ user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
+      <p class="mb-1">Statut : <strong class="color-tertiary">{{user?.status}}</strong></p>
+      <p class="mb-0">Date d'inscription : <em>{{ user?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</em></p>
+      <button
+      class="bg-transparent border border-0 text-warning mb-5"
+      (click)="signalUser(user.id)">Signaler l'utilisateur <mat-icon class="color-primary">report</mat-icon></button>
+      <!-- <p>Connexion : <em>{{ user?.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</em></p> -->
     </ng-container>
 
     <ng-template class="mb-5" #editMode>

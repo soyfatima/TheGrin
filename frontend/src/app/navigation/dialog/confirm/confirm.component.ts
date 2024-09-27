@@ -6,11 +6,21 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
   templateUrl: './confirm.component.html',
   styleUrl: './confirm.component.css'
 })
+
 export class ConfirmComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { folderId?: number; commentId?: number; replyId?:number } // Accept both folderId and commentId
+    @Inject(MAT_DIALOG_DATA) 
+    //public data: { folderId?: number; commentId?: number; replyId?:number } // Accept both folderId and commentId
+    public data: { 
+      folderId?: number; 
+      commentId?: number; 
+      replyId?: number;
+      message?: string; // Custom message
+      title?: string; // Custom title
+      confirmButtonText?: string; // Custom button text
+    }
   ) {}
 
 confirm():void {

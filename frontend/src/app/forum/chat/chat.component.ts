@@ -10,10 +10,9 @@ import { AuthService } from '../../service/auth.service';
 import { TokenService } from '../../service/tokenservice';
 import { debounceTime, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../navigation/dialog/confirm-dialog/confirm-dialog.component';
 import { userService } from '../../service/user.service';
-import { ReportUserComponent } from '../report-user/report-user.component';
-import { ConfirmComponent } from '../dialog/confirm/confirm.component';
+import { ReportUserComponent } from '../../navigation/dialog/report-user/report-user.component';
+import { ConfirmComponent } from '../../navigation/dialog/confirm/confirm.component';
 
 @Component({
   selector: 'app-chat',
@@ -49,6 +48,8 @@ export class ChatComponent {
   isEditing: boolean = false;
   isEditingComment: { [key: number]: boolean } = {};
   editContent: string = '';
+  editTitle: string = '';
+
   /////////////////////////////
   IsUserLogged: boolean = false;
   loggedInUserId: number | null = null;
@@ -83,32 +84,51 @@ export class ChatComponent {
   isAdmin: boolean = false;
   userId!: number
 
+  ////////////////
+  filteredFolder: any[] = [];
+  // Tableau des catégories
+
   category: any[] = [
-    { name: 'fertilité' },
-    { name: 'cardiologie' },
-    { name: 'santé bébé' },
-    { name: 'génécologie' },
-    { name: 'blague/détente' },
-    { name: 'problème de couple' },
-    { name: 'problème familiale' },
-    { name: 'relation sentimental' },
-    { name: 'administrateur' },
-    { name: 'autre' }
-  ]
+    { name: 'Fertilité' },
+    { name: 'Cardiologie' },
+    { name: 'Santé des bébés' },
+    { name: 'Gynécologie' },
+    { name: 'Pédiatrie' },
+    { name: 'Santé mentale' },
+    { name: 'Nutrition & Diététique' },
+    { name: 'Santé sexuelle et reproductive' },
+    { name: 'Problèmes de couple' },
+    { name: 'Problèmes familiaux' },
+    { name: 'Relations sentimentales' },
+    { name: 'Bien-être général' },
+    { name: 'Médecine alternative' },
+    { name: 'Blagues/Détente' },
+    { name: 'Suggestion' },
+    { name: 'Actualité' },
+    { name: 'Autre' },
 
+  ];
+
+  // Tableau des catégories avec valeurs cohérentes
   Categories: any[] = [
-    { label: 'fertilité', value: 'fertilité', },
-    { label: 'cardiologie', value: 'cardiologie', },
-    { label: 'santé bébé', value: 'santé bébé', },
-    { label: 'génécologie', value: 'génécologie', },
-    { label: 'blague/détente', value: 'blague/détente', },
-    { label: 'problème de couple', value: 'problème de couple', },
-    { label: 'problème familiale', value: 'problème familiale', },
-    { label: 'relation sentimental', value: 'relation sentimental', },
-    { label: 'administrateur', value: 'administrateur' },
-    { label: 'autre', value: 'autre', }
-  ]
-
+    { label: 'Fertilité', value: 'Fertilité' },
+    { label: 'Cardiologie', value: 'Cardiologie' },
+    { label: 'Santé des bébés', value: 'Santé des bébés' },
+    { label: 'Gynécologie', value: 'Gynécologie' },
+    { label: 'Pédiatrie', value: 'Pédiatrie' },
+    { label: 'Santé mentale', value: 'Santé mentale' },
+    { label: 'Nutrition & Diététique', value: 'Nutrition & Diététique' },
+    { label: 'Santé sexuelle et reproductive', value: 'Santé sexuelle et reproductive' },
+    { label: 'Problèmes de couple', value: 'Problèmes de couple' },
+    { label: 'Problèmes familiaux', value: 'Problèmes familiaux' },
+    { label: 'Relations sentimentales', value: 'Relations sentimentales' },
+    { label: 'Bien-être général', value: 'Bien-être général' },
+    { label: 'Médecine alternative', value: 'Médecine alternative' },
+    { label: 'Blagues/Détente', value: 'Blagues/Détente' },
+    { label: 'Suggestion', value: 'Suggestion' },
+    { label: 'Actualité', value: 'Actualité' },
+    { label: 'Autre', value: 'Autre' }
+  ];
 
   @HostListener('window:resize')
   onResize() {
@@ -117,7 +137,6 @@ export class ChatComponent {
       this.isCategoryHidden = true;
     }
   }
-
 
   constructor(
     private fb: FormBuilder,
@@ -259,6 +278,7 @@ export class ChatComponent {
 
   ////////////////////////////////
   //folders
+
   fetchFolders(): void {
     this.folderService.getFolderDetails().subscribe(
       (folders) => {
@@ -271,10 +291,19 @@ export class ChatComponent {
           }))
           .sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-        this.paginatedFolder = this.folders;
+        //   this.paginatedFolder = this.folders;
+        //   this.filteredFolder = folders;
+        //   this.folders.forEach(folder => {
+        //     this.fetchComments(folder.id);
+        //  //   this.paginatedFolders();
+        //   });
+
+
+        this.filteredFolder = this.folders;  // Initially, filteredFolder is the same as folders
+        this.paginateFolders();  // Apply pagination on full data
+
         this.folders.forEach(folder => {
           this.fetchComments(folder.id);
-          this.paginatedFolders();
         });
 
       },
@@ -284,11 +313,22 @@ export class ChatComponent {
     );
   }
 
+  Usersearch(searchTerm: string): void {
+    // Filter folders based on username and apply search term
+    this.filteredFolder = this.folders.filter(folder =>
+      folder.user?.username?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (!searchTerm) {
+      this.filteredFolder = this.folders;
+    }
+    this.paginateFolders();
+  }
+
 
   fetchAdminNote(): void {
     this.folderService.fetchAdminNote().subscribe(
       (folders: any[]) => {
-
         // Check read status per user
         this.adminNotes = folders.map((folder) => {
           const userStatus = folder.noteReadStatus.find((status: { user: { id: number }; read: boolean }) => status.user.id === this.loggedInUserId);
@@ -310,6 +350,8 @@ export class ChatComponent {
     );
   }
 
+
+
   viewNoteAndMarkAsRead(note: any): void {
     if (this.loggedInUserId) {
 
@@ -330,7 +372,7 @@ export class ChatComponent {
     if (this.selectedCard) {
       const folderId = this.selectedCard.id;
 
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      const dialogRef = this.dialog.open(ConfirmComponent, {
         data: { message: 'Êtes-vous sûre de vouloir supprimé ce post ?' }
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -354,23 +396,31 @@ export class ChatComponent {
 
   ///////////////////////////
   //folder edit
+
   EditContent(): void {
     if (this.selectedCard) {
       this.isEditing = true;
+      this.editTitle = this.selectedCard.title;
       this.editContent = this.selectedCard.content;
+
     }
   }
 
   EditFolderContent(): void {
     if (this.selectedCard) {
+      const title = this.editTitle;
       const content = this.editContent;
+
       const id = this.selectedCard.id;
       const folderId = id;
-      this.folderService.updateFolderContent(folderId, content).subscribe(
+      this.folderService.updateFolderContent(folderId, title, content).subscribe(
         (response) => {
+          this.selectedCard.title = title;
           this.selectedCard.content = content;
+
           const folderIndex = this.folders.findIndex(folder => folder.id === id);
           if (folderIndex !== -1) {
+            this.folders[folderIndex].title = title;
             this.folders[folderIndex].content = content;
           }
           this.isEditing = false;
@@ -558,7 +608,7 @@ export class ChatComponent {
   }
 
   deleteComment(commentId: number): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
       data: { message: 'Êtes-vous sûre de vouloir supprimé ce commentaire ?' }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -682,7 +732,7 @@ export class ChatComponent {
   }
 
   deleteReply(replyId: number): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
       data: { message: 'Êtes-vous sûre de vouloir supprimé votre réponse ?' }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -729,8 +779,8 @@ export class ChatComponent {
       },
       (error) => {
         // console.error('Error during folder creation:', error);
-       this.toastrService.error('Erreur lors de la publication, veuillez vous connecter pour continuer')
-      
+        this.toastrService.error('Erreur lors de la publication, veuillez vous connecter pour continuer')
+
       }
     );
   }
@@ -769,33 +819,73 @@ export class ChatComponent {
   //////////////////////////
   //pagination
 
-  paginatedFolders() {
-    this.folderTotalPage = Math.ceil(this.folders.length / this.itemsPerPage)
+  // paginatedFolders() {
+  //   this.folderTotalPage = Math.ceil(this.folders.length / this.itemsPerPage)
+  //   const startIndex = (this.folderCurrentPage - 1) * this.itemsPerPage;
+  //   const endIndex = startIndex + this.itemsPerPage;
+  //   this.paginatedFolder = this.folders.slice(startIndex, endIndex);
+
+  // }
+  // goToFolderPage(page: number) {
+  //   if (page > 0 && page <= this.folderTotalPage) {
+  //     this.folderCurrentPage = page;
+  //     this.paginatedFolders();
+  //   }
+  // }
+
+  // nextFolderPage() {
+  //   if (this.folderCurrentPage < this.folderTotalPage) {
+  //     this.folderCurrentPage++;
+  //     this.paginatedFolders();
+  //   }
+  // }
+
+  // prevFolderPage() {
+  //   if (this.folderCurrentPage > 1) {
+  //     this.folderCurrentPage--;
+  //     this.paginatedFolders()
+  //   }
+  // }
+
+  paginateFolders() {
     const startIndex = (this.folderCurrentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedFolder = this.folders.slice(startIndex, endIndex);
-
+    // Apply pagination to the filteredFolder (if there are results)
+    if (this.filteredFolder && this.filteredFolder.length > 0) {
+      this.paginatedFolder = this.filteredFolder.slice(startIndex, endIndex);
+    } else {
+      // If no search term is applied, paginate full folder list
+      this.paginatedFolder = this.folders.slice(startIndex, endIndex);
+    }
+    // Update total pages for the filtered or full dataset
+    this.folderTotalPage = Math.ceil(
+      (this.filteredFolder.length > 0 ? this.filteredFolder.length : this.folders.length) / this.itemsPerPage
+    );
   }
+
+
   goToFolderPage(page: number) {
     if (page > 0 && page <= this.folderTotalPage) {
       this.folderCurrentPage = page;
-      this.paginatedFolders();
+      this.paginateFolders();
     }
   }
 
   nextFolderPage() {
     if (this.folderCurrentPage < this.folderTotalPage) {
       this.folderCurrentPage++;
-      this.paginatedFolders();
+      this.paginateFolders();
     }
   }
 
   prevFolderPage() {
     if (this.folderCurrentPage > 1) {
       this.folderCurrentPage--;
-      this.paginatedFolders()
+      this.paginateFolders();
     }
   }
+
+
   ///////////////////////////
   paginatedAdminNotes() {
     this.adminNotesTotalPage = Math.ceil(this.adminNotes.length / this.itemsPerPage)
@@ -897,107 +987,120 @@ export class ChatComponent {
   //     console.error('User ID is not defined');
   //   }
   // }
-  
 
-signalUserComment(commentId: number): void {
-  const dialogRef = this.dialog.open(ReportUserComponent, {
+
+  signalUserComment(commentId: number): void {
+    const dialogRef = this.dialog.open(ReportUserComponent, {
       width: 'auto',
       height: 'auto',
       data: { commentId: commentId }
-  });
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result) {
         //  this.reportUser(result); // Pass the selected reason to report
       }
-  });
-}
+    });
+  }
 
-signalUserFolder(folderId: number): void {
-  const dialogRef = this.dialog.open(ReportUserComponent, {
-    width: 'auto',
-    height: 'auto',
-    data: { folderId: folderId } // Passing folderId
-  });
+  signalUserReply(ReplyId: number): void {
+    const dialogRef = this.dialog.open(ReportUserComponent, {
+      width: 'auto',
+      height: 'auto',
+      data: { replyId: ReplyId }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-    }
-  });
-}
- 
-////////////////////
-//admin action
+      }
+    })
+  }
 
-deleteUserFolder(folderId: number): void {
-  const dialogRef = this.dialog.open(ConfirmComponent, {
-    width: 'auto',
-    height: 'auto',
-    data: { folderId: folderId }
-  });
+  signalUserFolder(folderId: number): void {
+    const dialogRef = this.dialog.open(ReportUserComponent, {
+      width: 'auto',
+      height: 'auto',
+      data: { folderId: folderId } // Passing folderId
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.folderService.deleteUserFolder(folderId).subscribe(
-        response => {
-          this.toastrService.success('Folder deleted successfully.');
-          // Optionally, refresh the folder list or update the UI here
-        },
-        error => {
-          console.error('Error deleting folder:', error);
-          this.toastrService.error('Failed to delete folder. Please try again.');
-        }
-      );
-    }
-  });
-}
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+      }
+    });
+  }
 
+  ////////////////////
+  //admin action
 
-deleteUserComment(commentId: number): void {
-  const dialogRef = this.dialog.open(ConfirmComponent, {
-    width: 'auto',
-    height: 'auto',
-    data: { commentId: commentId }
-  });
+  deleteUserFolder(folderId: number): void {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: 'auto',
+      height: 'auto',
+      data: { folderId: folderId }
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.commentService.deleteUserComment(commentId).subscribe(
-        response => {
-          this.toastrService.success('Comment deleted successfully.');
-        },
-        error => {
-          console.error('Error deleting comment:', error);
-          this.toastrService.error('Failed to delete comment. Please try again.');
-        }
-      );
-    }
-  });
-}
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.folderService.deleteUserFolder(folderId).subscribe(
+          response => {
+            this.toastrService.success('Folder deleted successfully.');
+            // Optionally, refresh the folder list or update the UI here
+          },
+          error => {
+            //console.error('Error deleting folder:', error);
+            this.toastrService.error('Failed to delete folder. Please try again.');
+          }
+        );
+      }
+    });
+  }
 
 
+  deleteUserComment(commentId: number): void {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: 'auto',
+      height: 'auto',
+      data: { commentId: commentId }
+    });
 
-deleteUserReply(replyId: number): void {
-  const dialogRef = this.dialog.open(ConfirmComponent, {
-    width: 'auto',
-    height: 'auto',
-    data: { replyId: replyId }
-  });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commentService.deleteUserComment(commentId).subscribe(
+          response => {
+            this.toastrService.success('Comment deleted successfully.');
+          },
+          error => {
+            //console.error('Error deleting comment:', error);
+            this.toastrService.error('Failed to delete comment. Please try again.');
+          }
+        );
+      }
+    });
+  }
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.commentService.deleteUserReply(replyId).subscribe(
-        response => {
-          this.toastrService.success('Comment deleted successfully.');
-        },
-        error => {
-          console.error('Error deleting comment:', error);
-          this.toastrService.error('Failed to delete comment. Please try again.');
-        }
-      );
-    }
-  });
-}
+
+
+  deleteUserReply(replyId: number): void {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: 'auto',
+      height: 'auto',
+      data: { replyId: replyId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commentService.deleteUserReply(replyId).subscribe(
+          response => {
+            this.toastrService.success('Comment deleted successfully.');
+          },
+          error => {
+            // console.error('Error deleting comment:', error);
+            this.toastrService.error('Failed to delete comment. Please try again.');
+          }
+        );
+      }
+    });
+  }
 
 
 }

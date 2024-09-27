@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { CartService } from '../../service/cart.service';
-import { OrderComponent } from '../modal/order/order.component';
+import { OrderComponent } from '../../navigation/dialog/order/order.component';
 
 @Component({
   selector: 'app-product-info',

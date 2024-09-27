@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+<app-navbar (userSearched)="Usersearch($event)"></app-navbar>
 
 <div class="container-fluid forum">
     <div class="toggle-btn" (click)="toggleCategory()">
@@ -59,18 +59,18 @@
 
     </div>
     <div class="main-content" [ngClass]="{'expanded': isCategoryHidden}">
-        <div class="switch-container bg-color-white">
+        <div class="switch-container bg-color">
             <ul class="nav nav-tabs justify-content-center align-items-center mb-0" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link" type="button" [ngClass]="{ active: tab === 'forum' }"
+                    <a class="nav-link bg-color" type="button" [ngClass]="{ active: tab === 'forum' }"
                         (click)="switchTab('forum')">Publication</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" type="button" [ngClass]="{ active: tab === 'publish' }"
+                    <a class="nav-link bg-color" type="button" [ngClass]="{ active: tab === 'publish' }"
                         (click)="switchTab('publish')">Poster</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" type="button" [ngClass]="{ active: tab === 'note' }"
+                    <a class="nav-link bg-color" type="button" [ngClass]="{ active: tab === 'note' }"
                         (click)="switchTab('note')">Notes</a>
                     <span matBadge="{{adminNotesCount}}" [matBadgeHidden]="adminNotesCount === 0"
                         matBadgeColor="accent">
@@ -168,9 +168,10 @@
                                 </div>
                             </div>
                             <div class="content mb-4">
-                                <p><strong class="color-primary mb-0">Titre:</strong> {{selectedCard.title}}</p>
                                 <div class="content edit-content mb-3">
-                                    <ng-container class=" d-flex justify-content-end" *ngIf="!isEditing; else editMode">
+                                    <ng-container class="d-flex justify-content-end" *ngIf="!isEditing; else editMode">
+                                        <p><strong class="color-primary mb-0">Titre:</strong> {{selectedCard.title}}</p>
+
                                         <p [innerHTML]="selectedCard?.content| linkify"></p>
                                         <button *ngIf="selectedCard?.user?.id === loggedInUserId && !isAdmin"
                                             (click)="EditContent()" class="bg-transparent border border-0 m-1"><mat-icon
@@ -180,20 +181,10 @@
                                             class="bg-transparent border border-0 m-1"><mat-icon
                                                 class="color-tertiary">delete</mat-icon></button>
                                     </ng-container>
-                                    
-                                    <div class="d-flex justify-content-end">
-                                        <button class="bg-secondary border border-0 rounded-3 p-2 m-1 color-default"
-                                        (click)="signalUserFolder(selectedCard.id)">Signal</button>
-                                        <button
-                                        class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 text-dark"
-                                        *ngIf="isAdmin"
-                                        (click)="deleteUserFolder(selectedCard.id)">
-                                        <mat-icon>delete</mat-icon>
-                                        </button>
-                                    </div>
 
 
                                     <ng-template #editMode>
+                                        <input [(ngModel)]="editTitle" class="form-control mb-2" />
                                         <textarea [(ngModel)]="editContent" class="form-control" rows="4"></textarea>
                                         <div class="btn-action d-flex justify-content-end ">
                                             <button (click)="EditFolderContent()"
@@ -207,6 +198,19 @@
                                     <img [src]="selectedCard.FolderUploadedFileUrl" alt="img" class="img-fluid"
                                         width="400">
                                 </div>
+
+                                <hr>
+                                <div class="">
+                                    <button class="bg-transparent text-warning border border-0"
+                                        (click)="signalUserFolder(selectedCard.id)">signaler<mat-icon
+                                            class="color-primary">report</mat-icon></button>
+                                    <button
+                                        class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 text-dark"
+                                        *ngIf="isAdmin" (click)="deleteUserFolder(selectedCard.id)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                                <hr>
                             </div>
                             <div class="comment-form mb-5">
                                 <div class="col-12 mb-3" #commentList>
@@ -245,6 +249,11 @@
                                                     <div class="bg-color-white rounded-2 mb-3 p-2"
                                                         *ngFor="let reply of comment.replies" [id]="'reply-' + reply.id"
                                                         [ngClass]="{'highlight': reply.id === highlightReplyId}">
+                                                        <div class="d-flex justify-content-end mb-0">
+                                                            <button class="bg-transparent text-warning border border-0"
+                                                                (click)="signalUserReply(reply.id)"><mat-icon
+                                                                    class="text-warning">report</mat-icon></button>
+                                                        </div>
                                                         <div
                                                             class="d-flex flex0-column mb-1 flex-sm-row align-items-start">
                                                             <div
@@ -269,15 +278,16 @@
                                                                 <button
                                                                     *ngIf="reply.user?.id === loggedInUserId && !isAdmin"
                                                                     (click)="editReply(reply)"
-                                                                    class="bg-transparent border border-0 color-primary m-1"><mat-icon>edit</mat-icon></button>
+                                                                    class="bg-transparent border border-0 color-primary m-1 p-2 "><mat-icon>edit</mat-icon></button>
                                                                 <button
                                                                     *ngIf="reply.user?.id === loggedInUserId && !isAdmin"
                                                                     (click)="deleteReply(reply.id)"
-                                                                    class="bg-transparent border border-0 color-tertiary m-1 "><mat-icon>delete</mat-icon></button>
-                                                                    <button *ngIf="isAdmin"
+                                                                    class="bg-transparent border border-0 color-tertiary m-1 p-2"><mat-icon>delete</mat-icon></button>
+                                                                <button *ngIf="isAdmin"
                                                                     class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 color-default"
                                                                     (click)="deleteUserReply(reply.id)"><mat-icon>Delete</mat-icon></button>
                                                             </ng-container>
+
                                                             <ng-template #editModeReply>
                                                                 <textarea [(ngModel)]="reply.editContent"
                                                                     class="form-control mb-2" rows="2"></textarea>
@@ -323,7 +333,7 @@
                                                             <button
                                                                 class="bg-secondary border border-0 rounded-3 p-2 m-1 color-default"
                                                                 (click)="signalUserComment(comment.id)">Signaler</button>
-                                                                <button *ngIf="isAdmin"
+                                                            <button *ngIf="isAdmin"
                                                                 class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 color-default"
                                                                 (click)="deleteUserComment(comment.id)"><mat-icon>Delete</mat-icon></button>
                                                         </div>

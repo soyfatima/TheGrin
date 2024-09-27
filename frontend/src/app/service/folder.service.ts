@@ -22,9 +22,9 @@ export class FolderService {
     return this.http.get<any[]>(url);
   }
 
-  updateFolderContent(id: number, content: string): Observable<any> {
+  updateFolderContent(id: number, title:string, content: string): Observable<any> {
     const url = `${this.apiUrl}/folders/${id}`;
-    return this.http.put<any>(url, { content });
+    return this.http.put<any>(url, { title, content });
   }
 
   getUserFolders(id: number): Observable<any> {

@@ -43,7 +43,6 @@ import { BlogComponent } from './forum/blog/blog.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ContactUsComponent } from './navigation/dialog/contact-us/contact-us.component';
 import { UserLoginComponent } from './navigation/dialog/user-login/user-login.component';
-import { ConfirmDialogComponent } from './navigation/dialog/confirm-dialog/confirm-dialog.component';
 import { UserOrderComponent } from './admin/dialog/user-order/user-order.component';
 import { AddProductsComponent } from './admin/products/add-products/add-products.component';
 import { ListProductsComponent } from './admin/products/list-products/list-products.component';
@@ -59,15 +58,15 @@ import { ModifyComponent } from './admin/dialog/modify/modify.component';
 import { UserProfilComponent } from './forum/user-profil/user-profil.component';
 import { StoreComponent } from './shopping/store/store.component';
 import { ProductComponent } from './shopping/product/product.component';
-import { ShoppingCartComponent } from './shopping/modal/shopping-cart/shopping-cart.component';
+import { ShoppingCartComponent } from './navigation/dialog/shopping-cart/shopping-cart.component';
 import { ProductInfoComponent } from './shopping/product-info/product-info.component';
-import { OrderComponent } from './shopping/modal/order/order.component';
+import { OrderComponent } from './navigation/dialog/order/order.component';
 import { ListUserComponent } from './admin/list-user/list-user.component';
 import { LinkifyPipe } from './linkify.pipe';
 import { MessagingComponent } from './forum/messaging/messaging.component';
 import { SenderListComponent } from './forum/sender-list/sender-list.component';
-import { ReportUserComponent } from './forum/report-user/report-user.component';
-import { ConfirmComponent } from './forum/dialog/confirm/confirm.component';
+import { ReportUserComponent } from './navigation/dialog/report-user/report-user.component';
+import { ConfirmComponent } from './navigation/dialog/confirm/confirm.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +86,6 @@ import { ConfirmComponent } from './forum/dialog/confirm/confirm.component';
     ContactUsComponent,
     SafeHtmlPipe,
     UserLoginComponent,
-    ConfirmDialogComponent,
     SidebarComponent,
 
     UserOrderComponent,
@@ -112,7 +110,7 @@ import { ConfirmComponent } from './forum/dialog/confirm/confirm.component';
     MessagingComponent,
     SenderListComponent,
     ReportUserComponent,
-    ConfirmComponent
+    ConfirmComponent,
 
   ],
 

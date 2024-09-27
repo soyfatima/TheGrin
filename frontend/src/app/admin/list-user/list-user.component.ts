@@ -20,6 +20,7 @@ this.fetchAllUser()
 fetchAllUser() {
   this.userService.GetAllUser().subscribe(
     (users) => {
+      console.log('user', users)
       this.user = users
       this.filteredUsers = users;
     },

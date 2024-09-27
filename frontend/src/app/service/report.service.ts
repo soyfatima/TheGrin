@@ -11,10 +11,16 @@ export class ReportService {
 
     constructor(private http: HttpClient) { }
 
-
+    reportUser(reportData: { userId: number; reason: string }): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/report/report/user/${reportData.userId}`, reportData); // Pass the commentId in the URL
+    }
 
     reportComment(reportData: { commentId: number; reason: string }): Observable<any> {
         return this.http.post<any>(`${this.apiUrl}/report/report/comment/${reportData.commentId}`, reportData); // Pass the commentId in the URL
+    }
+
+    reportReply(reportData: { replyId: number; reason: string }): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/report/report/reply/${reportData.replyId}`, reportData); // Pass the commentId in the URL
     }
 
     reportFolder(reportData: { folderId: number; reason: string }): Observable<any> {

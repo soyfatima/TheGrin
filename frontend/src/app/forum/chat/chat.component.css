@@ -40,7 +40,7 @@
 
 .main-content {
     position: relative;
-    padding-top: 115px;
+    padding-top: 130px;
 }
 
 .switch-container {
@@ -54,7 +54,7 @@
 @media (max-width: 768px) {
     .main-content {
         position: relative;
-        padding-top: 135px;
+        padding-top: 145px;
     }
 
     .switch-container {
@@ -227,12 +227,6 @@ app-navbar {
     transition: background-color 0.3s ease, border 0.3s ease;
   }
   
-  /* .highlight {
-    color: 2px solid yellow;
-    transition: background-color 0.5s ease;
-  }
-  
-   */
 .bg-color-status {
     background: var(--color-primary);
     padding: 8px;
