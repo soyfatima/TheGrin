@@ -105,20 +105,24 @@ constructor(private fb:FormBuilder,
       });
     }
   }
+ 
+
+  
   formatNumberWithSeparator(number: number): string {
+    if (isNaN(number)) return '';
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
-
-  // Méthode pour analyser une chaîne formatée en nombre
+  
+  // Method to parse a formatted string back to a plain number
   parseNumberFromString(value: string): number {
-    return parseFloat(value.replace(/\./g, '').replace(/,/g, '.'));
+    const parsed = parseFloat(value.replace(/\./g, '').replace(/,/g, '.'));
+    return isNaN(parsed) ? 0 : parsed; 
   }
-
-  // Méthode pour gérer l'entrée du prix
+  
+  // Handle input event and update the form control with the raw number
   onPriceInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const parsedValue = this.parseNumberFromString(input.value);
-    const formattedValue = this.formatNumberWithSeparator(parsedValue);
-    this.productForm.get('price')?.setValue(formattedValue, { emitEvent: false });
+    this.productForm.get('price')?.setValue(parsedValue, { emitEvent: false });
   }
 }

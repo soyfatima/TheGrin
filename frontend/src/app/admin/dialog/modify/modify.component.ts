@@ -80,13 +80,16 @@ export class ModifyComponent {
     this.product.sizes.splice(index, 1);
   }
 
+  
   formatNumberWithSeparator(number: number): string {
+    if (isNaN(number)) return '';
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
-
-  // Méthode pour analyser une chaîne formatée en nombre
+  
+  // Method to parse a formatted string back to a plain number
   parseNumberFromString(value: string): number {
-    return parseFloat(value.replace(/\./g, '').replace(/,/g, '.'));
+    const parsed = parseFloat(value.replace(/\./g, '').replace(/,/g, '.'));
+    return isNaN(parsed) ? 0 : parsed; 
   }
 
   // Méthode pour gérer l'entrée du prix

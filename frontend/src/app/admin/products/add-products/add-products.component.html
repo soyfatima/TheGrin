@@ -38,6 +38,7 @@
                     formControlName="price"
                     class="form-control"
                     (input)="onPriceInput($event)"
+                    [value]="formatNumberWithSeparator(productForm.get('price')?.value)"
                     placeholder="Prix du produit"
                     required
                   />
