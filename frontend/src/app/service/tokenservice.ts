@@ -1,3 +1,5 @@
+
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieOptions, CookieService } from 'ngx-cookie-service';
@@ -9,30 +11,31 @@ import { environment } from '../../environments/environment';
 })
 
 export class TokenService {
-  constructor(private cookieService: CookieService, private http: HttpClient) { }
+  constructor(private cookieService: CookieService,
+    private http: HttpClient,) { }
 
-  refreshAccessToken(refreshToken: string): Observable<{ accessToken: string }> {
-    const refreshTokenPayload = { refreshToken };
-
-    return this.http.post<{ accessToken: string }>(`${environment.apiUrl}/auth/refresh-token`, refreshTokenPayload)
-      .pipe(
-        tap(response => {
-          this.setAccessToken(response.accessToken);
-        }),
-        catchError(error => {
-          console.error('Refresh Token API Error:', error);
-          throw error;
-        })
-      );
-  }
-
+    refreshAccessToken(refreshToken: string): Observable<{ accessToken: string }> {
+      const refreshTokenPayload = { refreshToken };
+  
+      return this.http.post<{ accessToken: string }>(`${environment.apiUrl}/auth/refresh-token`, refreshTokenPayload)
+        .pipe(
+          tap(response => {
+            this.setAccessToken(response.accessToken);
+          }),
+          catchError(error => {
+         //   console.error('Refresh Token API Error:', error);
+            throw error;
+          })
+        );
+    }
 
   setAccessTokenInCookie(accessToken: string, refreshToken: string, userInfo: string): void {
     const expires = new Date();
-    expires.setDate(expires.getDate() + 365 * 10);
+    expires.setDate(expires.getDate() + 1);
+  //  expires.setDate(expires.getDate() + 365 * 10);
     const cookieOptions: CookieOptions = {
       expires,
-      secure: true, 
+      secure: true,
       sameSite: 'Strict',
     };
     this.cookieService.set('authData', JSON.stringify({ accessToken, refreshToken, userInfo }), cookieOptions);
@@ -45,7 +48,13 @@ export class TokenService {
     }
     return null;
   }
-
+  // getAuthData(): { accessToken: string; refreshToken: string; userInfo: string } | null {
+  //   const authDataString = this.cookieService.get('authData'); // Retrieve the cookie
+  //   if (authDataString) {
+  //     return JSON.parse(authDataString); // Parse the JSON string into an object
+  //   }
+  //   return null;
+  // }
   removeAuthData(): void {
     this.cookieService.delete('authData');
   }
@@ -56,21 +65,4 @@ export class TokenService {
       this.setAccessTokenInCookie(accessToken, authData.refreshToken, authData.userInfo);
     }
   }
-
-
-  isTokenExpired(token: string): boolean {
-    const decodedToken = this.decodeToken(token);
-    const expiryTime = decodedToken ? decodedToken.exp * 1000 : null;
-    return expiryTime ? (Date.now() > expiryTime) : true;
-  }
-  
-  decodeToken(token: string): any {
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch (error) {
-      return null;
-    }
-  }
-  
-  
 }

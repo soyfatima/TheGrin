@@ -268,23 +268,16 @@ export class NavbarComponent {
 
 
   logout(): void {
-    const currentUser = localStorage.getItem('currentUser');
-    const accessToken = currentUser ? JSON.parse(currentUser).accessToken : '';
-
-    if (!accessToken) {
-      //      console.warn('Access token is missing. User might be already logged out.');
-    } else {
-      this.authService.logout(accessToken).subscribe(
-        () => {
-          this.tokenService.removeAuthData();
-          this.IsUserLogged = false;
-          this.authService.clearAuthData();
-        },
-        (error) => {
-          //              console.error('Logout failed:', error); // Log any errors that occur during logout
-        }
-      );
-    }
+    this.authService.logout().subscribe({
+      next: () => {
+        this.toastrService.success('Vous êtes déconnecté avec succès');
+        this.IsUserLogged=false;
+      },
+      error: (errorMessage) => {
+        console.error('Logout failed:', errorMessage);
+        this.toastrService.error('Erreur lors de la déconnexion');
+      }
+    });
   }
 
   goToUserProfil(): void {
