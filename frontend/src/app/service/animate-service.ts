@@ -1,4 +1,3 @@
-// animation.service.ts
 import { Injectable } from '@angular/core';
 import { trigger, state, style, animate, transition, AnimationTriggerMetadata } from '@angular/animations';
 

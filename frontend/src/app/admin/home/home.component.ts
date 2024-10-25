@@ -8,7 +8,7 @@ import { NotificationService } from '../../service/notification.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { OrderService } from '../../service/order.service';
 import { UserOrderComponent } from '../dialog/user-order/user-order.component';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommentService } from '../../service/comment.service';

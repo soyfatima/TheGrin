@@ -26,39 +26,6 @@ export class AuthService {
     this.updateLoginStatus();
   }
 
-  //admin login 
-  // login(email: string, password: string): Observable<any> {
-  //   const url = `${this.apiUrl}/auth/login`;
-  //   return this.http.post<any>(url, { email, password }).pipe(
-  //     tap(response => {
-  //       if (response && response.accessToken) {
-  //         localStorage.setItem('currentUser', JSON.stringify(response.userInfo));
-  //         this.updateLoginStatus();
-  //       }
-  //     })
-  //   );
-  // }
-
-  // isAdmin(): boolean {
-  //   const currentUser = localStorage.getItem('currentUser');
-  //   if (currentUser) {
-  //     const user = JSON.parse(currentUser);
-  //     //console.log('Current user role:', user.role);
-  //     return user.role === 'admin';
-  //   }
-  //   return false;
-  // }
-
-  // isUser(): boolean {
-  //   const currentUser = localStorage.getItem('currentUser');
-  //   if (currentUser) {
-  //     const user = JSON.parse(currentUser);
-  //     return user.role === 'user';
-  //   }
-  //   return false;
-  // }
-
-
    // Admin login
    login(email: string, password: string): Observable<any> {
     const url = `${this.apiUrl}/auth/login`;
@@ -166,34 +133,6 @@ export class AuthService {
       })
     );
   }
-
-  // updateLoginStatus(): void {
-  //   const currentUser = localStorage.getItem('currentUser');
-  //   const loggedInUser = currentUser ? JSON.parse(currentUser) : null;
-  //   this.loggedInUserSubject.next(loggedInUser);
-
-  //   if (loggedInUser) {
-  //     // Ensure the token is available before making the request
-  //     const authData = this.tokenService.getAuthData();
-  //     const accessToken = authData?.accessToken;
-
-  //     if (accessToken) {
-  //       this.notifService.getAllUserNotifications(loggedInUser.id).subscribe(
-  //         (notifications) => {
-  //         },
-  //         (error) => {
-  //           // console.error('Failed to fetch notifications:', error);
-  //         }
-  //       );
-  //     } else {
-  //       // console.warn('Access token is not available.');
-  //     }
-  //   }
-  // }
-
-  // isLoggedIn(): boolean {
-  //   return !!localStorage.getItem('currentUser');
-  // }
 
   userLogin(username: string, password: string): Observable<any> {
     const url = `${this.apiUrl}/auth/userLogin`;
