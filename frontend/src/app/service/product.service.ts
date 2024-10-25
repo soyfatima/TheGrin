@@ -21,12 +21,13 @@ export class ProductService {
         const url = `${this.apiUrl}/products/${id}`;
         return this.http.put<any>(url, updatedProductData)
     }
-
+    
     updateRemiseForAllProducts(remise:string): Observable<any> {
         const payload = { remise };
         return this.http.patch<any>(`${this.apiUrl}/products/update/remise`, payload)
     }
-    
+
+   
     deleteProduct(id: number): Observable<any> {
         const url = `${this.apiUrl}/products/${id}`;
         return this.http.delete<any>(url);
