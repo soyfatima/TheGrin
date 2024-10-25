@@ -58,6 +58,14 @@ export class UserLoginComponent {
       gender: ['', Validators.required],
     });
 
+    // this.authService.loggedInUser$.subscribe(user => {
+    //   this.IsUserLogged = !!user;
+    // });
+
+    const authData = this.tokenService.getAuthData();
+    this.IsUserLogged = !!authData?.accessToken;
+
+    // Subscribe to the observable to keep track of authentication changes
     this.authService.loggedInUser$.subscribe(user => {
       this.IsUserLogged = !!user;
     });

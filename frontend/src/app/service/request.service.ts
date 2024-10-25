@@ -8,7 +8,7 @@ import { TokenService } from './tokenservice';
 })
 
 export class requestService {
-    constructor(private http: HttpClient, private tokenService: TokenService, ) { }
+    constructor(private http: HttpClient, private tokenService: TokenService,) { }
 
     submitRequest<T>(method: string, url: string, formData?: any, payload?: any): Observable<any> {
         return new Observable((observer) => {
@@ -46,5 +46,4 @@ export class requestService {
             );
         });
     }
-    
 }

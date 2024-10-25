@@ -9,18 +9,18 @@ import { Injectable } from "@angular/core";
 })
 export class AdminGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
-
+  
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (this.authService.isAdmin()) {
-      return true; 
-    }  else {
-        this.router.navigate(['/login']); 
-      }
-      return false; 
-    }
+    const isAdmin = this.authService.isAdmin();
   
-
+    if (isAdmin) {
+      return true;
+    } else {
+      return this.router.createUrlTree(['/login']);
+    }
+  }
+  
 }

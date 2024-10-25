@@ -160,9 +160,11 @@ app-navbar {
     }
 
     .categories .tags {
-        margin-top: 80px;
+        padding-top: 20px;
     }
-
+.categories .visibility-check {
+    padding-top: 80px;
+}
     .categories.mobile-hidden {
         transform: translateY(-10%);
         height: 60px;

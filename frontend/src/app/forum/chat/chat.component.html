@@ -8,7 +8,7 @@
     </div>
     <div class="categories bg-color-gradient"
         [ngClass]="{'hidden': isCategoryHidden && !isMobile, 'mobile-hidden': isCategoryHidden && isMobile}">
-        <div class="tags" [ngClass]="isCategoryHidden ? 'col-lg-12' : 'col-md-12' ">
+        <div class="visibility-check" [ngClass]="isCategoryHidden ? 'col-lg-12' : 'col-md-12' ">
             <div class="d-flex justify-content-between mb-3">
                 <div class="title-name color-default mt-2">
                     <h4 class="fw-bold">LE-GRIN</h4>
@@ -205,10 +205,16 @@
                                         (click)="signalUserFolder(selectedCard.id)">signaler<mat-icon
                                             class="color-primary">report</mat-icon></button>
                                     <button
-                                        class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 text-dark"
+                                        class="bg-transparent color-tertiary border border-0 p-2 m-1 "
                                         *ngIf="isAdmin" (click)="deleteUserFolder(selectedCard.id)">
                                         <mat-icon>delete</mat-icon>
                                     </button>
+                                    <button
+                                    class="bg-color-default border border-0 rounded-3 p-2 m-1 text-dark"
+                                    *ngIf="isAdmin"
+                                    (click)="toggleBlockUser(selectedCard.user?.id, selectedCard.user?.blocked)">
+                                    {{ selectedCard.user?.blocked ? 'Débloquer' : 'Bloquer' }}
+                                </button>
                                 </div>
                                 <hr>
                             </div>
@@ -284,8 +290,8 @@
                                                                     (click)="deleteReply(reply.id)"
                                                                     class="bg-transparent border border-0 color-tertiary m-1 p-2"><mat-icon>delete</mat-icon></button>
                                                                 <button *ngIf="isAdmin"
-                                                                    class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 color-default"
-                                                                    (click)="deleteUserReply(reply.id)"><mat-icon>Delete</mat-icon></button>
+                                                                    class="bg-transparent color-tertiary border border-0"
+                                                                    (click)="deleteUserReply(reply.id)"><mat-icon>delete</mat-icon></button>
                                                             </ng-container>
 
                                                             <ng-template #editModeReply>
@@ -314,7 +320,10 @@
                                                                 *ngIf="comment?.user?.id === loggedInUserId && !isAdmin"
                                                                 (click)="deleteComment(comment.id)"
                                                                 class="bg-transparent border border-0 p-2 m-1 color-primary"><mat-icon>delete</mat-icon></button>
-                                                        </div>
+                                                                <button *ngIf="isAdmin"
+                                                                class="bg-transparent color-primary border border-0 p-2 m-1"
+                                                                (click)="deleteUserComment(comment.id)"><mat-icon>delete</mat-icon></button>
+                                                            </div>
                                                         <div class="right-side">
                                                             <button
                                                                 class="bg-color-default border border-0 rounded-3 p-2 m-1 text-dark"
@@ -333,9 +342,7 @@
                                                             <button
                                                                 class="bg-secondary border border-0 rounded-3 p-2 m-1 color-default"
                                                                 (click)="signalUserComment(comment.id)">Signaler</button>
-                                                            <button *ngIf="isAdmin"
-                                                                class="bg-color-primary text-white border border-0 rounded-3 p-2 m-1 color-default"
-                                                                (click)="deleteUserComment(comment.id)"><mat-icon>Delete</mat-icon></button>
+                                                           
                                                         </div>
                                                     </div>
 

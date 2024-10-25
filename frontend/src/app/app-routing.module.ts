@@ -55,7 +55,7 @@ const routes: Routes = [
   { path: 'contact-us', component: ContactUsComponent },
 
   { path: 'navbar', component: NavbarComponent, canActivate: [LoginGuard] },
-  { path: 'user-login', component: UserLoginComponent, canActivate: [LoginGuard] },
+  { path: 'user-login', component: UserLoginComponent },
   { path: 'user-profil/:id', component: UserProfilComponent, canActivate: [LoginGuard] },
   { path: 'reset-password', component: ResetPasswordComponent, canActivate: [LoginGuard] },
   { path: 'product-info/:id', component: ProductInfoComponent, canActivate: [LoginGuard] },
@@ -67,7 +67,7 @@ const routes: Routes = [
   { path: 'confirm-dialog', component: ConfirmComponent, canActivate: [LoginGuard] },
 
   // Admin routes
-  { path: 'login', component: LoginComponent, canActivate: [AdminGuard] },
+  { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [AdminGuard] },
   { path: 'sidebar', component: SidebarComponent, canActivate: [AdminGuard] },
   { path: 'on-confirm', component: OnConfirmComponent, canActivate: [AdminGuard] },

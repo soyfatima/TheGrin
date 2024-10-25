@@ -12,6 +12,7 @@ import { environment } from '../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommentService } from '../../service/comment.service';
+import { ToastrService } from 'ngx-toastr';
 
 //import * as $ from 'jquery';
 
@@ -31,6 +32,9 @@ export class HomeComponent implements OnInit {
   notifications: any[] = []
   notificationCount: number = 0;
   data: any;
+  IsUserLogged: boolean = false;
+  IsAdminLogged: boolean = false;
+
   private offcanvasService = inject(NgbOffcanvas)
 
   constructor(
@@ -43,7 +47,9 @@ export class HomeComponent implements OnInit {
     private commentService: CommentService,
     private dialog: MatDialog,
     private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private toastrService: ToastrService,
+
   ) {
   }
 
@@ -53,6 +59,13 @@ export class HomeComponent implements OnInit {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
       $("#content").toggleClass("toggled");
+    });
+    const authData = this.tokenService.getAuthData();
+    this.IsUserLogged = !!authData?.accessToken;
+    this.IsAdminLogged = this.authService.isAdmin();
+    this.authService.loggedInUser$.subscribe(user => {
+      this.IsUserLogged = !!user;
+      this.IsAdminLogged = user?.role === 'admin';
     });
     this.getOrderNotification();
   }
@@ -152,23 +165,15 @@ export class HomeComponent implements OnInit {
 
 
   logout(): void {
-    const currentUser = localStorage.getItem('currentUser');
-    const accessToken = currentUser ? JSON.parse(currentUser).accessToken : '';
-
-    if (!accessToken) {
-    } else {
-      this.authService.logout(accessToken).subscribe(
-        () => {
-          this.tokenService.removeAuthData();
-          this.authService.clearAuthData();
-          this.router.navigate(['login']);
-
-        },
-        (error) => {
-          console.error('Logout failed:', error);
-        }
-      );
-    }
+    this.authService.logout().subscribe({
+      next: () => {
+        this.toastrService.success('Vous êtes déconnecté avec succès');
+      },
+      error: (errorMessage) => {
+        console.error('Logout failed:', errorMessage);
+        this.toastrService.error('Erreur lors de la déconnexion');
+      }
+    });
   }
   ngAfterViewInit() {
     this.loader();
