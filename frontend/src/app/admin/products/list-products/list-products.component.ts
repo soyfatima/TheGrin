@@ -23,6 +23,7 @@ export class ListProductsComponent {
   currentPage: number = 1;
   itemsPerPage: number = 10;
   visiblePageRange: number[] = [];
+  remise: any;
 
   category: any[] = [
     { name: 'Équipements de diagnostic' },
@@ -105,6 +106,22 @@ export class ListProductsComponent {
     });
   }
 
+  updateRemiseForAll() {
+    if (this.remise !== null && this.remise !== undefined) {
+    this.productService.updateRemiseForAllProducts(this.remise).subscribe({
+      next: (response) => {
+        this.toastrService.success('remise mise à jour ')
+        this.fetchProducts();
+      },
+      error: (error) => {
+        this.toastrService.error('erreur lors de la mise à jour, veuillez réessayer')
+       // console.error('Error updating remise', error);
+      }
+    });
+  } else {
+    //console.error('Invalid remise value');
+  }
+}
 
   filterProductsByCategory(category: string) {
     this.selectedCategory = category;

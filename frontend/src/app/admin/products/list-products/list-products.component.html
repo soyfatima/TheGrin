@@ -4,6 +4,14 @@
       <h6 class="fw-bold">LISTE DES PRODUITS</h6>
     </div>
 
+    <div class="col-md-4 mb-4">
+        <h6>Remise : </h6>
+        <div class="input-group">
+        <input type="number" [(ngModel)]="remise" class="form-control w-50" placeholder="Entrez une valeur pour changer les remises" />
+        <button class="btn btn-primary" (click)="updateRemiseForAll()">Valider</button>
+      </div>
+      </div>
+
      <div class="row">
                 <div class="col-lg-3 mb-3" data-aos="fade-right">
                     <div class="filter">
